@@ -10,17 +10,29 @@ class MockRobotD:
 
     def __init__(self, root_dir=DEFAULT_ROOT_DIR):
         self.root_dir = root_dir
-        self.motor_boards = []
         self.runners = []
+        self._motor_boards = []
+        self._power_boards = []
+
+    def new_board(self, board_class, name):
+        # Enter a blank node
+        board = board_class(name, {'name': name})
+        runner = BoardRunner(board, self.root_dir)
+        runner.start()
+        self.runners.append(runner)
+        return board
+
+    def new_powerboard(self, name=None):
+        if not name:
+            name = "MOCK{}".format(len(self._power_boards))
+        self._power_boards.append(name)
+        self.new_board(MockPowerBoard, name)
 
     def new_motorboard(self, name=None):
         if not name:
-            name = "MOCK{}".format(len(self.motor_boards))
-        self.motor_boards.append(name)
-        # Enter a blank node
-        runner = BoardRunner(MockMotorBoard(name, {'name': name}), self.root_dir)
-        runner.start()
-        self.runners.append(runner)
+            name = "MOCK{}".format(len(self._motor_boards))
+        self._motor_boards.append(name)
+        self.new_board(MockMotorBoard, name)
 
     def stop(self):
         for runner in self.runners:
@@ -40,6 +52,25 @@ class MockMotorBoard(Board):
         self._name = name
         self.left = robot.BRAKE
         self.right = robot.BRAKE
+
+    @classmethod
+    def name(cls, node):
+        """Board name - actually fetched over serial."""
+        return node['name']
+
+    def command(self, cmd):
+        print("{} Command: {}".format(self._name, cmd))
+
+
+class MockPowerBoard(Board):
+    """
+    Mock class for simulating a power board with a button
+    """
+    board_type_id = 'power'
+
+    def __init__(self, name, node):
+        super().__init__(node)
+        self._name = name
 
     @classmethod
     def name(cls, node):
