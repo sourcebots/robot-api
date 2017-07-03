@@ -3,7 +3,7 @@ import unittest
 import time
 
 from robot.robot import Robot
-from robot.tests.mockrobotd import MockRobotD
+from robot.tests.mock_robotd import MockRobotD
 
 
 class MotorBoardTest(unittest.TestCase):
