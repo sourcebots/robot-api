@@ -31,7 +31,9 @@ class CameraTest(unittest.TestCase):
         time.sleep(0.2)
         camera = self.robot.cameras[0]
         tokens = camera.see()
-        print([t for t in tokens])
+
+        # Check the correct markers are spotted
+        self.assertEqual({x.id for x in tokens}, {0, 1, 24, 25})
 
     def tearDown(self):
         self.mock.stop()
