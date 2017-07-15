@@ -9,20 +9,22 @@ from robot.tests.mock_robotd import MockRobotD
 class PowerBoardTest(unittest.TestCase):
     def setUp(self):
         mock = MockRobotD(root_dir="/tmp/")
-        mock.new_powerboard()
-        time.sleep(0.1)
+        self.power_board = mock.new_powerboard()
+        time.sleep(0.2)
         self.mock = mock
         self.robot = Robot(robotd_path="/tmp/robotd")
 
-    def test_insert_motorboards(self):
-        # Give it a tiny bit to init the boards
-        time.sleep(0.4)
+    def test_on_off(self):
+        # Got to clear the first message
+        _ = self.power_board.message_queue.get()
 
-        boards = self.robot.power_boards
+        self.robot.power_boards[0].power_off()
+        msg = self.power_board.message_queue.get()
+        self.assertEqual(msg, {'power': False})
 
-        # Check all the motor boards are initialised and can be indexed
-        self.assertTrue(0 in boards)
+        self.robot.power_boards[0].power_on()
+        msg = self.power_board.message_queue.get()
+        self.assertEqual(msg, {'power': True})
 
     def tearDown(self):
         self.mock.stop()
-

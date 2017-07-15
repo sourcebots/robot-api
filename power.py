@@ -1,17 +1,14 @@
 import json
-import socket
 from pathlib import Path
 
+from robot.board import Board
 
-class PowerBoard:
-    OUTPUTS = ['H0', 'H1', 'L0', 'L1', 'L2', 'L3']
+
+class PowerBoard(Board):
 
     def __init__(self, socket_path):
-        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
-        self.sock.connect(socket_path)
+        super().__init__(socket_path)
         self._serial = Path(socket_path).stem
-        # Get the status message, throw it away
-        _ = self.sock.recv(2048)
 
     @property
     def serial(self):
@@ -21,11 +18,9 @@ class PowerBoard:
         return self._serial
 
     def power_on(self):
-        self.sock.send(json.dumps({'power': True}).encode('utf-8'))
-        # Receive the response
-        self.sock.recv(2048)
+        self._send(json.dumps({'power': True}).encode('utf-8'))
+        self._recv()
 
     def power_off(self):
-        self.sock.send(json.dumps({'power': False}).encode('utf-8'))
-        # Receive the response
-        self.sock.recv(2048)
+        self._send(json.dumps({'power': False}).encode('utf-8'))
+        self._recv()

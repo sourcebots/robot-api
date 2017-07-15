@@ -1,8 +1,12 @@
 import time
 
+from multiprocessing import Queue
+
 import robot
+from robotd.devices import Camera
 from robotd.devices_base import Board
 from robotd.master import BoardRunner
+from robotd.vision.camera import FileCamera
 
 
 class MockRobotD:
@@ -11,28 +15,40 @@ class MockRobotD:
     def __init__(self, root_dir=DEFAULT_ROOT_DIR):
         self.root_dir = root_dir
         self.runners = []
-        self._motor_boards = []
-        self._power_boards = []
+        self.board_to_runner = {}
 
-    def new_board(self, board_class, name):
+    def new_board(self, board_class, name, *args):
         # Enter a blank node
-        board = board_class(name, {'name': name})
+        print(args, board_class)
+        board = board_class(name, {'name': name}, *args)
         runner = BoardRunner(board, self.root_dir)
         runner.start()
+        self.board_to_runner[board] = runner
         self.runners.append(runner)
         return board
 
     def new_powerboard(self, name=None):
         if not name:
-            name = "MOCK{}".format(len(self._power_boards))
-        self._power_boards.append(name)
-        self.new_board(MockPowerBoard, name)
+            name = "MOCK{}".format(len(self.runners))
+        return self.new_board(MockPowerBoard, name)
 
     def new_motorboard(self, name=None):
         if not name:
-            name = "MOCK{}".format(len(self._motor_boards))
-        self._motor_boards.append(name)
-        self.new_board(MockMotorBoard, name)
+            name = "MOCK{}".format(len(self.runners))
+        return self.new_board(MockMotorBoard, name)
+
+    def new_camera(self, name=None, camera=None):
+        if not name:
+            name = "MOCK{}".format(len(self.runners))
+        if not camera:
+            camera = FileCamera('empty.png', 720)
+        return self.new_board(MockCamera, name, camera)
+
+    def remove_board(self, board):
+        runner = self.board_to_runner[board]
+        runner.terminate()
+        runner.join()
+        runner.cleanup_socket()
 
     def stop(self):
         for runner in self.runners:
@@ -50,16 +66,21 @@ class MockMotorBoard(Board):
     def __init__(self, name, node):
         super().__init__(node)
         self._name = name
-        self.left = robot.BRAKE
-        self.right = robot.BRAKE
+        self._status = {'m0': robot.BRAKE, 'm1': robot.COAST}
+        self.message_queue = Queue()
 
     @classmethod
     def name(cls, node):
         """Board name - actually fetched over serial."""
         return node['name']
 
+    def status(self):
+        return self._status
+
     def command(self, cmd):
+        self._status.update(cmd)
         print("{} Command: {}".format(self._name, cmd))
+        self.message_queue.put(cmd)
 
 
 class MockPowerBoard(Board):
@@ -71,6 +92,7 @@ class MockPowerBoard(Board):
     def __init__(self, name, node):
         super().__init__(node)
         self._name = name
+        self.message_queue = Queue()
 
     @classmethod
     def name(cls, node):
@@ -79,6 +101,17 @@ class MockPowerBoard(Board):
 
     def command(self, cmd):
         print("{} Command: {}".format(self._name, cmd))
+        self.message_queue.put(cmd)
+
+
+class MockCamera(Camera):
+    board_type_id = 'camera'
+
+    def __init__(self, name, node, camera):
+        node['DEVNAME'] = "/" + name
+        self.serial = name
+        # Create a camera with a file camera instead of a real camera
+        super().__init__(node, camera)
 
 
 def main():
