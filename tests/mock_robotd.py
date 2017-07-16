@@ -48,13 +48,13 @@ class MockRobotD:
         runner = self.board_to_runner[board]
         runner.terminate()
         runner.join()
-        runner.cleanup_socket()
+        runner.cleanup()
 
     def stop(self):
         for runner in self.runners:
             runner.terminate()
             runner.join()
-            runner.cleanup_socket()
+            runner.cleanup()
 
 
 class MockMotorBoard(Board):

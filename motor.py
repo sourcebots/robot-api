@@ -1,5 +1,4 @@
 import json
-import socket
 from pathlib import Path
 
 from robot import COAST, BRAKE
@@ -37,8 +36,6 @@ class MotorBoard(Board):
             m1_id: self._m1
         }
 
-
-
     @staticmethod
     def string_to_voltage(voltage):
         """
@@ -59,6 +56,7 @@ class MotorBoard(Board):
     def voltage_to_string(voltage):
         """
         Inverse of #MotorBoard.string_to_voltage
+        Converts more human readable info to that robotd can read
         """
         if voltage is COAST:
             return 'free'
@@ -85,7 +83,12 @@ class MotorBoard(Board):
         """
         return self._serial
 
+    def get_status(self, motor_id):
+        self._send(b'{}')
+        return self.string_to_voltage(json.loads(self._recv())[motor_id])
+
     def update_motor(self, motor_id, voltage):
         v_string = self.voltage_to_string(voltage)
         self._send(json.dumps({motor_id: v_string}).encode('utf-8'))
-
+        # Receive the response to keep in sync.
+        self._recv()

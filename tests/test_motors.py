@@ -59,17 +59,6 @@ class MotorBoardTest(unittest.TestCase):
             self.assertTrue(0 in self.robot.motor_boards)
             print("connection", i)
 
-    def _try_voltage(self, motor, board, value):
-        self._try_voltage_expect(motor, board, value, value)
-
-    def _try_voltage_expect(self, motor, board, value, expect):
-        if motor == 'm0':
-            self.robot.motor_boards[0].m0.voltage = value
-        elif motor == 'm1':
-            self.robot.motor_boards[0].m1.voltage = value
-        got_value = board.message_queue.get()
-        self.assertEqual(got_value, {motor: expect})
-
     def test_set_edge_conditions(self):
         board = self.mock.new_motorboard()
         time.sleep(0.2)
@@ -83,9 +72,30 @@ class MotorBoardTest(unittest.TestCase):
                 self._try_voltage(motor, board, -1.01)
             # Brake and coast
             self._try_voltage(motor, board, COAST)
-            self._try_voltage(motor, board, BRAKE)
             # 0 should be BRAKE
-            self._try_voltage_expect(motor, board, 0, BRAKE)
+            self._try_voltage_expect(motor, board, 0, 'brake')
+
+    def _try_voltage(self, motor, board, value):
+        self._try_voltage_expect(motor, board, value, value)
+
+    def _try_voltage_expect(self, motor, board, value, expect):
+        if motor == 'm0':
+            self.robot.motor_boards[0].m0.voltage = value
+        elif motor == 'm1':
+            self.robot.motor_boards[0].m1.voltage = value
+        else:
+            raise ValueError()
+        got_value = board.message_queue.get()
+        # Test the motor board got what it expected
+        self.assertEqual(got_value, {motor: expect})
+        # Test the value set hasn't changed
+        if motor == 'm0':
+            self.assertEqual(self.robot.motor_boards[0].m0.voltage, value)
+        elif motor == 'm1':
+            self.assertEqual(self.robot.motor_boards[0].m1.voltage, value)
+        else:
+            raise ValueError()
+            # Throw away the status message we sent
 
     def tearDown(self):
         self.mock.stop()

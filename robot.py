@@ -27,6 +27,7 @@ class Robot:
         else:
             raise RuntimeError("Cannot find Power Board!")
 
+
     def _update_boards(self, known_boards, board_type, directory_name):
         """
         Update the number of boards against the known boards
@@ -71,3 +72,8 @@ class Robot:
         boards = self._update_boards(self.known_cameras, Camera, 'camera')
         self.known_cameras = boards
         return self._dictify_boards(boards)
+
+    def __del__(self):
+        for camera in self.known_cameras:
+            camera.stop_poll()
+

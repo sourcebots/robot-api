@@ -17,7 +17,7 @@ class Camera(Board):
         self._got_image = threading.Event()
         super().__init__(socket_path)
         self._serial = Path(socket_path)
-        self._running = False
+        self._running = threading.Event()
         self._latest_lock = threading.Lock()
         self.sock_thread = self.listen()
 
@@ -26,22 +26,21 @@ class Camera(Board):
 
     def listen(self):
         thread = threading.Thread(target=self.cam_listener_worker)
-        self._running = True
+        self._running.set()
         thread.start()
         return thread
 
     def clean_up(self):
-        super().clean_up()
-        self.stop_poll()
+        pass
 
     def stop_poll(self):
-        self._running = False
+        self._running.clear()
         self.sock_thread.join()
 
     def cam_listener_worker(self):
         print("Thread started")
-        while self._running:
-            data = self._recv(2048)
+        while self._running.is_set():
+            data = self._recv()
             if data:
                 self._got_image.set()
                 # print("Received", data)
