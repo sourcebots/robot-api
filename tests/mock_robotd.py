@@ -96,7 +96,7 @@ class MockServoBoard(Board):
     def __init__(self, name, node):
         super().__init__(node)
         self._name = name
-        self._status = {x: 0 for x in range(16)}
+        self._status = {str(x): 0 for x in range(16)}
         self.message_queue = Queue()
 
     @classmethod
