@@ -1,36 +1,35 @@
 from robot.robot import Robot
 
-robot = Robot()
+r = Robot()
 
-left_motor = robot.motor_boards['sgkjn'].m0
+left_motor = r.motor_boards['sgkjn'].m0
 # m1.voltage is from -1 to 1
 # EXCEPT it automatically brakes unless set to ROBOT.COAST
-robot.motor_boards['sgkjn'].m1.voltage = robot.COAST
-robot.motor_boards[0].m1.voltage = 1.0
-robot.motor_boards[0].m1.voltage = 0  # 0 is indistinguishable from braking
-robot.motor_boards[0].m1.voltage = robot.BRAKE  # NOTE, if this value is read back it will return 0, not BRAKE
-assert(robot.BRAKE == 0)
-# Will Error:
+r.motor_boards['sgkjn'].m1.voltage = r.COAST
+r.motor_boards[0].m1.voltage = 1.0
+r.motor_boards[0].m1.voltage = 0  # 0 is indistinguishable from braking
+r.motor_boards[0].m1.voltage = r.BRAKE  # NOTE, if this value is read back it will return 0, not BRAKE
+assert (r.BRAKE == 0)
 try:
-    robot.motor_boards[0].m1.voltage = 1.01
-    robot.motor_boards[0].m1.voltage = -1.01
-    robot.motor_boards[0].m1.voltage = "robot go fast plz"
+    # Should Error:
+    r.motor_boards[0].m1.voltage = 1.01
+    r.motor_boards[0].m1.voltage = -1.01
+    r.motor_boards[0].m1.voltage = "robot go fast plz"
 except:
     pass
 
-
-
-robot.servo_boards[0].socket[2].position = -1
+r.servo_boards[0].ports[2].position = -1
 
 # Results are sorted by distance
 # r.see() returns a subclass of sequence (abstract base classes), which can then error things.
-markers = robot.see()
+markers = r.see()
 
 marker = markers[0]
 
-if marker.type == robot.ARENA:
+if marker.type == r.ARENA:
     if marker.distance_metres > 1:
-        pass
+        if marker.polar.rot_x > 0:
+            print("it's more than 1m away in some direction!")
         # decomposeHomographyMat:
         # - decomposeHomography:
         # - normalize:
@@ -44,3 +43,15 @@ if marker.type == robot.ARENA:
         #   Line 305.
         #   - findRmatFrom_tstar_n
         #   R = H(I - (2 / v) * te_star * ne_t)
+
+
+# Indexing tokens
+tokens = r.cameras[0].see()
+
+if len(tokens) == 0:
+    try:
+        # Will Error
+        tokens[0]
+    except IndexError:
+        # Shows a fancy "you're indexing an empty array" error! ooOooh!
+        pass
