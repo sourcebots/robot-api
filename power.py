@@ -18,9 +18,15 @@ class PowerBoard(Board):
         return self._serial
 
     def power_on(self):
+        """
+        Turn on power to all power board outputs
+        """
         self._send(json.dumps({'power': True}).encode('utf-8'))
         self._recv()
 
     def power_off(self):
+        """
+        Turn off power to all power board outputs
+        """
         self._send(json.dumps({'power': False}).encode('utf-8'))
         self._recv()

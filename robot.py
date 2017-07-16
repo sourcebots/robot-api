@@ -27,7 +27,6 @@ class Robot:
         else:
             raise RuntimeError("Cannot find Power Board!")
 
-
     def _update_boards(self, known_boards, board_type, directory_name):
         """
         Update the number of boards against the known boards
@@ -42,13 +41,14 @@ class Robot:
         boards = known_boards[:]
         # Add all boards that weren't previously there
         for board in new_boards - known_paths:
-            boards.append(board_type(str(board)))
+            boards.append(board_type(board))
 
         return sorted(boards, key=lambda b: b.serial)
 
     @staticmethod
     def _dictify_boards(boards):
         # Convert lists of boards into a dictionary
+        # TODO: Return something which when len() is called doesn't return 2 if theres 1 board
         boards_dict = {}
         for i, board in enumerate(boards):
             boards_dict[i] = board
@@ -57,23 +57,32 @@ class Robot:
 
     @property
     def motor_boards(self):
+        """
+        :return: list of available Motor boards, can be indexed by serial or by number
+        """
         boards = self._update_boards(self.known_motor_boards, MotorBoard, 'motor')
         self.known_motor_boards = boards
         return self._dictify_boards(boards)
 
     @property
     def power_boards(self):
+        """
+        :return: list of available Power boards, can be indexed by serial or by number
+        """
         boards = self._update_boards(self.known_power_boards, PowerBoard, 'power')
         self.known_power_boards = boards
         return self._dictify_boards(boards)
 
     @property
     def cameras(self):
+        """
+        :return: list of available Cameras, can be indexed by serial or by number
+        """
         boards = self._update_boards(self.known_cameras, Camera, 'camera')
         self.known_cameras = boards
         return self._dictify_boards(boards)
 
     def __del__(self):
+        # stop the polling threads
         for camera in self.known_cameras:
-            camera.stop_poll()
-
+            camera._stop_poll()

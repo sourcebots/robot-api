@@ -20,6 +20,20 @@ class CameraTest(unittest.TestCase):
         self.mock = mock
         self.robot = Robot(robotd_path="/tmp/robotd")
 
+    def test_insert_cameras(self):
+        self.mock.new_camera('ABC')
+        self.mock.new_camera('DEF')
+        # Give it a tiny bit to init the boards
+        time.sleep(0.4)
+
+        boards = self.robot.cameras
+
+        # Check all the motor boards are initialised and can be indexed
+        self.assertTrue(0 in boards)
+        self.assertTrue(1 in boards)
+        self.assertTrue('ABC' in boards)
+        self.assertTrue('DEF' in boards)
+
     def test_cant_see_anything(self):
         self.camera = self.mock.new_camera()
         time.sleep(0.2)
@@ -34,6 +48,17 @@ class CameraTest(unittest.TestCase):
 
         # Check the correct markers are spotted
         self.assertEqual({x.id for x in tokens}, {0, 1, 24, 25})
+
+    def test_unique_error(self):
+        self.camera = self.mock.new_camera()
+        time.sleep(0.2)
+        tokens = self.robot.cameras[0].see()
+        with self.assertRaises(IndexError):
+            _ = tokens[0]
+        try:
+            _ = tokens[0]
+        except IndexError as e:
+            self.assertEqual(str(e), "Trying to index an empty list")
 
     def tearDown(self):
         self.mock.stop()

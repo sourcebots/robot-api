@@ -4,22 +4,22 @@ from pathlib import Path
 from robot import COAST, BRAKE
 from robot.board import Board
 
-
 class Motor:
-    def __init__(self, motor_board, motor_id):
-        self.motor_board = motor_board
-        self.motor_id = motor_id
+        def __init__(self, motor_board, motor_id):
+            self.motor_board = motor_board
+            self.motor_id = motor_id
 
-    @property
-    def voltage(self):
-        return self.motor_board.get_status(self.motor_id)
+        @property
+        def voltage(self):
+            return self.motor_board._get_status(self.motor_id)
 
-    @voltage.setter
-    def voltage(self, voltage):
-        self.motor_board.update_motor(self.motor_id, voltage)
+        @voltage.setter
+        def voltage(self, voltage):
+            self.motor_board._update_motor(self.motor_id, voltage)
 
 
 class MotorBoard(Board):
+
     def __init__(self, socket_path):
         super().__init__(socket_path)
         self._serial = Path(socket_path).stem
@@ -37,7 +37,7 @@ class MotorBoard(Board):
         }
 
     @staticmethod
-    def string_to_voltage(voltage):
+    def _string_to_voltage(voltage):
         """
         Converts a string to a Voltage value
         :param voltage:
@@ -53,7 +53,7 @@ class MotorBoard(Board):
             raise ValueError('Incorrect voltage value, valid values: between -1 and 1, "free", or "brake"')
 
     @staticmethod
-    def voltage_to_string(voltage):
+    def _voltage_to_string(voltage):
         """
         Inverse of #MotorBoard.string_to_voltage
         Converts more human readable info to that robotd can read
@@ -70,10 +70,16 @@ class MotorBoard(Board):
 
     @property
     def m0(self):
+        """
+        :return: `Motor` object for motor connected to the `m0` slot
+        """
         return self._m0
 
     @property
     def m1(self):
+        """
+        :return: `Motor` object for motor connected to the `m1` slot
+        """
         return self._m1
 
     @property
@@ -83,12 +89,17 @@ class MotorBoard(Board):
         """
         return self._serial
 
-    def get_status(self, motor_id):
+    def _get_status(self, motor_id):
         self._send(b'{}')
-        return self.string_to_voltage(json.loads(self._recv())[motor_id])
+        return self._string_to_voltage(json.loads(self._recv())[motor_id])
 
-    def update_motor(self, motor_id, voltage):
-        v_string = self.voltage_to_string(voltage)
+    def _update_motor(self, motor_id, voltage):
+        """
+        Set the value of a motor
+        :param motor_id: id of the motor, either 'm0' or 'm1'
+        :param voltage: Voltage to set the motor to
+        """
+        v_string = self._voltage_to_string(voltage)
         self._send(json.dumps({motor_id: v_string}).encode('utf-8'))
         # Receive the response to keep in sync.
         self._recv()

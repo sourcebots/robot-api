@@ -26,5 +26,29 @@ class PowerBoardTest(unittest.TestCase):
         msg = self.power_board.message_queue.get()
         self.assertEqual(msg, {'power': True})
 
+    def test_insert_power(self):
+        # TODO: Make this generic for all boards, instead of duplicated logic
+        self.mock.new_powerboard('ABC')
+        self.mock.new_powerboard('DEF')
+        # Give it a tiny bit to init the boards
+        time.sleep(0.4)
+
+        boards = self.robot.power_boards
+
+        # Check all the motor boards are initialised and can be indexed
+        self.assertTrue(0 in boards)
+        self.assertTrue(1 in boards)
+        self.assertTrue(2 in boards)
+        self.assertTrue('ABC' in boards)
+        self.assertTrue('DEF' in boards)
+
+    def test_remove_board(self):
+        # TODO: Make this generic for all boards
+        # Add and remove a board
+        pb = self.mock.new_powerboard('ABC')
+        self.mock.remove_board(pb)
+        # check the new board has gone
+        self.assertTrue('ABC' not in self.robot.power_boards)
+
     def tearDown(self):
         self.mock.stop()

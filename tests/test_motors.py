@@ -88,7 +88,7 @@ class MotorBoardTest(unittest.TestCase):
         got_value = board.message_queue.get()
         # Test the motor board got what it expected
         self.assertEqual(got_value, {motor: expect})
-        # Test the value set hasn't changed
+        # Test the value can be read
         if motor == 'm0':
             self.assertEqual(self.robot.motor_boards[0].m0.voltage, value)
         elif motor == 'm1':

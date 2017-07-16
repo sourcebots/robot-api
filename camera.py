@@ -1,61 +1,90 @@
 import json
+import time
 import threading
 from pathlib import Path
+from collections.abc import MutableSequence
 
 from robot.board import Board
 
 
 class Marker:
+    """
+    Class that represents a marker captured from a webcam image
+    """
+
     def __init__(self, data):
         self._raw_data = data
+
         self.__dict__.update(data)
 
 
 class Camera(Board):
+    """
+    Object representing an Apriltag camera in robotd
+
+    Polls the robot daemon for new images
+    """
+
+    #: How often the camera should check for a new image.
+    # this MUST be faster than the camera sends images
+    # or latency will be a problem
+    POLL_FREQ = 0.075
+
     def __init__(self, socket_path):
         self._latest = None
         self._got_image = threading.Event()
         super().__init__(socket_path)
-        self._serial = Path(socket_path)
+        self._serial = Path(socket_path).stem
         self._running = threading.Event()
         self._latest_lock = threading.Lock()
-        self.sock_thread = self.listen()
+        self._start_listening()
 
-    def _init_response(self, data):
-        pass
-
-    def listen(self):
-        thread = threading.Thread(target=self.cam_listener_worker)
+    def _start_listening(self):
+        """
+        Start listening thread
+        """
+        thread = threading.Thread(target=self._cam_listener_worker)
         self._running.set()
         thread.start()
-        return thread
+        self.sock_thread = thread
 
-    def clean_up(self):
+    def _clean_up(self):
         pass
 
-    def stop_poll(self):
+    def _stop_poll(self):
+        """
+        Stop polling the camera
+        """
         self._running.clear()
         self.sock_thread.join()
 
-    def cam_listener_worker(self):
-        print("Thread started")
+    def _cam_listener_worker(self):
+        """
+        Worker thread for listening to the camera socket
+
+        Works until `self._running` is set.
+        """
         while self._running.is_set():
+            time.sleep(Camera.POLL_FREQ)
             data = self._recv()
             if data:
                 self._got_image.set()
-                # print("Received", data)
                 with self._latest_lock:
                     self._latest = data
-        print("Thread finished")
 
     @staticmethod
-    def see_to_results(data):
-        tokens = []
+    def _see_to_results(data):
+        """
+        Converts the string output that comes from the camera in robotd to a list of #Marker objects
+        :param data: json string data to convert
+        :return: #ResultList object (that imitates a list) of markers
+        """
+        markers = []
         data = json.loads(data)
         for token in data["tokens"]:
-            tokens.append(Marker(token))
+            markers.append(Marker(token))
         # Sort by distance
-        return sorted(tokens, key=lambda x: x.distance)
+        return ResultList(sorted(markers, key=lambda x: x.distance))
 
     @property
     def serial(self):
@@ -65,6 +94,53 @@ class Camera(Board):
         return self._serial
 
     def see(self):
+        """
+        Look for markers
+        :return: List of #Marker objects
+        """
         self._got_image.wait()
         with self._latest_lock:
-            return self.see_to_results(self._latest)
+            return self._see_to_results(self._latest)
+
+
+class ResultList(MutableSequence):
+    """
+    This class pretends to be a list, except it returns
+    a much more useful error description if the user indexes an empty array.
+
+    This is to mitigate a common beginners issue where an array is indexed
+    without checking that the array has any items
+    """
+
+    def __delitem__(self, index):
+        del self.data[index]
+
+    def __init__(self, data):
+        self.data = data
+
+    def __getitem__(self, item):
+        try:
+            self.data[item]
+        except IndexError as e:
+            if len(self.data) == 0:
+                raise IndexError("Trying to index an empty list")
+            else:
+                raise e
+
+    def __setitem__(self, key, value):
+        self.data[key] = value
+
+    def insert(self, index, value):
+        self.data.insert(index, value)
+
+    def __len__(self):
+        return len(self.data)
+
+    def __repr__(self):
+        return self.data.__repr__()
+
+    def __eq__(self, other):
+        return self.data.__eq__(other)
+
+    def __iter__(self):
+        return self.data.__iter__()

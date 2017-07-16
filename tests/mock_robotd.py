@@ -19,7 +19,6 @@ class MockRobotD:
 
     def new_board(self, board_class, name, *args):
         # Enter a blank node
-        print(args, board_class)
         board = board_class(name, {'name': name}, *args)
         runner = BoardRunner(board, self.root_dir)
         runner.start()
