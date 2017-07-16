@@ -43,7 +43,7 @@ class MotorBoard(Board):
         :param voltage:
         :return:
         """
-        if voltage == 'free':
+        if voltage == 'coast':
             return COAST
         elif voltage == 'brake':
             return BRAKE
@@ -59,7 +59,7 @@ class MotorBoard(Board):
         Converts more human readable info to that robotd can read
         """
         if voltage is COAST:
-            return 'free'
+            return 'coast'
         # Explicit or implicit stopping
         elif voltage is BRAKE or voltage == 0:
             return 'brake'
