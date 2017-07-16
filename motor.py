@@ -1,25 +1,27 @@
 import json
 from pathlib import Path
 
-from robot import COAST, BRAKE
 from robot.board import Board
 
+BRAKE = 0  # 0 so setting the motors to 0 has exactly the same affect as setting the motors to BRAKE
+COAST = "coast"
+
+
 class Motor:
-        def __init__(self, motor_board, motor_id):
-            self.motor_board = motor_board
-            self.motor_id = motor_id
+    def __init__(self, motor_board, motor_id):
+        self.motor_board = motor_board
+        self.motor_id = motor_id
 
-        @property
-        def voltage(self):
-            return self.motor_board._get_status(self.motor_id)
+    @property
+    def voltage(self):
+        return self.motor_board._get_status(self.motor_id)
 
-        @voltage.setter
-        def voltage(self, voltage):
-            self.motor_board._update_motor(self.motor_id, voltage)
+    @voltage.setter
+    def voltage(self, voltage):
+        self.motor_board._update_motor(self.motor_id, voltage)
 
 
 class MotorBoard(Board):
-
     def __init__(self, socket_path):
         super().__init__(socket_path)
         self._serial = Path(socket_path).stem

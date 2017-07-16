@@ -57,7 +57,6 @@ class MotorBoardTest(unittest.TestCase):
         # Check all the motor boards are initialised and can be indexed
         for i in range(10):
             self.assertTrue(0 in self.robot.motor_boards)
-            print("connection", i)
 
     def test_set_edge_conditions(self):
         board = self.mock.new_motorboard()

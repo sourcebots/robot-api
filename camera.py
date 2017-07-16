@@ -5,6 +5,7 @@ from pathlib import Path
 from collections.abc import MutableSequence
 
 from robot.board import Board
+from robot.game_specific import WALL, TOKEN
 
 
 class Marker:
@@ -15,7 +16,60 @@ class Marker:
     def __init__(self, data):
         self._raw_data = data
 
+        # Go through all the data, add an _ at the start.
+        data = {"_" + k: v for k, v in data.items()}
+
         self.__dict__.update(data)
+
+    @property
+    def id(self):
+        """
+            ID of the marker seen
+        """
+        return self._id
+
+    @property
+    def size(self):
+        """
+            Marker size in metres
+        """
+        return tuple(self._size)
+
+    # Disabled because it's always 0.0
+    # TODO fix the certainty being 0
+    # @property
+    # def certainty(self):
+    #     return self._certainty
+
+    @property
+    def pixel_corners(self):
+        """
+            Pixel co-ordinates of the of the corners of the marker
+        """
+        # TODO define what the order of these corners are
+        return [tuple(x) for x in self._pixel_corners]
+
+    @property
+    def pixel_corners(self):
+        """
+            Pixel co-ordinates of the centre of the marker
+        """
+        return tuple(self._pixel_centre)
+
+    @property
+    def distance(self):
+        """
+        Distance of the marker from the camera in metres
+        """
+        return self._distance
+
+    # Helper functions, Might need to vary these per-game
+
+    def is_wall_marker(self):
+        return self.id in WALL
+
+    def is_token_marker(self):
+        return self.id in TOKEN
 
 
 class Camera(Board):

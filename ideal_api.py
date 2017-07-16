@@ -19,6 +19,7 @@ except:
     pass
 
 
+
 robot.servo_boards[0].socket[2].position = -1
 
 # Results are sorted by distance
