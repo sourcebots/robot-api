@@ -95,7 +95,6 @@ class MotorBoardTest(unittest.TestCase):
             self.assertEqual(self.robot.motor_boards[0].m1.voltage, value)
         else:
             raise ValueError()
-            # Throw away the status message we sent
 
     def tearDown(self):
         self.mock.stop()
