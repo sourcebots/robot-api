@@ -36,6 +36,11 @@ class MockRobotD:
             name = "MOCK{}".format(len(self.runners))
         return self.new_board(MockMotorBoard, name)
 
+    def new_servoboard(self, name=None):
+        if not name:
+            name = "MOCK{}".format(len(self.runners))
+        return self.new_board(MockServoBoard, name)
+
     def new_camera(self, name=None, camera=None):
         if not name:
             name = "MOCK{}".format(len(self.runners))
@@ -66,6 +71,32 @@ class MockMotorBoard(Board):
         super().__init__(node)
         self._name = name
         self._status = {'m0': robot.BRAKE, 'm1': robot.COAST}
+        self.message_queue = Queue()
+
+    @classmethod
+    def name(cls, node):
+        """Board name - actually fetched over serial."""
+        return node['name']
+
+    def status(self):
+        return self._status
+
+    def command(self, cmd):
+        self._status.update(cmd)
+        print("{} Command: {}".format(self._name, cmd))
+        self.message_queue.put(cmd)
+
+
+class MockServoBoard(Board):
+    """
+    Mock class for simulating a servo board
+    """
+    board_type_id = 'servo'
+
+    def __init__(self, name, node):
+        super().__init__(node)
+        self._name = name
+        self._status = {x: 0 for x in range(16)}
         self.message_queue = Queue()
 
     @classmethod

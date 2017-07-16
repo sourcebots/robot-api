@@ -3,6 +3,7 @@ from pathlib import Path
 from robot.camera import Camera
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
+from robot.servo import ServoBoard
 
 
 class Robot:
@@ -18,6 +19,7 @@ class Robot:
         self.robotd_path = Path(robotd_path)
         self.known_power_boards = []
         self.known_motor_boards = []
+        self.known_servo_boards = []
         self.known_cameras = []
         # Try to turn on the outputs of the power board
         power_boards = self.power_boards
@@ -55,6 +57,8 @@ class Robot:
             boards_dict[board.serial] = board
         return boards_dict
 
+    # TODO: Parameterise the functions below so we only need one
+
     @property
     def motor_boards(self):
         """
@@ -71,6 +75,15 @@ class Robot:
         """
         boards = self._update_boards(self.known_power_boards, PowerBoard, 'power')
         self.known_power_boards = boards
+        return self._dictify_boards(boards)
+
+    @property
+    def servo_boards(self):
+        """
+        :return: list of available Servo boards, can be indexed by serial or by number
+        """
+        boards = self._update_boards(self.known_servo_boards, ServoBoard, 'servo')
+        self.known_servo_boards = boards
         return self._dictify_boards(boards)
 
     @property
