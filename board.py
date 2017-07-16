@@ -3,7 +3,7 @@ import socket
 
 class Board:
     SEND_TIMEOUT = 2
-    RECV_BUFFER = 2048
+    RECV_BUFFER = 4096*64
 
     def __init__(self, socket_path):
         self.sock_path = socket_path
@@ -51,10 +51,14 @@ class Board:
                 self._send(message, retry=True)  # Retry Recursively
 
     def _recv(self, retry=False):
+
         """
         Receive a message from the robotd socket
         :return: message
         """
+        # TODO split receieves by \n characters and return them one at a time.
+        # Currently this is mitigated by having a large receive buffer, but I'd rather
+        # we did it properly at some point
         try:
             return self.sock.recv(Board.RECV_BUFFER)
         except (socket.timeout, BrokenPipeError, OSError):

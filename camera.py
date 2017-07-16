@@ -1,5 +1,4 @@
 import json
-import time
 import threading
 from pathlib import Path
 from collections.abc import MutableSequence
@@ -57,7 +56,7 @@ class Marker:
         return tuple(self._pixel_centre)
 
     @property
-    def distance(self):
+    def distance_metres(self):
         """
         Distance of the marker from the camera in metres
         """
@@ -78,11 +77,6 @@ class Camera(Board):
 
     Polls the robot daemon for new images
     """
-
-    #: How often the camera should check for a new image.
-    # this MUST be faster than the camera sends images
-    # or latency will be a problem
-    POLL_FREQ = 0.075
 
     def __init__(self, socket_path):
         self._latest = None
@@ -119,7 +113,6 @@ class Camera(Board):
         Works until `self._running` is set.
         """
         while self._running.is_set():
-            time.sleep(Camera.POLL_FREQ)
             data = self._recv()
             if data:
                 self._got_image.set()
@@ -138,7 +131,7 @@ class Camera(Board):
         for token in data["tokens"]:
             markers.append(Marker(token))
         # Sort by distance
-        return ResultList(sorted(markers, key=lambda x: x.distance))
+        return ResultList(sorted(markers, key=lambda x: x.distance_metres))
 
     @property
     def serial(self):
