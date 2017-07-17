@@ -2,6 +2,8 @@ import unittest
 
 import time
 
+from robot import MARKER_SIZES as MARKER_SIZES_ROBOT
+from robotd.game_specific import MARKER_SIZES as MARKER_SIZES_ROBOTD
 from robot.robot import Robot
 from robot.tests.mock_robotd import MockRobotD
 from robotd.vision.camera import FileCamera
@@ -48,6 +50,20 @@ class CameraTest(unittest.TestCase):
 
         # Check the correct markers are spotted
         self.assertEqual({x.id for x in tokens}, {0, 1, 24, 25})
+
+    def test_marker_sizes(self):
+        # Change the marker sizes value in both robotd and robot-api
+        written_sizes = {0: (0.9, 0.9), 1: (0.9, 0.9), 24: (0.2, 0.2), 25: (0.2, 0.2)}
+        # MARKER_SIZES_ROBOT.update(written_sizes)
+        MARKER_SIZES_ROBOTD.update(written_sizes)
+        self.camera = self.mock.new_camera(camera=FileCamera('tagsampler.png', 720))
+        time.sleep(0.2)
+        camera = self.robot.cameras[0]
+        tokens = camera.see()
+
+        # Check the correct sizes are read
+        read_sizes = {x.id:x.size for x in tokens}
+        self.assertEqual(written_sizes, read_sizes)
 
     def test_unique_error(self):
         self.camera = self.mock.new_camera()
