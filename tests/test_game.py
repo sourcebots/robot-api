@@ -5,7 +5,7 @@ from threading import Thread, Event
 from robot import corner_script
 from robot import Robot
 from robot.game import GameMode
-from robot.tests.mock_robotd import MockRobotD
+from tests.mock_robotd import MockRobotD
 
 
 class GameTest(unittest.TestCase):

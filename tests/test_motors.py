@@ -4,7 +4,7 @@ import time
 
 from robot.robot import Robot
 from robot import COAST, BRAKE
-from robot.tests.mock_robotd import MockRobotD
+from tests.mock_robotd import MockRobotD
 
 
 class MotorBoardTest(unittest.TestCase):
