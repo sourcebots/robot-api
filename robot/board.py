@@ -1,6 +1,19 @@
 import socket
 
 
+class BoardList(dict):
+    def __getitem__(self, attr):
+        if type(attr) is int:
+            return super().__getitem__(list(self.keys())[attr])
+        return super().__getitem__(attr)
+
+    def __setitem__(self, key, value):
+        raise NotImplementedError("Cannot mutate board list")
+
+    def __delitem__(self, key):
+        raise NotImplementedError("Cannot mutate board list")
+
+
 class Board:
     SEND_TIMEOUT = 2
     RECV_BUFFER = 4096*64
