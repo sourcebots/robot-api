@@ -24,7 +24,7 @@ class State(Enum):
     DONE = 3
 
 
-def poll(robot_root_path, corner_id, stop_event: Event = None):
+def poll(robot_root_path, corner_id, stop_event: Event = Event()):
     message = '{{"corner":{}, "mode":"competition"}}\n'.format(corner_id).encode('utf-8')
     state = State.CONNECT
     while not stop_event.is_set():
@@ -59,8 +59,15 @@ if __name__ == "__main__":
     import re
     from pathlib import Path
     path = Path(os.path.dirname(os.path.realpath(__file__)))
-    # Get all files named corner_1, corner_2, etc..
-    corner_file = glob.glob(str(path/"corner*")).group(0)
+    # Get all files named corner-1, corner-2, etc..
+    corner_files = glob.glob(str(path/"corner-*"))
+    if not corner_files:
+        print("Could not find any corner ids (files like corner-1 or corner-0)")
+        exit(0)
+    corner_file = corner_files[0]
+    if len(corner_files) > 1:
+        print("Warning, found more than 1 corner file!")
     # Get the first number in the filename
-    corner_id = int(re.search(r'\d', corner_file))
+    corner_id = int(re.search(r'\d', corner_file).group(0))
+    print("ID:", corner_id)
     poll("/var/robotd/", corner_id)
