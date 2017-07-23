@@ -48,6 +48,19 @@ class MotorBoardTest(unittest.TestCase):
 
         board.m0.voltage = 1
 
+    def test_two_clients(self):
+        """ Checks you can interface a motor board multiple times"""
+        # TODO make this test generic to the board, so it runs on all boards.
+        self.mock.new_motorboard('ABC')
+        # Set up robot 2!
+        robot2 = Robot(robotd_path="/tmp/robotd")
+        # Give it a tiny bit to init the boards
+        time.sleep(0.2)
+        self.robot.motor_boards[0].m0.voltage = 1
+        self.robot.motor_boards[0].m0.voltage = -1
+        robot2.motor_boards[0].m0.voltage = 1
+        robot2.motor_boards[0].m0.voltage = -1
+
     def test_multiple_indexes(self):
         """ Checks you can index motor boards plenty of times"""
         self.mock.new_motorboard('ABC')

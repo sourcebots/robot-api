@@ -3,7 +3,7 @@ import time
 from multiprocessing import Queue
 
 import robot
-from robotd.devices import Camera
+from robotd.devices import Camera, GameState
 from robotd.devices_base import Board
 from robotd.master import BoardRunner
 from robotd.vision.camera import FileCamera
@@ -47,6 +47,9 @@ class MockRobotD:
         if not camera:
             camera = FileCamera('empty.png', 720)
         return self.new_board(MockCamera, name, camera)
+
+    def new_gamestate(self, name="serial"):
+        return self.new_board(MockGameState, name)
 
     def remove_board(self, board):
         runner = self.board_to_runner[board]
@@ -138,10 +141,19 @@ class MockCamera(Camera):
     board_type_id = 'camera'
 
     def __init__(self, name, node, camera):
-        node['DEVNAME'] = "/" + name
+        node['DEVNAME'] = name
         self.serial = name
         # Create a camera with a file camera instead of a real camera
         super().__init__(node, camera)
+
+
+class MockGameState(GameState):
+    board_type_id = 'game'
+
+    def __init__(self, name, node):
+        super().__init__()
+        self._serial = name
+        _ = node  # Throw away node, not needed in this case
 
 
 def main():

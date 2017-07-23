@@ -2,20 +2,19 @@ import socket
 
 
 class Board:
-    SEND_TIMEOUT = 2
-    RECV_BUFFER = 4096*64
+    SEND_TIMEOUT = 20
+    RECV_BUFFER = 2048
 
     def __init__(self, socket_path):
         self.sock_path = socket_path
         self.sock = None
+        self._recv_buffer = []
         self._connect(socket_path)
-        print("Receiving response:")
-        data = self._recv()
-        self._init_response(data)
-        print("Response:", data)
 
-    def _init_response(self, data):
-        pass  # Handle the response to the init command
+    def _greeting_response(self, data):
+        """Handle the response to the greeting command
+        NOTE: This is called on reconnect in addition to first connection"""
+        pass
 
     def _connect(self, socket_path):
         """
@@ -25,12 +24,18 @@ class Board:
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
         self.sock.settimeout(Board.SEND_TIMEOUT)
         self.sock.connect(socket_path)
+        greeting = self._recv(_retry=True)
+        self._greeting_response(greeting)
 
     def _get_lc_error(self):
         """
         :return: The text for a lost connection error
         """
         return "Lost Connection to {} at {}".format(str(self.__class__.__name__), self.sock_path)
+
+    def _send_recv(self, message):
+        self._send(message)
+        return self._recv()
 
     def _send(self, message, retry=False):
         """
@@ -50,23 +55,34 @@ class Board:
                     raise ConnectionError(self._get_lc_error())
                 self._send(message, retry=True)  # Retry Recursively
 
-    def _recv(self, retry=False):
-
+    def _recv(self, _retry=False):
         """
         Receive a message from the robotd socket
-        :return: message
+        :return: the message
         """
-        # TODO split receieves by \n characters and return them one at a time.
-        # Currently this is mitigated by having a large receive buffer, but I'd rather
-        # we did it properly at some point
-        try:
-            return self.sock.recv(Board.RECV_BUFFER)
-        except (socket.timeout, BrokenPipeError, OSError):
-            if retry:
-                raise ConnectionError(self._get_lc_error())
-            else:
-                self._connect(self.sock_path)  # Reconnect
-                return self._recv(retry=True)  # Retry recursively
+
+        # TODO catch empty string receives as bad things
+        unended_text = b''
+
+        while not self._recv_buffer:
+            strings = []
+            try:
+                output = self.sock.recv(Board.RECV_BUFFER)
+            except (socket.timeout, BrokenPipeError, OSError) as e:
+                if _retry:
+                    raise ConnectionError(self._get_lc_error())
+                else:
+                    print("Connection", self.sock_path, e, "retrying")
+                    self._connect(self.sock_path)
+                    return self._recv(_retry=True)  # Retry recursively
+            strings.extend((unended_text + output).split(b'\n'))
+            if strings == [b'']:
+                self._recv_buffer.append(b'')
+            unended_text = strings.pop()
+            if not unended_text:
+                self._recv_buffer.extend([x for x in strings if x != b''])
+
+        return self._recv_buffer.pop(0)
 
     def _clean_up(self):
         self.sock.detach()

@@ -19,7 +19,7 @@ class Camera(Board):
         self._got_image = threading.Event()
         super().__init__(socket_path)
         self._serial = Path(socket_path).stem
-        self._running = threading.Event()
+        self._stop = threading.Event()
         self._latest_lock = threading.Lock()
         self._start_listening()
 
@@ -28,7 +28,7 @@ class Camera(Board):
         Start listening thread
         """
         thread = threading.Thread(target=self._cam_listener_worker)
-        self._running.set()
+        self._stop.clear()
         thread.start()
         self.sock_thread = thread
 
@@ -39,7 +39,7 @@ class Camera(Board):
         """
         Stop polling the camera
         """
-        self._running.clear()
+        self._stop.set()
         self.sock_thread.join()
 
     def _cam_listener_worker(self):
@@ -48,7 +48,7 @@ class Camera(Board):
 
         Works until `self._running` is set.
         """
-        while self._running.is_set():
+        while not self._stop.is_set():
             data = self._recv()
             if data:
                 self._got_image.set()

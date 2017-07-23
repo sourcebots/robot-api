@@ -92,8 +92,9 @@ class MotorBoard(Board):
         return self._serial
 
     def _get_status(self, motor_id):
-        self._send(b'{}')
-        return self._string_to_voltage(json.loads(self._recv())[motor_id])
+        return self._string_to_voltage(
+            json.loads(self._send_recv(b'{}'))[motor_id]
+        )
 
     def _update_motor(self, motor_id, voltage):
         """
@@ -102,6 +103,4 @@ class MotorBoard(Board):
         :param voltage: Voltage to set the motor to
         """
         v_string = self._voltage_to_string(voltage)
-        self._send(json.dumps({motor_id: v_string}).encode('utf-8'))
-        # Receive the response to keep in sync.
-        self._recv()
+        self._send_recv(json.dumps({motor_id: v_string}).encode('utf-8'))

@@ -4,6 +4,7 @@ from robot.camera import Camera
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
+from robot.game import GameState
 
 
 class Robot:
@@ -21,11 +22,11 @@ class Robot:
         self.known_motor_boards = []
         self.known_servo_boards = []
         self.known_cameras = []
+        self.known_gamestates = []
         # Try to turn on the outputs of the power board
         power_boards = self.power_boards
         if power_boards:
-            self.power_board = power_boards[0]
-            self.power_board.power_on()
+            self.power_boards[0].power_on()
         else:
             raise RuntimeError("Cannot find Power Board!")
 
@@ -39,10 +40,10 @@ class Robot:
         """
         known_paths = {x.sock_path for x in known_boards}
         boards_dir = self.robotd_path / directory_name
-        new_boards = {str(x) for x in boards_dir.glob('*')}
+        new_paths = {str(x) for x in boards_dir.glob('*')}
         boards = known_boards[:]
         # Add all boards that weren't previously there
-        for board in new_boards - known_paths:
+        for board in new_paths - known_paths:
             boards.append(board_type(board))
 
         return sorted(boards, key=lambda b: b.serial)
@@ -58,7 +59,6 @@ class Robot:
         return boards_dict
 
     # TODO: Parameterise the functions below so we only need one
-
     @property
     def motor_boards(self):
         """
@@ -89,11 +89,58 @@ class Robot:
     @property
     def cameras(self):
         """
-        :return: list of available Cameras, can be indexed by serial or by number
+        :return: list of available cameras, can be indexed by serial or by number
         """
         boards = self._update_boards(self.known_cameras, Camera, 'camera')
         self.known_cameras = boards
         return self._dictify_boards(boards)
+
+    @property
+    def games(self):
+        """
+        :return: list of available GameStates, can be indexed by serial or by number
+        """
+        boards = self._update_boards(self.known_gamestates, GameState, 'game')
+        self.known_gamestates = boards
+        return self._dictify_boards(boards)
+
+    @staticmethod
+    def _single_index(name, list_of_boards):
+        if list_of_boards:
+            return list_of_boards[0]
+        else:
+            raise ValueError("No {}s connected".format(name))
+
+    def power_board(self):
+        return self._single_index("power board", self.power_boards)
+
+    def motor_board(self):
+        return self._single_index("motor board", self.motor_boards)
+
+    def servo_board(self):
+        return self._single_index("servo board", self.servo_boards)
+
+    def camera(self):
+        """
+        Get the object representing the camera information
+        """
+        return self._single_index("camera", self.cameras)
+
+    def game(self):
+        """
+        Get the object representing the game information
+        """
+        return self._single_index("game states", self.games)
+
+    def corner(self):
+        """
+        Get the corner the robot is in. This is changed by inserting a competition corner USB stick in it,
+        the value defaults to 0 if there is no stick plugged in.
+
+        (alias of .game.corner)
+        :return: ID of the corner the robot started in (0-3)
+        """
+        return self.game.corner
 
     def __del__(self):
         # stop the polling threads

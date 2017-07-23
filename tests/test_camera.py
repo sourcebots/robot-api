@@ -13,7 +13,7 @@ class CameraTest(unittest.TestCase):
     """
     Tests pertaining to the camera object
     """
-
+    # TODO add test for Serial number
     def setUp(self):
         mock = MockRobotD(root_dir="/tmp/")
         # Insert a power board to let the robot start up
@@ -54,7 +54,6 @@ class CameraTest(unittest.TestCase):
     def test_marker_sizes(self):
         # Change the marker sizes value in both robotd and robot-api
         written_sizes = {0: (0.9, 0.9), 1: (0.9, 0.9), 24: (0.2, 0.2), 25: (0.2, 0.2)}
-        # MARKER_SIZES_ROBOT.update(written_sizes)
         MARKER_SIZES_ROBOTD.update(written_sizes)
         self.camera = self.mock.new_camera(camera=FileCamera('tagsampler.png', 720))
         time.sleep(0.2)
