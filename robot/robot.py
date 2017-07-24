@@ -132,15 +132,15 @@ class Robot:
         """
         return self._single_index("game states", self.games)
 
-    def corner(self):
+    def zone(self):
         """
-        Get the corner the robot is in. This is changed by inserting a competition corner USB stick in it,
+        Get the zone the robot is in. This is changed by inserting a competition zone USB stick in it,
         the value defaults to 0 if there is no stick plugged in.
 
-        (alias of .game.corner)
-        :return: ID of the corner the robot started in (0-3)
+        (alias of .game.zone)
+        :return: ID of the zone the robot started in (0-3)
         """
-        return self.game.corner
+        return self.game.zone
 
     def __del__(self):
         # stop the polling threads

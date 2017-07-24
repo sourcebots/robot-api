@@ -33,13 +33,13 @@ class GameState(Board):
         return self._serial
 
     @property
-    def corner(self):
+    def zone(self):
         """
-        get the corner the robot is in. This is changed by inserting a competition corner USB stick in it,
+        get the zone the robot starts in. This is changed by inserting a competition zone USB stick in it,
         the value defaults to 0 if there is no stick plugged in.
-        :return: ID of the corner the robot started in (0-3)
+        :return: zone ID the robot started in (0-3)
         """
-        return json.loads(self._send_recv(b'{}'))['corner']
+        return json.loads(self._send_recv(b'{}'))['zone']
 
     @property
     def mode(self):

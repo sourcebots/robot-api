@@ -2,7 +2,7 @@ import time
 import unittest
 from threading import Thread, Event
 
-from robot import corner_script
+from robot import zone_script
 from robot import Robot
 from robot.game import GameMode
 from tests.mock_robotd import MockRobotD
@@ -21,21 +21,21 @@ class GameTest(unittest.TestCase):
     def test_default_state(self):
         self.mock.new_gamestate()
         time.sleep(0.2)
-        self.assertEqual(self.robot.games[0].corner, 0)
+        self.assertEqual(self.robot.games[0].zone, 0)
         self.assertEqual(self.robot.games[0].mode, GameMode.DEVELOPMENT)
 
     def test_game_state(self):
         self.mock.new_gamestate()
-        corner = 2
-        self.thread = Thread(target=corner_script.poll, args=("/tmp/robotd/", corner, self.stop_event))
+        zone = 2
+        self.thread = Thread(target=zone_script.poll, args=("/tmp/robotd/", zone, self.stop_event))
         time.sleep(0.2)
         # Check before
-        self.assertEqual(self.robot.games[0].corner, 0)
+        self.assertEqual(self.robot.games[0].zone, 0)
         self.assertEqual(self.robot.games[0].mode, GameMode.DEVELOPMENT)
         self.thread.start()
         time.sleep(0.1)
         # Check after
-        self.assertEqual(self.robot.games[0].corner, corner)
+        self.assertEqual(self.robot.games[0].zone, zone)
         self.assertEqual(self.robot.games[0].mode, GameMode.COMPETITION)
 
     def tearDown(self):

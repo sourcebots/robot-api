@@ -30,12 +30,12 @@ r.motor_boards[0].m0.voltage = -1
 r.motor_board.m0.voltage = -1
 ```
 
-The corner the robot is going to start in can be gotten with:
+The zone the robot is going to start in can be gotten with:
 
 ``` python
-r.corner
+r.zone
 # or
-r.game.corner
+r.game.zone
 ```
 
 # Testing
@@ -45,9 +45,9 @@ the robot-api tests require `robotd` (available at [https://github.com/sourcebot
 to run the tests, simply run `nosetests` (requires the `nose` python package) and it will run all tests
 
 
-# Corner ID script
+# Zone ID script
 
-To run the corner script on USB insert, you must install the runusb script in [https://github.com/sourcebots/runusb]
+To run the zone script on USB insert, you must install the runusb script in [https://github.com/sourcebots/runusb]
 
-The corner ID script can be found at `robot/corner_script.py`, to use this for real robots you must put that script in a USB stick
-In the same directory as a file named `corner_<x>`, where `<x>` is the ID of the corner the robot should be with.
+The zone ID script can be found at `robot/zone_script.py`, to use this for real robots you must put that script in a USB stick
+In the same directory as a file named `zone-<x>`, where `<x>` is the ID of the zone the robot should be with.

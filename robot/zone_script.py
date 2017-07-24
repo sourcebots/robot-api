@@ -3,7 +3,7 @@
 HOW TO USE THIS SCRIPT:
 
 put this as an .autorun file in the root of the USB stick,
-along with a file named corner_<X> where <X> is the id of the corner (0 to 3) to use.
+along with a file named zone-<X> where <X> is the id of the zone (0 to 3) to use.
 (The file can be blank and should have no extension)
 """
 import socket
@@ -24,8 +24,8 @@ class State(Enum):
     DONE = 3
 
 
-def poll(robot_root_path, corner_id, stop_event: Event = Event()):
-    message = '{{"corner":{}, "mode":"competition"}}\n'.format(corner_id).encode('utf-8')
+def poll(robot_root_path, zone_id, stop_event: Event = Event()):
+    message = '{{"zone":{}, "mode":"competition"}}\n'.format(zone_id).encode('utf-8')
     state = State.CONNECT
     while not stop_event.is_set():
         try:
@@ -37,7 +37,7 @@ def poll(robot_root_path, corner_id, stop_event: Event = Event()):
                 sock.send(message)
                 resp = sock.recv(2048)
                 resp = json.loads(resp)
-                if 'corner' in resp and resp['corner'] == corner_id:
+                if 'zone' in resp and resp['zone'] == zone_id:
                     print("done")
                     state = State.DONE
                 else:
@@ -59,15 +59,15 @@ if __name__ == "__main__":
     import re
     from pathlib import Path
     path = Path(os.path.dirname(os.path.realpath(__file__)))
-    # Get all files named corner-1, corner-2, etc..
-    corner_files = glob.glob(str(path/"corner-*"))
-    if not corner_files:
-        print("Could not find any corner ids (files like corner-1 or corner-0)")
+    # Get all files named zone-1, zone-2, etc..
+    id_files = glob.glob(str(path / "zone-*"))
+    if not id_files:
+        print("Could not find any zone ids (files like zone-1 or zone-0)")
         exit(0)
-    corner_file = corner_files[0]
-    if len(corner_files) > 1:
-        print("Warning, found more than 1 corner file!")
+    id_file = id_files[0]
+    if len(id_files) > 1:
+        print("Warning, found more than 1 zone file!")
     # Get the first number in the filename
-    corner_id = int(re.search(r'\d', corner_file).group(0))
-    print("ID:", corner_id)
-    poll("/var/robotd/", corner_id)
+    zone_id = int(re.search(r'\d', id_file).group(0))
+    print("ID:", zone_id)
+    poll("/var/robotd/", zone_id)
