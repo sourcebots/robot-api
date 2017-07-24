@@ -1,14 +1,10 @@
 import json
-import threading
-from collections.abc import MutableSequence
 from pathlib import Path
 
-import select
 
 from enum import Enum
 
 from robot.board import Board
-from robot.markers import Marker
 
 
 class GameMode(Enum):
