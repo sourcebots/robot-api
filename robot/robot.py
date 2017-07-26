@@ -111,15 +111,19 @@ class Robot:
         else:
             raise ValueError("No {}s connected".format(name))
 
+    @property
     def power_board(self):
         return self._single_index("power board", self.power_boards)
 
+    @property
     def motor_board(self):
         return self._single_index("motor board", self.motor_boards)
 
+    @property
     def servo_board(self):
         return self._single_index("servo board", self.servo_boards)
 
+    @property
     def camera(self):
         """
         Get the object representing the camera information
