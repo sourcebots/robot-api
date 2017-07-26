@@ -28,7 +28,7 @@ class Camera(Board):
         Start listening thread
         """
         thread = threading.Thread(target=self._cam_listener_worker)
-        self._stop.clear()
+        self._alive = True
         thread.start()
         self.sock_thread = thread
 
@@ -39,8 +39,19 @@ class Camera(Board):
         """
         Stop polling the camera
         """
-        self._stop.set()
+        self._alive = False
         self.sock_thread.join()
+
+    @property
+    def _alive(self):
+        return not self._stop.is_set()
+
+    @_alive.setter
+    def _alive(self, value):
+        if value:
+            self._stop.clear()
+        else:
+            self._stop.set()
 
     def _cam_listener_worker(self):
         """
@@ -48,7 +59,7 @@ class Camera(Board):
 
         Works until `self._running` is set.
         """
-        while not self._stop.is_set():
+        while self._alive:
             data = self._recv()
             if data:
                 self._got_image.set()
