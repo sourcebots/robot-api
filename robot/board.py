@@ -81,7 +81,7 @@ class Board:
         except retryable_errors:
             raise ConnectionError(self._get_lc_error())
 
-    def receive_raw_from_socket_with_single_retry(self):
+    def _receive_raw_from_socket_with_single_retry(self):
         return self._socket_with_single_retry(
             lambda s: s.recv(Board.RECV_BUFFER_BYTES),
         )
@@ -89,7 +89,7 @@ class Board:
     def _recv(self, should_retry=True):
         while b'\n' not in self.data:
             if should_retry:
-                message = self.receive_raw_from_socket_with_single_retry()
+                message = self._receive_raw_from_socket_with_single_retry()
             else:
                 message = self.sock.recv()
             if message == b'':
