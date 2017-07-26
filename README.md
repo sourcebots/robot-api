@@ -1,6 +1,6 @@
 # Robot
 
-This is the userspace API for the robot, which is what students will interface with to program their robots
+This is the userspace API for the robot, which is what students will interface with to program their robots.
 
 # How to use
 
@@ -42,9 +42,9 @@ r.zone
 
 # Testing
 
-The robot-api tests require `robotd` (available at [https://github.com/sourcebots/robotd] ) in the python path (ie in the same directory as the `tests` folder ) Personally I create a soft link to the robotd directory
+The robot-api tests require `robotd` (available at [https://github.com/sourcebots/robotd] ) installed. 
 
-To run the tests, simply run `nosetests` (requires the `nose` python package) and it will run all tests
+To run the tests, simply run `nosetests` (requires the `nose` python package) and it will run all tests.
 
 
 # Zone ID script
