@@ -2,6 +2,7 @@ import os
 import time
 
 from multiprocessing import Queue
+from pathlib import Path
 
 import robot
 from robotd.devices import Camera as RobotDCamera, GameState as RobotDGameState
@@ -11,10 +12,10 @@ from robotd.vision.camera import FileCamera
 
 
 class MockRobotD:
-    DEFAULT_ROOT_DIR = "/var/"
+    DEFAULT_ROOT_DIR = "/var/robotd"
 
     def __init__(self, root_dir=DEFAULT_ROOT_DIR):
-        self.root_dir = root_dir
+        self.root_dir = Path(root_dir)
         self.runners = []
         self.board_to_runner = {}
 
