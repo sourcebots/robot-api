@@ -1,14 +1,15 @@
+import re
 import socket
 
 
 class Board:
-    SEND_TIMEOUT = 20
-    RECV_BUFFER = 2048
+    SEND_TIMEOUT_SECS = 2
+    RECV_BUFFER_BYTES = 2048
 
     def __init__(self, socket_path):
         self.sock_path = socket_path
         self.sock = None
-        self._recv_buffer = []
+        self.data = b''
         self._connect(socket_path)
 
     def _greeting_response(self, data):
@@ -21,10 +22,10 @@ class Board:
         (re)connect to a new socket
         :param socket_path: Path for the unix socket
         """
-        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
-        self.sock.settimeout(Board.SEND_TIMEOUT)
+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.sock.settimeout(Board.SEND_TIMEOUT_SECS)
         self.sock.connect(socket_path)
-        greeting = self._recv(_retry=True)
+        greeting = self._recv()
         self._greeting_response(greeting)
 
     def _get_lc_error(self):
@@ -37,7 +38,7 @@ class Board:
         self._send(message)
         return self._recv()
 
-    def _send(self, message, retry=False):
+    def _send(self, message, _is_retry=False):
         """
         Send a message to robotd
         :param retry: used internally
@@ -46,43 +47,53 @@ class Board:
         try:
             self.sock.send(message)
         except (socket.timeout, BrokenPipeError, OSError):
-            if retry:
+            if _is_retry:
                 raise ConnectionError(self._get_lc_error())
             else:
                 try:
                     self._connect(self.sock_path)  # Reconnect
                 except FileNotFoundError:
                     raise ConnectionError(self._get_lc_error())
-                self._send(message, retry=True)  # Retry Recursively
+                self._send(message, _is_retry=True)  # Retry Recursively
 
-    def _recv(self, _retry=False):
-        """
-        Receive a message from the robotd socket
-        :return: the message
-        """
+    def _socket_with_single_retry(self, handler):
+        retryable_errors = (socket.timeout, BrokenPipeError, OSError)
 
-        # TODO catch empty string receives as bad things
-        unended_text = b''
+        try:
+            return handler(self.sock)
+        except retryable_errors:
+            pass
 
-        while not self._recv_buffer:
-            strings = []
-            try:
-                output = self.sock.recv(Board.RECV_BUFFER)
-            except (socket.timeout, BrokenPipeError, OSError) as e:
-                if _retry:
-                    raise ConnectionError(self._get_lc_error())
-                else:
-                    print("Connection", self.sock_path, e, "retrying")
-                    self._connect(self.sock_path)
-                    return self._recv(_retry=True)  # Retry recursively
-            strings.extend((unended_text + output).split(b'\n'))
-            if strings == [b'']:
-                self._recv_buffer.append(b'')
-            unended_text = strings.pop()
-            if not unended_text:
-                self._recv_buffer.extend([x for x in strings if x != b''])
+        # Retry once, need to reconnect first
+        try:
+            self._connect(self.sock_path)
+        except FileNotFoundError:
+            raise ConnectionError(self._get_lc_error())
 
-        return self._recv_buffer.pop(0)
+        try:
+            return handler(self.sock)
+        except retryable_errors:
+            raise ConnectionError(self._get_lc_error())
+
+    def receive_raw_from_socket_with_single_retry(self):
+        return self._socket_with_single_retry(
+            lambda s: s.recv(Board.RECV_BUFFER_BYTES),
+        )
+
+    def _recv(self, should_retry=True):
+        while b'\n' not in self.data:
+            if should_retry:
+                message = self.receive_raw_from_socket_with_single_retry()
+            else:
+                message = self.sock.recv()
+            if message is b'':
+                # Received blank, return blank
+                return b''
+
+            self.data += message
+        line = re.search(b'.*\n', self.data).group(0)
+        self.data = self.data[len(line):]
+        return line
 
     def _clean_up(self):
         self.sock.detach()
