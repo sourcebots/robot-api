@@ -96,7 +96,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def games(self):
+    def _games(self):
         """
         :return: list of available GameStates, can be indexed by serial or by number
         """
@@ -126,21 +126,33 @@ class Robot:
         """
         return self._single_index("camera", self.cameras)
 
-    def game(self):
+    @property
+    def _game(self):
         """
         Get the object representing the game information
-        """
-        return self._single_index("game states", self.games)
 
+        This is a private method, users should use self.zone to access the same information stored here.
+        """
+        return self._single_index("game states", self._games)
+
+    @property
     def zone(self):
         """
         Get the zone the robot is in. This is changed by inserting a competition zone USB stick in it,
         the value defaults to 0 if there is no stick plugged in.
 
-        (alias of .game.zone)
         :return: ID of the zone the robot started in (0-3)
         """
-        return self.game.zone
+        return self._game.zone
+
+    @property
+    def mode(self):
+        """
+        Get which mode the robot is in,
+        :return: either GameMode.COMPETITION or GameMode.DEVELOPMENT, if the robot is in
+        competition or development mode respectively.
+        """
+        return self._game.mode
 
     def __del__(self):
         # stop the polling threads
