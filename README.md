@@ -34,8 +34,6 @@ The zone the robot is going to start in can be gotten with:
 
 ``` python
 r.zone
-# or
-r.game.zone
 ```
 
 # Testing

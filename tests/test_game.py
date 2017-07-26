@@ -21,8 +21,8 @@ class GameTest(unittest.TestCase):
     def test_default_state(self):
         self.mock.new_gamestate()
         time.sleep(0.2)
-        self.assertEqual(self.robot.games[0].zone, 0)
-        self.assertEqual(self.robot.games[0].mode, GameMode.DEVELOPMENT)
+        self.assertEqual(self.robot.zone, 0)
+        self.assertEqual(self.robot.mode, GameMode.DEVELOPMENT)
 
     def test_game_state(self):
         self.mock.new_gamestate()
@@ -30,13 +30,13 @@ class GameTest(unittest.TestCase):
         self.thread = Thread(target=zone_script.poll, args=("/tmp/robotd/", zone, self.stop_event))
         time.sleep(0.2)
         # Check before
-        self.assertEqual(self.robot.games[0].zone, 0)
-        self.assertEqual(self.robot.games[0].mode, GameMode.DEVELOPMENT)
+        self.assertEqual(self.robot.zone, 0)
+        self.assertEqual(self.robot.mode, GameMode.DEVELOPMENT)
         self.thread.start()
         time.sleep(0.1)
         # Check after
-        self.assertEqual(self.robot.games[0].zone, zone)
-        self.assertEqual(self.robot.games[0].mode, GameMode.COMPETITION)
+        self.assertEqual(self.robot.zone, zone)
+        self.assertEqual(self.robot.mode, GameMode.COMPETITION)
 
     def tearDown(self):
         self.mock.stop()
