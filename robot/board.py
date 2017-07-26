@@ -24,7 +24,7 @@ class Board:
         (re)connect to a new socket
         :param socket_path: Path for the unix socket
         """
-        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
         self.sock.settimeout(Board.SEND_TIMEOUT_SECS)
         self.sock.connect(socket_path)
         greeting = self._recv()
