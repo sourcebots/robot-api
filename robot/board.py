@@ -88,7 +88,7 @@ class Board:
                 message = self.receive_raw_from_socket_with_single_retry()
             else:
                 message = self.sock.recv()
-            if message is b'':
+            if message == b'':
                 # Received blank, return blank
                 return b''
 

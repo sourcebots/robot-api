@@ -4,7 +4,11 @@ This is the userspace API for the robot, which is what students will interface w
 
 # How to use
 
-Currently the code is designed to be imported then ran, however we hope to move the robot initialisation into the `__init__.py` to not need this
+Import Robot and initialise it:
+``` python
+from robot import Robot
+r = Robot()
+```
 
 Markers can be seen by:
 
