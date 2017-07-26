@@ -52,4 +52,4 @@ class ServoBoard(Board):
         """
         if position > 1 or position < -1:
             raise ValueError("Value should be between -1 and 1")
-        self._send_recv(json.dumps({port: position}).encode('utf-8'))
+        self._send_recv_data({port: position})

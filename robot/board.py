@@ -1,3 +1,4 @@
+import json
 import re
 import socket
 
@@ -39,6 +40,9 @@ class Board:
     def _send_recv(self, message):
         self._send(message)
         return self._recv()
+
+    def _send_recv_data(self, data):
+            return json.loads(self._send_recv(json.dumps(data).encode('utf-8')))
 
     def _send(self, message, _is_retry=False):
         """
