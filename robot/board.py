@@ -13,8 +13,10 @@ class Board:
         self._connect(socket_path)
 
     def _greeting_response(self, data):
-        """Handle the response to the greeting command
-        NOTE: This is called on reconnect in addition to first connection"""
+        """
+        Handle the response to the greeting command
+        NOTE: This is called on reconnect in addition to first connection
+        """
         pass
 
     def _connect(self, socket_path):
