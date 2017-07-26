@@ -4,7 +4,7 @@ import time
 from multiprocessing import Queue
 
 import robot
-from robotd.devices import Camera, GameState
+from robotd.devices import Camera as RobotDCamera, GameState as RobotDGameState
 from robotd.devices_base import Board
 from robotd.master import BoardRunner
 from robotd.vision.camera import FileCamera
@@ -139,7 +139,7 @@ class MockPowerBoard(Board):
         self.message_queue.put(cmd)
 
 
-class MockCamera(Camera):
+class MockCamera(RobotDCamera):
     board_type_id = 'camera'
 
     def __init__(self, name, node, camera):
@@ -149,13 +149,12 @@ class MockCamera(Camera):
         super().__init__(node, camera)
 
 
-class MockGameState(GameState):
+class MockGameState(RobotDGameState):
     board_type_id = 'game'
 
     def __init__(self, name, node):
         super().__init__()
         self._serial = name
-        _ = node  # Throw away node, not needed in this case
 
 
 def main():
