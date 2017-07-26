@@ -40,9 +40,9 @@ r.game.zone
 
 # Testing
 
-the robot-api tests require `robotd` (available at [https://github.com/sourcebots/robotd] ) in the python path (ie in the same directory as the `tests` folder ) Personally I create a soft link to the robotd directory
+The robot-api tests require `robotd` (available at [https://github.com/sourcebots/robotd] ) in the python path (ie in the same directory as the `tests` folder ) Personally I create a soft link to the robotd directory
 
-to run the tests, simply run `nosetests` (requires the `nose` python package) and it will run all tests
+To run the tests, simply run `nosetests` (requires the `nose` python package) and it will run all tests
 
 
 # Zone ID script
