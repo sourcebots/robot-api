@@ -109,7 +109,7 @@ class Robot:
         if list_of_boards:
             return list_of_boards[0]
         else:
-            raise ValueError("No {}s connected".format(name))
+            raise AttributeError("No {}s connected".format(name))
 
     @property
     def power_board(self):
