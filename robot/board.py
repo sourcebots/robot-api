@@ -36,31 +36,6 @@ class Board:
         """
         return "Lost Connection to {} at {}".format(str(self.__class__.__name__), self.sock_path)
 
-    def _send_recv(self, message):
-        self._send(message)
-        return self._recv()
-
-    def _send_recv_data(self, data):
-            return json.loads(self._send_recv(json.dumps(data).encode('utf-8')))
-
-    def _send(self, message, _is_retry=False):
-        """
-        Send a message to robotd
-        :param retry: used internally
-        :param message: message to send
-        """
-        try:
-            self.sock.send(message)
-        except (socket.timeout, BrokenPipeError, OSError):
-            if _is_retry:
-                raise ConnectionError(self._get_lc_error())
-            else:
-                try:
-                    self._connect(self.sock_path)  # Reconnect
-                except FileNotFoundError:
-                    raise ConnectionError(self._get_lc_error())
-                self._send(message, _is_retry=True)  # Retry Recursively
-
     def _socket_with_single_retry(self, handler):
         retryable_errors = (socket.timeout, BrokenPipeError, OSError)
 
@@ -85,6 +60,22 @@ class Board:
             lambda s: s.recv(Board.RECV_BUFFER_BYTES),
         )
 
+    def _send_raw_from_socket_with_single_retry(self, message):
+        return self._socket_with_single_retry(
+            lambda s: s.send(message),
+        )
+
+    def _send(self, message, should_retry=True):
+        """
+        Send a message to robotd
+        :param retry: used internally
+        :param message: message to send
+        """
+        if should_retry:
+            return self._send_raw_from_socket_with_single_retry(message)
+        else:
+            return self.sock.send(message)
+
     def _recv(self, should_retry=True):
         while b'\n' not in self.data:
             if should_retry:
@@ -96,9 +87,16 @@ class Board:
                 return b''
 
             self.data += message
-        line = self.data.split(b'\n',1)
+        line = self.data.split(b'\n', 1)
         self.data = self.data[len(line):]
         return line
+
+    def _send_recv(self, message):
+        self._send(message)
+        return self._recv()
+
+    def _send_recv_data(self, data):
+        return json.loads(self._send_recv(json.dumps(data).encode('utf-8')))
 
     def _clean_up(self):
         self.sock.detach()
