@@ -71,17 +71,11 @@ class Board:
         :param retry: used internally
         :param message: message to send
         """
-        if should_retry:
-            return self._send_raw_from_socket_with_single_retry(message)
-        else:
-            return self.sock.send(message)
+        return self._send_raw_from_socket_with_single_retry(message) if should_retry else self.sock.send(message)
 
     def _recv(self, should_retry=True):
         while b'\n' not in self.data:
-            if should_retry:
-                message = self._receive_raw_from_socket_with_single_retry()
-            else:
-                message = self.sock.recv()
+            message = self._receive_raw_from_socket_with_single_retry() if should_retry else self.sock.recv()
             if message == b'':
                 # Received blank, return blank
                 return b''
