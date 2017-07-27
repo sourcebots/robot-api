@@ -1,5 +1,4 @@
 import json
-import re
 import socket
 
 
@@ -97,7 +96,7 @@ class Board:
                 return b''
 
             self.data += message
-        line = re.search(b'.*\n', self.data).group(0)
+        line = self.data.split(b'\n',1)
         self.data = self.data[len(line):]
         return line
 
