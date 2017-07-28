@@ -35,7 +35,7 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
       - run: apt-get update -y
-      - run: apt-get install -y libcv-dev libopencv-photo-dev libopencv-contrib-dev
+      - run: apt-get install -y libcv-dev libopencv-photo-dev libopencv-contrib-dev libusb-1.0.0-dev
       - run: git clone https://github.com/sourcebots/robotd.git
       - run: cd robotd/; pip3 install .
       - run: pip3 install -r requirements.txt
