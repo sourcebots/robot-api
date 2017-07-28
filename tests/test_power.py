@@ -8,7 +8,7 @@ from tests.mock_robotd import MockRobotD
 
 class PowerBoardTest(unittest.TestCase):
     def setUp(self):
-        mock = MockRobotD(root_dir="/tmp/")
+        mock = MockRobotD(root_dir="/tmp/robotd")
         self.power_board = mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock

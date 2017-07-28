@@ -15,7 +15,7 @@ class CameraTest(unittest.TestCase):
     """
     # TODO add test for Serial number
     def setUp(self):
-        mock = MockRobotD(root_dir="/tmp/")
+        mock = MockRobotD(root_dir="/tmp/robotd")
         # Insert a power board to let the robot start up
         self.power_board = mock.new_powerboard()
         time.sleep(0.2)

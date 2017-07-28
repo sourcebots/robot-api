@@ -84,6 +84,7 @@ class Board:
         :param retry: used internally
         :param message: message to send
         """
+
         return self._send_raw_from_socket_with_single_retry(message) if should_retry else self.sock.send(message)
 
     def _recv(self, should_retry=True):
