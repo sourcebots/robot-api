@@ -103,4 +103,4 @@ class MotorBoard(Board):
         :param voltage: Voltage to set the motor to
         """
         v_string = self._voltage_to_string(voltage)
-        self._send_recv(json.dumps({motor_id: v_string}).encode('utf-8'))
+        self._send_recv_data({motor_id: v_string})

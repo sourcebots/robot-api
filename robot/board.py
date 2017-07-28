@@ -1,5 +1,18 @@
-import re
+import json
 import socket
+
+
+class BoardList(dict):
+    def __getitem__(self, attr):
+        if type(attr) is int:
+            return super().__getitem__(list(self.keys())[attr])
+        return super().__getitem__(attr)
+
+    def __setitem__(self, key, value):
+        raise NotImplementedError("Cannot mutate board list")
+
+    def __delitem__(self, key):
+        raise NotImplementedError("Cannot mutate board list")
 
 
 class Board:
@@ -36,28 +49,6 @@ class Board:
         """
         return "Lost Connection to {} at {}".format(str(self.__class__.__name__), self.sock_path)
 
-    def _send_recv(self, message):
-        self._send(message)
-        return self._recv()
-
-    def _send(self, message, _is_retry=False):
-        """
-        Send a message to robotd
-        :param retry: used internally
-        :param message: message to send
-        """
-        try:
-            self.sock.send(message)
-        except (socket.timeout, BrokenPipeError, OSError):
-            if _is_retry:
-                raise ConnectionError(self._get_lc_error())
-            else:
-                try:
-                    self._connect(self.sock_path)  # Reconnect
-                except FileNotFoundError:
-                    raise ConnectionError(self._get_lc_error())
-                self._send(message, _is_retry=True)  # Retry Recursively
-
     def _socket_with_single_retry(self, handler):
         retryable_errors = (socket.timeout, BrokenPipeError, OSError)
 
@@ -77,25 +68,43 @@ class Board:
         except retryable_errors:
             raise ConnectionError(self._get_lc_error())
 
-    def receive_raw_from_socket_with_single_retry(self):
+    def _receive_raw_from_socket_with_single_retry(self):
         return self._socket_with_single_retry(
             lambda s: s.recv(Board.RECV_BUFFER_BYTES),
         )
 
+    def _send_raw_from_socket_with_single_retry(self, message):
+        return self._socket_with_single_retry(
+            lambda s: s.send(message),
+        )
+
+    def _send(self, message, should_retry=True):
+        """
+        Send a message to robotd
+        :param retry: used internally
+        :param message: message to send
+        """
+
+        return self._send_raw_from_socket_with_single_retry(message) if should_retry else self.sock.send(message)
+
     def _recv(self, should_retry=True):
         while b'\n' not in self.data:
-            if should_retry:
-                message = self.receive_raw_from_socket_with_single_retry()
-            else:
-                message = self.sock.recv()
+            message = self._receive_raw_from_socket_with_single_retry() if should_retry else self.sock.recv()
             if message == b'':
                 # Received blank, return blank
                 return b''
 
             self.data += message
-        line = re.search(b'.*\n', self.data).group(0)
-        self.data = self.data[len(line):]
+        line = self.data.split(b'\n', 1)[0]
+        self.data = self.data[len(line)+1:]
         return line
+
+    def _send_recv(self, message):
+        self._send(message)
+        return self._recv()
+
+    def _send_recv_data(self, data):
+        return json.loads(self._send_recv(json.dumps(data).encode('utf-8')))
 
     def _clean_up(self):
         self.sock.detach()
