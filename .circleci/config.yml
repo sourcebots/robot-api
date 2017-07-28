@@ -37,7 +37,9 @@ jobs:
       - run: apt-get update -y
       - run: apt-get install -y libcv-dev libopencv-photo-dev libopencv-contrib-dev
       - run: git clone https://github.com/sourcebots/robotd.git
-      - run: pip3 install robotd/
+      - run: cd robotd/
+      - run: pip3 install .
+      - run: cd ..
       - run: pip3 install -r requirements.txt
       - run: pip3 install -r requirements-test.txt
 
