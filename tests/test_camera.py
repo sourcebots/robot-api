@@ -1,11 +1,11 @@
+import os
 import unittest
 
 import time
 
-from robot import MARKER_SIZES as MARKER_SIZES_ROBOT
 from robotd.game_specific import MARKER_SIZES as MARKER_SIZES_ROBOTD
 from robot.robot import Robot
-from robot.tests.mock_robotd import MockRobotD
+from tests.mock_robotd import MockRobotD
 from robotd.vision.camera import FileCamera
 
 
@@ -13,7 +13,7 @@ class CameraTest(unittest.TestCase):
     """
     Tests pertaining to the camera object
     """
-
+    # TODO add test for Serial number
     def setUp(self):
         mock = MockRobotD(root_dir="/tmp/")
         # Insert a power board to let the robot start up
@@ -21,6 +21,7 @@ class CameraTest(unittest.TestCase):
         time.sleep(0.2)
         self.mock = mock
         self.robot = Robot(robotd_path="/tmp/robotd")
+        self.image_root = os.path.dirname(os.path.realpath(__file__))
 
     def test_insert_cameras(self):
         self.mock.new_camera('ABC')
@@ -43,7 +44,7 @@ class CameraTest(unittest.TestCase):
         self.assertEqual(tokens, [])
 
     def test_can_see_something(self):
-        self.camera = self.mock.new_camera(camera=FileCamera('tagsampler.png', 720))
+        self.camera = self.mock.new_camera(camera=FileCamera(self.image_root + '/tagsampler.png', 720))
         time.sleep(0.2)
         camera = self.robot.cameras[0]
         tokens = camera.see()
@@ -54,9 +55,8 @@ class CameraTest(unittest.TestCase):
     def test_marker_sizes(self):
         # Change the marker sizes value in both robotd and robot-api
         written_sizes = {0: (0.9, 0.9), 1: (0.9, 0.9), 24: (0.2, 0.2), 25: (0.2, 0.2)}
-        # MARKER_SIZES_ROBOT.update(written_sizes)
         MARKER_SIZES_ROBOTD.update(written_sizes)
-        self.camera = self.mock.new_camera(camera=FileCamera('tagsampler.png', 720))
+        self.camera = self.mock.new_camera(camera=FileCamera(self.image_root + '/tagsampler.png', 720))
         time.sleep(0.2)
         camera = self.robot.cameras[0]
         tokens = camera.see()

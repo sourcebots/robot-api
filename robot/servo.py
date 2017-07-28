@@ -42,8 +42,7 @@ class ServoBoard(Board):
         return self._serial
 
     def _get_status(self, port):
-        self._send(b'{}')
-        return json.loads(self._recv())[str(port)]
+        return json.loads(self._send_recv(b'{}'))[str(port)]
 
     def _update_servo(self, port, position):
         """
@@ -53,6 +52,4 @@ class ServoBoard(Board):
         """
         if position > 1 or position < -1:
             raise ValueError("Value should be between -1 and 1")
-        self._send(json.dumps({port: position}).encode('utf-8'))
-        # Receive the response to keep in sync.
-        self._recv()
+        self._send_recv_data({port: position})

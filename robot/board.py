@@ -1,3 +1,4 @@
+import json
 import socket
 
 
@@ -15,20 +16,21 @@ class BoardList(dict):
 
 
 class Board:
-    SEND_TIMEOUT = 2
-    RECV_BUFFER = 4096*64
+    SEND_TIMEOUT_SECS = 2
+    RECV_BUFFER_BYTES = 2048
 
     def __init__(self, socket_path):
         self.sock_path = socket_path
         self.sock = None
+        self.data = b''
         self._connect(socket_path)
-        print("Receiving response:")
-        data = self._recv()
-        self._init_response(data)
-        print("Response:", data)
 
-    def _init_response(self, data):
-        pass  # Handle the response to the init command
+    def _greeting_response(self, data):
+        """
+        Handle the response to the greeting command
+        NOTE: This is called on reconnect in addition to first connection
+        """
+        pass
 
     def _connect(self, socket_path):
         """
@@ -36,8 +38,10 @@ class Board:
         :param socket_path: Path for the unix socket
         """
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
-        self.sock.settimeout(Board.SEND_TIMEOUT)
+        self.sock.settimeout(Board.SEND_TIMEOUT_SECS)
         self.sock.connect(socket_path)
+        greeting = self._recv()
+        self._greeting_response(greeting)
 
     def _get_lc_error(self):
         """
@@ -45,41 +49,61 @@ class Board:
         """
         return "Lost Connection to {} at {}".format(str(self.__class__.__name__), self.sock_path)
 
-    def _send(self, message, retry=False):
+    def _socket_with_single_retry(self, handler):
+        retryable_errors = (socket.timeout, BrokenPipeError, OSError)
+
+        try:
+            return handler(self.sock)
+        except retryable_errors:
+            pass
+
+        # Retry once, need to reconnect first
+        try:
+            self._connect(self.sock_path)
+        except FileNotFoundError:
+            raise ConnectionError(self._get_lc_error())
+
+        try:
+            return handler(self.sock)
+        except retryable_errors:
+            raise ConnectionError(self._get_lc_error())
+
+    def _receive_raw_from_socket_with_single_retry(self):
+        return self._socket_with_single_retry(
+            lambda s: s.recv(Board.RECV_BUFFER_BYTES),
+        )
+
+    def _send_raw_from_socket_with_single_retry(self, message):
+        return self._socket_with_single_retry(
+            lambda s: s.send(message),
+        )
+
+    def _send(self, message, should_retry=True):
         """
         Send a message to robotd
         :param retry: used internally
         :param message: message to send
         """
-        try:
-            self.sock.send(message)
-        except (socket.timeout, BrokenPipeError, OSError):
-            if retry:
-                raise ConnectionError(self._get_lc_error())
-            else:
-                try:
-                    self._connect(self.sock_path)  # Reconnect
-                except FileNotFoundError:
-                    raise ConnectionError(self._get_lc_error())
-                self._send(message, retry=True)  # Retry Recursively
+        return self._send_raw_from_socket_with_single_retry(message) if should_retry else self.sock.send(message)
 
-    def _recv(self, retry=False):
+    def _recv(self, should_retry=True):
+        while b'\n' not in self.data:
+            message = self._receive_raw_from_socket_with_single_retry() if should_retry else self.sock.recv()
+            if message == b'':
+                # Received blank, return blank
+                return b''
 
-        """
-        Receive a message from the robotd socket
-        :return: message
-        """
-        # TODO split receieves by \n characters and return them one at a time.
-        # Currently this is mitigated by having a large receive buffer, but I'd rather
-        # we did it properly at some point
-        try:
-            return self.sock.recv(Board.RECV_BUFFER)
-        except (socket.timeout, BrokenPipeError, OSError):
-            if retry:
-                raise ConnectionError(self._get_lc_error())
-            else:
-                self._connect(self.sock_path)  # Reconnect
-                return self._recv(retry=True)  # Retry recursively
+            self.data += message
+        line = self.data.split(b'\n', 1)[0]
+        self.data = self.data[len(line)+1:]
+        return line
+
+    def _send_recv(self, message):
+        self._send(message)
+        return self._recv()
+
+    def _send_recv_data(self, data):
+        return json.loads(self._send_recv(json.dumps(data).encode('utf-8')))
 
     def _clean_up(self):
         self.sock.detach()
