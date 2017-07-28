@@ -81,8 +81,8 @@ class Board:
                 return b''
 
             self.data += message
-        line = self.data.split(b'\n', 1)
-        self.data = self.data[len(line):]
+        line = self.data.split(b'\n', 1)[0]
+        self.data = self.data[len(line)+1:]
         return line
 
     def _send_recv(self, message):
