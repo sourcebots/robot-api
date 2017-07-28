@@ -14,6 +14,13 @@ class BoardList(dict):
     def __delitem__(self, key):
         raise NotImplementedError("Cannot mutate board list")
 
+    def __contains__(self, item):
+        if type(item) is int:
+            return item < len(self)
+        else:
+            return super().__contains__(item)
+
+
 
 class Board:
     SEND_TIMEOUT_SECS = 2
