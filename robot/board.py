@@ -1,12 +1,19 @@
 import json
 import socket
 
+import collections
+from collections import OrderedDict
 
-class BoardList(dict):
+
+class BoardList(collections.MutableMapping):
+    def __init__(self, *args, **kwargs):
+        self.store = OrderedDict(*args, **kwargs)
+        self.store_list = list(self.store.values())
+
     def __getitem__(self, attr):
         if type(attr) is int:
-            return super().__getitem__(list(self.keys())[attr])
-        return super().__getitem__(attr)
+            return self.store_list[attr]
+        return self.store[attr]
 
     def __setitem__(self, key, value):
         raise NotImplementedError("Cannot mutate board list")
@@ -14,12 +21,11 @@ class BoardList(dict):
     def __delitem__(self, key):
         raise NotImplementedError("Cannot mutate board list")
 
-    def __contains__(self, item):
-        if type(item) is int:
-            return item < len(self)
-        else:
-            return super().__contains__(item)
+    def __iter__(self):
+        return iter(self.store_list)
 
+    def __len__(self):
+        return len(self.store_list)
 
 
 class Board:
@@ -102,7 +108,7 @@ class Board:
 
             self.data += message
         line = self.data.split(b'\n', 1)[0]
-        self.data = self.data[len(line)+1:]
+        self.data = self.data[len(line) + 1:]
         return line
 
     def _send_recv(self, message):
