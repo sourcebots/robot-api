@@ -5,6 +5,7 @@ from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
 from robot.game import GameState
+from robot.board import BoardList
 
 
 class Robot:
@@ -51,12 +52,7 @@ class Robot:
     @staticmethod
     def _dictify_boards(boards):
         # Convert lists of boards into a dictionary
-        # TODO: Return something which when len() is called doesn't return 2 if theres 1 board
-        boards_dict = {}
-        for i, board in enumerate(boards):
-            boards_dict[i] = board
-            boards_dict[board.serial] = board
-        return boards_dict
+        return BoardList({board.serial for board in boards})
 
     # TODO: Parameterise the functions below so we only need one
     @property
