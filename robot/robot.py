@@ -52,7 +52,7 @@ class Robot:
     @staticmethod
     def _dictify_boards(boards):
         # Convert lists of boards into a dictionary
-        return BoardList({board.serial for board in boards})
+        return BoardList({board.serial: board for board in boards})
 
     # TODO: Parameterise the functions below so we only need one
     @property
