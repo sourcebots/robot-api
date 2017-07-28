@@ -35,7 +35,7 @@ class GameState(Board):
         the value defaults to 0 if there is no stick plugged in.
         :return: zone ID the robot started in (0-3)
         """
-        return json.loads(self._send_recv(b'{}'))['zone']
+        return self._send_recv_data({})['zone']
 
     @property
     def mode(self):
@@ -43,7 +43,7 @@ class GameState(Board):
         Whether or not the robot is in competition mode
         :return: if the robot is in competition mode
         """
-        value = json.loads(self._send_recv(b'{}'))['mode']
+        value = self._send_recv_data({})['mode']
         for enum in GameMode:
             if value == enum.value:
                 return enum

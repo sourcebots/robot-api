@@ -93,7 +93,7 @@ class MotorBoard(Board):
 
     def _get_status(self, motor_id):
         return self._string_to_voltage(
-            json.loads(self._send_recv(b'{}'))[motor_id]
+            self._send_recv_data({})[motor_id]
         )
 
     def _update_motor(self, motor_id, voltage):
