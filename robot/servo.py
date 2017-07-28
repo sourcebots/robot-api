@@ -42,7 +42,7 @@ class ServoBoard(Board):
         return self._serial
 
     def _get_status(self, port):
-        return json.loads(self._send_recv(b'{}'))[str(port)]
+        return self._send_recv_data({})[str(port)]
 
     def _update_servo(self, port, position):
         """

@@ -116,7 +116,7 @@ class Board:
         return self._recv()
 
     def _send_recv_data(self, data):
-        return json.loads(self._send_recv(json.dumps(data).encode('utf-8')))
+        return json.loads(self._send_recv(json.dumps(data).encode('utf-8')).decode("utf-8"))
 
     def _clean_up(self):
         self.sock.detach()

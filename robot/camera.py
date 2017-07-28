@@ -74,7 +74,7 @@ class Camera(Board):
         :return: #ResultList object (that imitates a list) of markers
         """
         markers = []
-        data = json.loads(data)
+        data = json.loads(data.decode('utf-8'))
         for token in data["tokens"]:
             markers.append(Marker(token))
         # Sort by distance
