@@ -51,9 +51,7 @@ jobs:
       # run tests!
       - run:
           name: run tests
-          command: |
-            . venv/bin/activate
-            nosetests
+          command: nosetests
 
       - store_artifacts:
           path: test-reports
