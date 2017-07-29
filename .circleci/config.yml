@@ -36,11 +36,10 @@ jobs:
             . venv/bin/activate
       - run: apt-get update -y
       - run: apt-get install -y libcv-dev libopencv-photo-dev libopencv-contrib-dev libusb-1.0.0-dev
-      - run: git clone https://github.com/sourcebots/robotd.git
-      - run: cd robotd/; pip3 install .
       - run: pip3 install -r requirements.txt
       - run: pip3 install -r requirements_test.txt
-
+      - run: git clone https://github.com/sourcebots/robotd.git
+      - run: cd robotd; pip3 install .
       - save_cache:
           paths:
             - ./venv
@@ -49,7 +48,7 @@ jobs:
       # run tests!
       - run:
           name: run tests
-          command: nosetests
+          command: python3 -m unittest
 
       - store_artifacts:
           path: test-reports

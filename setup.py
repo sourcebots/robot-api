@@ -8,6 +8,7 @@ setup(
     author='SourceBots',
     license='MIT',
     install_requires=['pyserial'],
-    tests_require=['cffi', 'robotd'],
+    dependency_links=['git+ssh://git@github.com/sourcebots/robotd.git#egg=robotd'],
+    tests_require=['cffi'],
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
 )
