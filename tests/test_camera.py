@@ -69,12 +69,8 @@ class CameraTest(unittest.TestCase):
         self.camera = self.mock.new_camera()
         time.sleep(0.2)
         tokens = self.robot.cameras[0].see()
-        with self.assertRaises(IndexError):
+        with self.assertRaisesRegexp(IndexError, "Trying to index an empty list"):
             _ = tokens[0]
-        try:
-            _ = tokens[0]
-        except IndexError as e:
-            self.assertEqual(str(e), "Trying to index an empty list")
 
     def tearDown(self):
         self.mock.stop()
