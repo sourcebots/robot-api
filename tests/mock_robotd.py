@@ -138,6 +138,9 @@ class MockPowerBoard(Board):
         print("{} Command: {}".format(self._name, cmd))
         self.message_queue.put(cmd)
 
+    def status(self):
+        return {'start-button': True}
+
 
 class MockCamera(RobotDCamera):
     board_type_id = 'camera'
