@@ -1,7 +1,7 @@
-import json
-import threading
 from collections.abc import MutableSequence
+import json
 from pathlib import Path
+import threading
 
 from robot.board import Board
 from robot.markers import Marker

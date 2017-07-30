@@ -1,11 +1,11 @@
 from pathlib import Path
 
+from robot.board import BoardList
 from robot.camera import Camera
+from robot.game import GameState
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
-from robot.game import GameState
-from robot.board import BoardList
 
 
 class Robot:
