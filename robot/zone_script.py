@@ -6,9 +6,8 @@ put this as an .autorun file in the root of the USB stick,
 along with a file named zone-<X> where <X> is the id of the zone (0 to 3) to use.
 (The file can be blank and should have no extension)
 """
-import socket
 import json
-
+import socket
 import time
 
 from enum import Enum

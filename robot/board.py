@@ -6,6 +6,7 @@ from collections import OrderedDict
 
 
 class BoardList(collections.MutableMapping):
+
     def __init__(self, *args, **kwargs):
         self.store = OrderedDict(*args, **kwargs)
         self.store_list = list(self.store.values())
@@ -29,6 +30,7 @@ class BoardList(collections.MutableMapping):
 
 
 class Board:
+
     SEND_TIMEOUT_SECS = 2
     RECV_BUFFER_BYTES = 2048
 
@@ -65,7 +67,10 @@ class Board:
         """
         :return: The text for a lost connection error
         """
-        return "Lost Connection to {} at {}".format(str(self.__class__.__name__), self.sock_path)
+        return "Lost Connection to {conn} at {path}".format(
+            conn=str(self.__class__.__name__),
+            path=self.sock_path
+        )
 
     def _socket_with_single_retry(self, handler):
         retryable_errors = (socket.timeout, BrokenPipeError, OSError)
@@ -102,11 +107,19 @@ class Board:
         :param retry: used internally
         :param message: message to send
         """
-        return self._send_raw_from_socket_with_single_retry(message) if should_retry else self.sock.send(message)
+
+        if should_retry:
+            return self._send_raw_from_socket_with_single_retry(message)
+        else:
+            return self.sock.send(message)
 
     def _recv(self, should_retry=True):
         while b'\n' not in self.data:
-            message = self._receive_raw_from_socket_with_single_retry() if should_retry else self.sock.recv()
+            if should_retry:
+                message = self._receive_raw_from_socket_with_single_retry()
+            else:
+                message = self.sock.recv()
+
             if message == b'':
                 # Received blank, return blank
                 return b''

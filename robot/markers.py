@@ -116,16 +116,12 @@ class Marker:
 
     @property
     def id(self):
-        """
-            ID of the marker seen
-        """
+        """ID of the marker seen"""
         return self._id
 
     @property
     def size(self):
-        """
-            Marker size in metres
-        """
+        """Marker size in metres"""
         return tuple(self._size)
 
     # Disabled because it's always 0.0
@@ -136,24 +132,18 @@ class Marker:
 
     @property
     def pixel_corners(self):
-        """
-            Pixel co-ordinates of the of the corners of the marker
-        """
+        """Pixel co-ordinates of the of the corners of the marker"""
         # TODO define what the order of these corners are
         return [tuple(x) for x in self._pixel_corners]
 
     @property
     def pixel_centre(self):
-        """
-            Pixel co-ordinates of the centre of the marker
-        """
+        """Pixel co-ordinates of the centre of the marker"""
         return tuple(self._pixel_centre)
 
     @property
     def distance_metres(self):
-        """
-        Distance of the marker from the camera in metres
-        """
+        """Distance of the marker from the camera in metres"""
         return self.polar.distance_metres
 
     # Helper functions, Might need to vary these per-game
@@ -168,9 +158,13 @@ class Marker:
 
     @property
     def polar(self):
-        """ Position of the marker in the polar co-ordinates system, Axis is at the camera's position """
+        """
+        Position of the marker in the polar co-ordinates system, Axis is at the
+        camera's position
+        """
         return PolarCoord(self._polar[0], self._polar[1])
 
     @property
     def cartesian(self):
+        raise NotImplementedError("This is not implemented.")
         return CartCoord()
