@@ -21,9 +21,9 @@ markers = r.camera.see()
 Servo positions can be set by:
 
 ``` python
-r.servo_boards[0].ports[0].position = -1
+r.servo_boards[0].servos[0].position = -1
 # or
-r.servo_board.ports[0].position = -1
+r.servo_board.servos[0].position = -1
 ```
 
 Motors can be set with:
