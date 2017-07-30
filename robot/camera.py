@@ -60,11 +60,14 @@ class Camera(Board):
         Works until `self._running` is set.
         """
         while self._alive:
-            data = self._recv()
-            if data:
-                self._got_image.set()
-                with self._latest_lock:
-                    self._latest = data
+            received = self._recv()
+            if received:
+                data = json.loads(received.decode('utf-8'))
+                if data:
+                    self._got_image.set()
+                    with self._latest_lock:
+                        self._latest = data
+
 
     @staticmethod
     def _see_to_results(data):
@@ -74,7 +77,6 @@ class Camera(Board):
         :return: #ResultList object (that imitates a list) of markers
         """
         markers = []
-        data = json.loads(data.decode('utf-8'))
         for token in data["tokens"]:
             markers.append(Marker(token))
         # Sort by distance
