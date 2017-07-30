@@ -52,7 +52,12 @@ class Board:
         """
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
         self.sock.settimeout(Board.SEND_TIMEOUT_SECS)
-        self.sock.connect(socket_path)
+        try:
+            self.sock.connect(socket_path)
+        except ConnectionRefusedError as e:
+            print("Error connecting to ", socket_path)
+            raise e
+
         greeting = self._recv()
         self._greeting_response(greeting)
 
