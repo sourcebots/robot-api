@@ -1,4 +1,5 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
+
 
 setup(
     name='robot',
@@ -9,6 +10,7 @@ setup(
     license='MIT',
     install_requires=['pyserial'],
     dependency_links=['git+ssh://git@github.com/sourcebots/robotd.git#egg=robotd'],
-    tests_require=['cffi'],
+    tests_require=['cffi', 'nose'],
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    test_suite='nose.collector',
 )
