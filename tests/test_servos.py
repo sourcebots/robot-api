@@ -40,13 +40,13 @@ class ServoBoardTest(unittest.TestCase):
         board = boards[0]
         self.mock.remove_board(mock_servo)
         with self.assertRaises(ConnectionError):
-            board.ports[0].position = 1
+            board._servos[0].position = 1
 
         # Re-add it
         self.mock.new_servoboard('ABC')
         time.sleep(0.2)
 
-        board.ports[0].position = 1
+        board._servos[0].position = 1
 
     def test_multiple_indexes(self):
         """ Checks you can index servo boards plenty of times"""
@@ -72,12 +72,12 @@ class ServoBoardTest(unittest.TestCase):
         self._try_position_expect(motor, board, value, value)
 
     def _try_position_expect(self, servo, board, value, expect):
-        self.robot.servo_boards[0].ports[servo].position = value
+        self.robot.servo_boards[0]._servos[servo].position = value
         got_value = board.message_queue.get()
         # Test the motor board got what it expected
         self.assertEqual(got_value, {str(servo): expect})
         # Test the value can be read
-        self.assertEqual(self.robot.servo_boards[0].ports[servo].position, value)
+        self.assertEqual(self.robot.servo_boards[0]._servos[servo].position, value)
 
     def tearDown(self):
         self.mock.stop()
