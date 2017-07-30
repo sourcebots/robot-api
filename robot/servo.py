@@ -44,7 +44,7 @@ class ServoBoard(Board):
         return self._serial
 
     def _get_status(self, port):
-        return self._send_recv_data({})[str(port)]
+        return self.send_and_receive({})[str(port)]
 
     def _update_servo(self, port, position):
         """
@@ -54,4 +54,4 @@ class ServoBoard(Board):
         """
         if position > 1 or position < -1:
             raise ValueError("Value should be between -1 and 1")
-        self._send_recv_data({port: position})
+        self.send_and_receive({port: position})

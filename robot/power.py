@@ -23,11 +23,11 @@ class PowerBoard(Board):
         Turn on power to all power board outputs
         """
 
-        self._send_recv_data({'power': True})
+        self.send_and_receive({'power': True})
 
     def power_off(self):
         """
         Turn off power to all power board outputs
         """
 
-        self._send_recv_data({'power': False})
+        self.send_and_receive({'power': False})

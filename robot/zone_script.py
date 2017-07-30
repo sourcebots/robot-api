@@ -14,7 +14,7 @@ from enum import Enum
 from threading import Event
 
 
-sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
 
 class State(Enum):
@@ -33,7 +33,7 @@ def poll(robot_root_path, zone_id, stop_event: Event = Event()):
                 state = State.MESSAGE
 
             if state is State.MESSAGE:
-                sock.send(message)
+                sock.sendall(message)
                 resp = sock.recv(2048)
                 resp = json.loads(resp.decode('utf-8'))
                 if 'zone' in resp and resp['zone'] == zone_id:

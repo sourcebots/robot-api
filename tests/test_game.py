@@ -43,4 +43,3 @@ class GameTest(unittest.TestCase):
         self.stop_event.set()
         if self.thread and self.thread.is_alive():
             self.thread.join()
-

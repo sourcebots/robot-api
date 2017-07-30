@@ -94,7 +94,7 @@ class MotorBoard(Board):
 
     def _get_status(self, motor_id):
         return self._string_to_voltage(
-            self._send_recv_data({})[motor_id]
+            self.send_and_receive({})[motor_id]
         )
 
     def _update_motor(self, motor_id, voltage):
@@ -104,4 +104,4 @@ class MotorBoard(Board):
         :param voltage: Voltage to set the motor to
         """
         v_string = self._voltage_to_string(voltage)
-        self._send_recv_data({motor_id: v_string})
+        self.send_and_receive({motor_id: v_string})

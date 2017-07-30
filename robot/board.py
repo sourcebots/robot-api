@@ -35,9 +35,10 @@ class Board:
     RECV_BUFFER_BYTES = 2048
 
     def __init__(self, socket_path):
-        self.sock_path = socket_path
-        self.sock = None
+        self.socket_path = socket_path
+        self.socket = None
         self.data = b''
+
         self._connect(socket_path)
 
     def _greeting_response(self, data):
@@ -52,15 +53,16 @@ class Board:
         (re)connect to a new socket
         :param socket_path: Path for the unix socket
         """
-        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
-        self.sock.settimeout(Board.SEND_TIMEOUT_SECS)
+        self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.socket.settimeout(self.SEND_TIMEOUT_SECS)
+
         try:
-            self.sock.connect(socket_path)
+            self.socket.connect(str(self.socket_path))
         except ConnectionRefusedError as e:
-            print("Error connecting to ", socket_path)
+            print('Error connecting to:', socket_path)
             raise e
 
-        greeting = self._recv()
+        greeting = self.receive()
         self._greeting_response(greeting)
 
     def _get_lc_error(self):
@@ -69,72 +71,66 @@ class Board:
         """
         return "Lost Connection to {conn} at {path}".format(
             conn=str(self.__class__.__name__),
-            path=self.sock_path
+            path=self.socket_path
         )
 
     def _socket_with_single_retry(self, handler):
         retryable_errors = (socket.timeout, BrokenPipeError, OSError)
 
         try:
-            return handler(self.sock)
+            return handler()
         except retryable_errors:
             pass
 
         # Retry once, need to reconnect first
         try:
-            self._connect(self.sock_path)
+            self._connect(self.socket_path)
         except FileNotFoundError:
             raise ConnectionError(self._get_lc_error())
 
         try:
-            return handler(self.sock)
+            return handler()
         except retryable_errors:
             raise ConnectionError(self._get_lc_error())
 
-    def _receive_raw_from_socket_with_single_retry(self):
-        return self._socket_with_single_retry(
-            lambda s: s.recv(Board.RECV_BUFFER_BYTES),
-        )
-
-    def _send_raw_from_socket_with_single_retry(self, message):
-        return self._socket_with_single_retry(
-            lambda s: s.send(message),
-        )
-
-    def _send(self, message, should_retry=True):
+    def send(self, message, should_retry=True):
         """
         Send a message to robotd
         :param retry: used internally
         :param message: message to send
         """
 
-        if should_retry:
-            return self._send_raw_from_socket_with_single_retry(message)
-        else:
-            return self.sock.send(message)
+        data = (json.dumps(message) + '\n').encode('utf-8')
 
-    def _recv(self, should_retry=True):
+        def sendall():
+            self.socket.sendall(data)
+
+        if should_retry:
+            return self._socket_with_single_retry(sendall)
+        else:
+            return sendall()
+
+    def receive(self, should_retry=True):
         while b'\n' not in self.data:
             if should_retry:
-                message = self._receive_raw_from_socket_with_single_retry()
+                message = self._socket_with_single_retry(
+                    lambda: self.socket.recv(4096)
+                )
             else:
-                message = self.sock.recv()
+                message = self.socket.recv(4096)
 
             if message == b'':
-                # Received blank, return blank
-                return b''
+                return {}
 
             self.data += message
         line = self.data.split(b'\n', 1)[0]
         self.data = self.data[len(line) + 1:]
-        return line
 
-    def _send_recv(self, message):
-        self._send(message)
-        return self._recv()
+        return json.loads(line)
 
-    def _send_recv_data(self, data):
-        return json.loads(self._send_recv(json.dumps(data).encode('utf-8')).decode("utf-8"))
+    def send_and_receive(self, message, should_retry=True):
+        self.send(message, should_retry)
+        return self.receive(should_retry)
 
     def _clean_up(self):
-        self.sock.detach()
+        self.socket.detach()
