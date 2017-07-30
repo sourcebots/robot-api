@@ -18,7 +18,7 @@ try:
 except:
     pass
 
-r.servo_boards[0]._servos[2].position = -1
+r.servo_boards[0].ports[2].position = -1
 
 # Results are sorted by distance
 # r.see() returns a subclass of sequence (abstract base classes), which can then error things.

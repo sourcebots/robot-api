@@ -25,14 +25,14 @@ class ServoBoard(Board):
 
         servo_ids = range(0, 16)  # servos with a port 0-15
 
-        self._servos = [Servo(self, x) for x in servo_ids]
+        self.servos = [Servo(self, x) for x in servo_ids]
 
     @property
-    def servos(self):
+    def ports(self):
         """
-        List of `Servo` objects for the servo board
+        List of `Servo` objects for the servo
         """
-        return self._servos
+        return self.servos
 
     @property
     def serial(self):
