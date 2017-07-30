@@ -7,7 +7,7 @@ import robot
 from robotd.devices import Camera as RobotDCamera, GameState as RobotDGameState
 from robotd.devices_base import Board
 from robotd.master import BoardRunner
-from robotd.vision.camera import FileCamera
+from sb_vision.camera import FileCamera
 
 
 class MockRobotD:

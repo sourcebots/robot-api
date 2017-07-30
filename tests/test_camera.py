@@ -6,7 +6,7 @@ import time
 from robotd.game_specific import MARKER_SIZES as MARKER_SIZES_ROBOTD
 from robot.robot import Robot
 from tests.mock_robotd import MockRobotD
-from robotd.vision.camera import FileCamera
+from sb_vision.camera import FileCamera
 
 
 class CameraTest(unittest.TestCase):
