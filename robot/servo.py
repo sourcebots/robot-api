@@ -52,6 +52,9 @@ class Gpio:
         The mode the pin should be in
         :param mode: PinMode.INPUT, PinMode.INPUT_PULLUP, or PinMode.OUTPUT_HIGH or PinMode.OUTPUT_LOW
         """
+        if mode not in [PinMode.INPUT, PinMode.INPUT_PULLUP, PinMode.OUTPUT_HIGH, PinMode.OUTPUT_LOW]:
+            raise ValueError("Mode should be one of PinMode.INPUT, PinMode.INPUT_PULLUP, PinMode.OUTPUT_HIGH, "
+                             "or PinMode.OUTPUT_LOW")
         self._pin_mode_set(mode.value)
 
     def read(self):
