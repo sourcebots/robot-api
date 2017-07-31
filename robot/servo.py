@@ -44,7 +44,8 @@ class ServoBoard(Board):
         return self._serial
 
     def _get_status(self, port):
-        return self.send_and_receive({})[str(port)]
+        status = self.send_and_receive({})
+        return status['servos'][str(port)]
 
     def _update_servo(self, port, position):
         """
