@@ -29,5 +29,13 @@ class PowerBoard(Board):
         """
         Turn off power to all power board outputs
         """
-
         self.send_and_receive({'power': False})
+
+    @property
+    def start_button_pressed(self):
+        """
+        Read the status of the start button.
+        """
+
+        status = self.send_and_receive({})
+        return status["start-button"]

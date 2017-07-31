@@ -1,4 +1,5 @@
 from pathlib import Path
+import time
 
 from robot.board import BoardList
 from robot.camera import Camera
@@ -25,12 +26,19 @@ class Robot:
         self.known_cameras = []
         self.known_gamestates = []
 
-        # Try to turn on the outputs of the power board
+        self._wait_for_power_board()
+
+    def _wait_for_power_board(self):
         power_boards = self.power_boards
-        if power_boards:
-            self.power_boards[0].power_on()
-        else:
-            raise RuntimeError("Cannot find Power Board!")
+        if not power_boards:
+            raise RuntimeError('Cannot find Power Board!')
+
+        self.power_board.power_on()
+
+        print('Waiting for start button.')
+        while not self.power_board.start_button_pressed:
+            time.sleep(0.05)
+        print('Start button pressed!')
 
     def _update_boards(self, known_boards, board_type, directory_name):
         """
