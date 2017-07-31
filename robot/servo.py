@@ -121,7 +121,7 @@ class ServoBoard(Board):
 
     def _read_pin(self, pin):
         # request a check for that pin by trying to set it to None
-        data = self.send_and_receive({'pins': {pin, None}})
+        data = self.send_and_receive({'read-pins': [pin]})
         # example data value:
         # {'pin-values':{2:'high'}}
         values = data['pin-values']
