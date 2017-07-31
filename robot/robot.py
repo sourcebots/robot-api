@@ -88,7 +88,7 @@ class Robot:
         """
         :return: list of available Servo boards, can be indexed by serial or by number
         """
-        boards = self._update_boards(self.known_servo_boards, ServoBoard, 'servo')
+        boards = self._update_boards(self.known_servo_boards, ServoBoard, 'servo_assembly')
         self.known_servo_boards = boards
         return self._dictify_boards(boards)
 

@@ -96,7 +96,7 @@ class MockServoBoard(Board):
     """
     Mock class for simulating a servo board
     """
-    board_type_id = 'servo'
+    board_type_id = 'servo_assembly'
 
     def __init__(self, name, node):
         super().__init__(node)
