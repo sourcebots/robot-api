@@ -76,7 +76,7 @@ class Board:
         )
 
     def _socket_with_single_retry(self, handler):
-        retryable_errors = (socket.timeout, BrokenPipeError, OSError)
+        retryable_errors = (socket.timeout, BrokenPipeError, OSError, ConnectionResetError)
 
         backoffs = [
             0.1,
