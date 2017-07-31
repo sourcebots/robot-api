@@ -1,4 +1,5 @@
 import json
+import time
 import socket
 
 import collections
@@ -77,21 +78,33 @@ class Board:
     def _socket_with_single_retry(self, handler):
         retryable_errors = (socket.timeout, BrokenPipeError, OSError)
 
-        try:
-            return handler()
-        except retryable_errors:
-            pass
-
-        # Retry once, need to reconnect first
-        try:
-            self._connect(self.socket_path)
-        except FileNotFoundError:
-            raise ConnectionError(self._get_lc_error())
+        backoffs = [
+            0.1,
+            0.5,
+            1.0,
+            2.0,
+            3.0,
+        ]
 
         try:
             return handler()
-        except retryable_errors:
-            raise ConnectionError(self._get_lc_error())
+        except retryable_errors as e:
+            original_exception = e
+
+        for backoff in backoffs:
+            time.sleep(backoff)
+
+            try:
+                self._connect(self.socket_path)
+            except FileNotFoundError:
+                continue
+
+            try:
+                return handler()
+            except retryable_errors:
+                pass
+
+        raise original_exception
 
     def send(self, message, should_retry=True):
         """
