@@ -55,6 +55,6 @@ class ServoBoard(Board):
         :param port: port for the servo board
         :param position: position to set the servo to
         """
-        if position > 1 or position < -1:
-            raise ValueError('Value should be between -1 and 1')
+        if position < 0 or position > 1:
+            raise ValueError('Value should be between 0 and 1')
         self.send_and_receive({'servos': {port: position}})
