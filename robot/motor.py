@@ -3,11 +3,13 @@ from pathlib import Path
 
 from robot.board import Board
 
+
 BRAKE = 0  # 0 so setting the motors to 0 has exactly the same affect as setting the motors to BRAKE
 COAST = "coast"
 
 
 class Motor:
+
     def __init__(self, motor_board, motor_id):
         self.motor_board = motor_board
         self.motor_id = motor_id
@@ -22,6 +24,7 @@ class Motor:
 
 
 class MotorBoard(Board):
+
     def __init__(self, socket_path):
         super().__init__(socket_path)
         self._serial = Path(socket_path).stem
@@ -86,14 +89,12 @@ class MotorBoard(Board):
 
     @property
     def serial(self):
-        """
-        Serial number for the board
-        """
+        """Serial number for the board"""
         return self._serial
 
     def _get_status(self, motor_id):
         return self._string_to_voltage(
-            self._send_recv_data({})[motor_id]
+            self.send_and_receive({})[motor_id]
         )
 
     def _update_motor(self, motor_id, voltage):
@@ -103,4 +104,4 @@ class MotorBoard(Board):
         :param voltage: Voltage to set the motor to
         """
         v_string = self._voltage_to_string(voltage)
-        self._send_recv_data({motor_id: v_string})
+        self.send_and_receive({motor_id: v_string})

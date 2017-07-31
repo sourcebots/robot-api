@@ -1,11 +1,11 @@
 from pathlib import Path
 
+from robot.board import BoardList
 from robot.camera import Camera
+from robot.game import GameState
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
-from robot.game import GameState
-from robot.board import BoardList
 
 
 class Robot:
@@ -24,6 +24,7 @@ class Robot:
         self.known_servo_boards = []
         self.known_cameras = []
         self.known_gamestates = []
+
         # Try to turn on the outputs of the power board
         power_boards = self.power_boards
         if power_boards:
@@ -39,12 +40,13 @@ class Robot:
         :param directory_name:
         :return:
         """
-        known_paths = {x.sock_path for x in known_boards}
+        known_paths = {x.socket_path for x in known_boards}
         boards_dir = self.robotd_path / directory_name
         new_paths = {str(x) for x in boards_dir.glob('*')}
         boards = known_boards[:]
         # Add all boards that weren't previously there
         for board in new_paths - known_paths:
+            print('New board found:', board)
             boards.append(board_type(board))
 
         return sorted(boards, key=lambda b: b.serial)

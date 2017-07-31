@@ -1,8 +1,6 @@
+from enum import Enum
 import json
 from pathlib import Path
-
-
-from enum import Enum
 
 from robot.board import Board
 
@@ -35,7 +33,7 @@ class GameState(Board):
         the value defaults to 0 if there is no stick plugged in.
         :return: zone ID the robot started in (0-3)
         """
-        return self._send_recv_data({})['zone']
+        return self.send_and_receive({})['zone']
 
     @property
     def mode(self):
@@ -43,7 +41,7 @@ class GameState(Board):
         Whether or not the robot is in competition mode
         :return: if the robot is in competition mode
         """
-        value = self._send_recv_data({})['mode']
+        value = self.send_and_receive({})['mode']
         for enum in GameMode:
             if value == enum.value:
                 return enum

@@ -1,7 +1,7 @@
-import json
-import threading
 from collections.abc import MutableSequence
+import json
 from pathlib import Path
+import threading
 
 from robot.board import Board
 from robot.markers import Marker
@@ -60,14 +60,11 @@ class Camera(Board):
         Works until `self._running` is set.
         """
         while self._alive:
-            received = self._recv()
-            if received:
-                data = json.loads(received.decode('utf-8'))
-                if data:
-                    self._got_image.set()
-                    with self._latest_lock:
-                        self._latest = data
-
+            data = self.receive()
+            if data:
+                self._got_image.set()
+                with self._latest_lock:
+                    self._latest = data
 
     @staticmethod
     def _see_to_results(data):

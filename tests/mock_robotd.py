@@ -22,9 +22,9 @@ class MockRobotD:
         # Enter a blank node
         board = board_class(name, {'name': name}, *args)
         runner = BoardRunner(board, self.root_dir)
-        runner.start()
         self.board_to_runner[board] = runner
         self.runners.append(runner)
+        runner.start()
         return board
 
     def new_powerboard(self, name=None):
@@ -158,12 +158,17 @@ class MockGameState(RobotDGameState):
 
 
 def main():
-    mock = MockRobotD(root_dir="/tmp/")
+    mock = MockRobotD(root_dir='/tmp/robotd')
+
+    mock.new_powerboard()
+    time.sleep(0.2)
+
     mock.new_motorboard()
-    # Give it a tiny bit to init the boards
-    time.sleep(0.1)
+    time.sleep(0.2)
+
     from robot.robot import Robot
-    robot = Robot(robotd_path="/tmp/robotd")
+    robot = Robot(robotd_path='/tmp/robotd')
+    robot.power_board.power_off()
     m0 = robot.motor_boards[0].m0
     m0.voltage = 1
 

@@ -6,16 +6,15 @@ put this as an .autorun file in the root of the USB stick,
 along with a file named zone-<X> where <X> is the id of the zone (0 to 3) to use.
 (The file can be blank and should have no extension)
 """
-import socket
 import json
-
+import socket
 import time
 
 from enum import Enum
 from threading import Event
 
 
-sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
 
 class State(Enum):
@@ -34,7 +33,7 @@ def poll(robot_root_path, zone_id, stop_event: Event = Event()):
                 state = State.MESSAGE
 
             if state is State.MESSAGE:
-                sock.send(message)
+                sock.sendall(message)
                 resp = sock.recv(2048)
                 resp = json.loads(resp.decode('utf-8'))
                 if 'zone' in resp and resp['zone'] == zone_id:
