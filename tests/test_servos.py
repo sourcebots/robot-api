@@ -29,6 +29,7 @@ class ServoBoardTest(unittest.TestCase):
         self.assertTrue('ABC' in boards)
         self.assertTrue('DEF' in boards)
 
+
     def test_remove_servoboard_recovery(self):
         mock_servo = self.mock.new_servoboard('ABC')
         # Give it a tiny bit to init the boards
@@ -75,7 +76,7 @@ class ServoBoardTest(unittest.TestCase):
         self.robot.servo_boards[0].servos[servo].position = value
         got_value = board.message_queue.get()
         # Test the motor board got what it expected
-        self.assertEqual(got_value, {str(servo): expect})
+        self.assertEqual(got_value, {'servos': {str(servo): expect}})
         # Test the value can be read
         self.assertEqual(self.robot.servo_boards[0].servos[servo].position, value)
 

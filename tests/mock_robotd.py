@@ -40,7 +40,7 @@ class MockRobotD:
     def new_servoboard(self, name=None):
         if not name:
             name = "MOCK{}".format(len(self.runners))
-        return self.new_board(MockServoBoard, name)
+        return self.new_board(MockServoAssembly, name)
 
     def new_camera(self, name=None, camera=None):
         if not name:
@@ -92,7 +92,7 @@ class MockMotorBoard(Board):
         self.message_queue.put(cmd)
 
 
-class MockServoBoard(Board):
+class MockServoAssembly(Board):
     """
     Mock class for simulating a servo board
     """
@@ -101,7 +101,10 @@ class MockServoBoard(Board):
     def __init__(self, name, node):
         super().__init__(node)
         self._name = name
-        self._status = {str(x): 0 for x in range(16)}
+        self._status = {
+            'servos': {x: None for x in range(16)},
+            'pins': {x: 'input' for x in range(2, 13)},
+        }
         self.message_queue = Queue()
 
     @classmethod
@@ -113,8 +116,8 @@ class MockServoBoard(Board):
         return self._status
 
     def command(self, cmd):
-        self._status.update(cmd)
         print("{} Command: {}".format(self._name, cmd))
+        self._status.update(cmd)
         self.message_queue.put(cmd)
 
 
