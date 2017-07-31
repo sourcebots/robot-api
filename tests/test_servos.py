@@ -3,7 +3,6 @@ import unittest
 import time
 
 from robot.robot import Robot
-from robot import COAST, BRAKE
 from tests.mock_robotd import MockRobotD
 
 
@@ -28,7 +27,6 @@ class ServoBoardTest(unittest.TestCase):
         self.assertTrue(1 in boards)
         self.assertTrue('ABC' in boards)
         self.assertTrue('DEF' in boards)
-
 
     def test_remove_servoboard_recovery(self):
         mock_servo = self.mock.new_servoboard('ABC')

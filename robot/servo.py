@@ -44,7 +44,7 @@ class Gpio:
 
     @property
     def mode(self):
-        return PinMode[self._pin_mode_get()]
+        return PinMode(self._pin_mode_get())
 
     @mode.setter
     def mode(self, mode: PinMode):
@@ -55,7 +55,7 @@ class Gpio:
         if mode not in [PinMode.INPUT, PinMode.INPUT_PULLUP, PinMode.OUTPUT_HIGH, PinMode.OUTPUT_LOW]:
             raise ValueError("Mode should be one of PinMode.INPUT, PinMode.INPUT_PULLUP, PinMode.OUTPUT_HIGH, "
                              "or PinMode.OUTPUT_LOW")
-        self._pin_mode_set(mode.value)
+        self._pin_mode_set(mode)
 
     def read(self):
         if self._pin_mode_get() not in [PinMode.INPUT, PinMode.INPUT_PULLUP]:
@@ -115,7 +115,7 @@ class ServoBoard(Board):
         return values[str(servo)]
 
     # GPIO code
-
+    @property
     def gpios(self):
         return self._gpios
 
@@ -125,7 +125,7 @@ class ServoBoard(Board):
         # example data value:
         # {'pin-values':{2:'high'}}
         values = data['pin-values']
-        return PinValue[values[pin]]
+        return PinValue(values[str(pin)])
 
     def _get_status(self):
         status = self.send_and_receive({})
@@ -136,7 +136,7 @@ class ServoBoard(Board):
         # example data value:
         # {'pins':{2:'pullup'}}
         values = data['pins']
-        return PinMode[values[pin]]
+        return PinMode(values[str(pin)])
 
     def _set_pin_mode(self, pin, value: PinMode):
-        self._send_recv_data({'pins': {pin, value.value}})
+        self._send_recv_data({'pins': {pin: value.value}})
