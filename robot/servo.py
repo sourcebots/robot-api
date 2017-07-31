@@ -34,6 +34,7 @@ class ServoBoard(Board):
         """
         List of `Servo` objects for the servo board
         """
+
         return self._servos
 
     @property
@@ -41,6 +42,7 @@ class ServoBoard(Board):
         """
         Serial number for the board
         """
+
         return self._serial
 
     def _get_status(self, port):
@@ -54,5 +56,5 @@ class ServoBoard(Board):
         :param position: position to set the servo to
         """
         if position > 1 or position < -1:
-            raise ValueError("Value should be between -1 and 1")
-        self.send_and_receive({port: position})
+            raise ValueError('Value should be between -1 and 1')
+        self.send_and_receive({'servos': {port: position}})
