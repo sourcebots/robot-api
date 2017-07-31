@@ -140,3 +140,12 @@ class ServoBoard(Board):
 
     def _set_pin_mode(self, pin, value: PinMode):
         self.send_and_receive({'pins': {pin: value.value}})
+
+    @property
+    def analogue(self):
+        command = {'read-analogue': True}
+        return self.send_and_receive(command)['analogue-values']
+
+    def ultrasound(self, trigger_pin, echo_pin):
+        command = {'read-ultrasound': [trigger_pin, echo_pin]}
+        return self.send_and_receive(command)['ultrasound']
