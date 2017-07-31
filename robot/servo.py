@@ -107,10 +107,10 @@ class ServoBoard(Board):
         return self._servos
 
     def _set_servo_pos(self, servo, pos):
-        self._send_recv_data({'servos': {servo: pos}})
+        self.send_and_receive({'servos': {servo: pos}})
 
     def _get_servo_pos(self, servo):
-        data = self._send_recv_data({})
+        data = self.send_and_receive({})
         values = data['servos']
         return values[str(servo)]
 
@@ -121,7 +121,7 @@ class ServoBoard(Board):
 
     def _read_pin(self, pin):
         # request a check for that pin by trying to set it to None
-        data = self._send_recv_data({'pins': {pin, None}})
+        data = self.send_and_receive({'pins': {pin, None}})
         # example data value:
         # {'pin-values':{2:'high'}}
         values = data['pin-values']
@@ -132,11 +132,11 @@ class ServoBoard(Board):
         return status['servos'][str(port)]
 
     def _get_pin_mode(self, pin):
-        data = self._send_recv_data({})
+        data = self.send_and_receive({})
         # example data value:
         # {'pins':{2:'pullup'}}
         values = data['pins']
         return PinMode(values[str(pin)])
 
     def _set_pin_mode(self, pin, value: PinMode):
-        self._send_recv_data({'pins': {pin: value.value}})
+        self.send_and_receive({'pins': {pin: value.value}})
