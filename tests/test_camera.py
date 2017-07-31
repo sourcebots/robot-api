@@ -44,7 +44,7 @@ class CameraTest(unittest.TestCase):
         self.assertEqual(tokens, [])
 
     def test_can_see_something(self):
-        self.camera = self.mock.new_camera(camera=FileCamera(self.image_root + '/tagsampler.png', 'c720'))
+        self.camera = self.mock.new_camera(camera=FileCamera(self.image_root + '/tagsampler.png', 'c270'))
         time.sleep(0.2)
         camera = self.robot.cameras[0]
         tokens = camera.see()
@@ -56,7 +56,7 @@ class CameraTest(unittest.TestCase):
         # Change the marker sizes value in both robotd and robot-api
         written_sizes = {0: (0.9, 0.9), 1: (0.9, 0.9), 24: (0.2, 0.2), 25: (0.2, 0.2)}
         MARKER_SIZES_ROBOTD.update(written_sizes)
-        self.camera = self.mock.new_camera(camera=FileCamera(self.image_root + '/tagsampler.png', 'c720'))
+        self.camera = self.mock.new_camera(camera=FileCamera(self.image_root + '/tagsampler.png', 'c270'))
         time.sleep(0.2)
         camera = self.robot.cameras[0]
         tokens = camera.see()
