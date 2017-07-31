@@ -31,6 +31,9 @@ class PowerBoard(Board):
         """
         self.send_and_receive({'power': False})
 
+    def set_start_led(self, value):
+        self.send_and_receive({'start-led': bool(value)})
+
     @property
     def start_button_pressed(self):
         """

@@ -36,8 +36,10 @@ class Robot:
         self.power_board.power_on()
 
         print('Waiting for start button.')
+        self.power_board.set_start_led(True)
         while not self.power_board.start_button_pressed:
             time.sleep(0.05)
+        self.power_board.set_start_led(False)
         print('Start button pressed!')
 
     def _update_boards(self, known_boards, board_type, directory_name):
