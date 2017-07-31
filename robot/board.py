@@ -126,7 +126,7 @@ class Board:
         line = self.data.split(b'\n', 1)[0]
         self.data = self.data[len(line) + 1:]
 
-        return json.loads(line)
+        return json.loads(line.decode('utf-8'))
 
     def send_and_receive(self, message, should_retry=True):
         self.send(message, should_retry)
