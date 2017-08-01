@@ -116,6 +116,7 @@ class Board:
         data = (json.dumps(message) + '\n').encode('utf-8')
 
         def sendall():
+            print('Sent:', data.strip())
             self.socket.sendall(data)
 
         if should_retry:
@@ -123,21 +124,27 @@ class Board:
         else:
             return sendall()
 
+    def _recv_from_socket(self, size):
+        data = self.socket.recv(size)
+        if data == b'':
+            raise BrokenPipeError()
+        return data
+
     def receive(self, should_retry=True):
         while b'\n' not in self.data:
             if should_retry:
                 message = self._socket_with_single_retry(
-                    lambda: self.socket.recv(4096)
+                    lambda: self._recv_from_socket(4096)
                 )
             else:
-                message = self.socket.recv(4096)
-
-            if message == b'':
-                return {}
+                message = self._recv_from_socket(4096)
 
             self.data += message
+
         line = self.data.split(b'\n', 1)[0]
         self.data = self.data[len(line) + 1:]
+
+        print('Received:', line.strip())
 
         return json.loads(line.decode('utf-8'))
 

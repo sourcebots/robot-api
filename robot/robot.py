@@ -33,6 +33,7 @@ class Robot:
         if not power_boards:
             raise RuntimeError('Cannot find Power Board!')
 
+        print('Turning on power board.')
         self.power_board.power_on()
 
         print('Waiting for start button.')
