@@ -1,5 +1,4 @@
 from collections.abc import MutableSequence
-import json
 from pathlib import Path
 import threading
 
