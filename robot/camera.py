@@ -73,7 +73,7 @@ class Camera(Board):
         :return: #ResultList object (that imitates a list) of markers
         """
         markers = []
-        for token in data["tokens"]:
+        for token in data["markers"]:
             markers.append(Marker(token))
         # Sort by distance
         return ResultList(sorted(markers, key=lambda x: x.distance_metres))
