@@ -96,7 +96,7 @@ class Board:
 
             try:
                 self._connect(self.socket_path)
-            except ConnectionRefusedError:
+            except (ConnectionRefusedError, FileNotFoundError):
                 continue
 
             try:
