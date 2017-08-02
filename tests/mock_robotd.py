@@ -131,6 +131,7 @@ class MockPowerBoard(Board):
         super().__init__(node)
         self._name = name
         self.message_queue = Queue()
+        self._status = {'start-button': True}
 
     @classmethod
     def name(cls, node):
@@ -139,10 +140,11 @@ class MockPowerBoard(Board):
 
     def command(self, cmd):
         print("{} Command: {}".format(self._name, cmd))
+        self._status.update(cmd)
         self.message_queue.put(cmd)
 
     def status(self):
-        return {'start-button': True}
+        return self._status
 
 
 class MockCamera(RobotDCamera):
