@@ -58,7 +58,12 @@ class Robot:
         # Add all boards that weren't previously there
         for board in new_paths - known_paths:
             print('New board found:', board)
-            boards.append(board_type(board))
+
+            try:
+                new_board = board_type(board)
+                boards.append(new_board)
+            except (FileNotFoundError, ConnectionRefusedError) as e:
+                print("Could not connect to the board.", e)
 
         return sorted(boards, key=lambda b: b.serial)
 
