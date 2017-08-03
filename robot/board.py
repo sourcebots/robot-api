@@ -32,7 +32,7 @@ class BoardList(collections.MutableMapping):
 
 class Board:
 
-    SEND_TIMEOUT_SECS = 5
+    SEND_TIMEOUT_SECS = 6
     RECV_BUFFER_BYTES = 2048
 
     def __init__(self, socket_path):
