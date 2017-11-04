@@ -1,6 +1,5 @@
 from enum import Enum
 import json
-from pathlib import Path
 
 from robot.board import Board
 
@@ -14,17 +13,6 @@ class GameState(Board):
     """
     Object representing the game state
     """
-
-    def __init__(self, socket_path):
-        super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
-
-    @property
-    def serial(self):
-        """
-        name of the socket
-        """
-        return self._serial
 
     @property
     def zone(self):

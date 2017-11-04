@@ -1,5 +1,4 @@
 from collections.abc import MutableSequence
-from pathlib import Path
 import threading
 
 from robot.board import Board
@@ -17,7 +16,6 @@ class Camera(Board):
         self._latest = None
         self._got_image = threading.Event()
         super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
         self._stop = threading.Event()
         self._latest_lock = threading.Lock()
         self._start_listening()
@@ -77,13 +75,6 @@ class Camera(Board):
             markers.append(Marker(token))
         # Sort by distance
         return ResultList(sorted(markers, key=lambda x: x.distance_metres))
-
-    @property
-    def serial(self):
-        """
-        Serial number for the board
-        """
-        return self._serial
 
     def see(self):
         """

@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 
 from enum import Enum
 
@@ -67,7 +66,6 @@ class ServoBoard(Board):
 
     def __init__(self, socket_path):
         super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
 
         servo_ids = range(0, 16)  # servos with a port 0-15
         gpio_pins = range(2, 13)  # gpio pins 2-12
@@ -90,16 +88,6 @@ class ServoBoard(Board):
             }
 
     @property
-    def serial(self):
-        """
-        Serial number for the board
-        """
-
-        return self._serial
-
-    # Servo code
-
-    @property
     def servos(self):
         """
         List of `Servo` objects for the servo board
@@ -114,7 +102,6 @@ class ServoBoard(Board):
         values = data['servos']
         return values[str(servo)]
 
-    # GPIO code
     @property
     def gpios(self):
         return self._gpios

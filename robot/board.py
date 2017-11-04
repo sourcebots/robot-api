@@ -4,6 +4,7 @@ import socket
 
 import collections
 from collections import OrderedDict
+from pathlib import Path
 
 
 class BoardList(collections.MutableMapping):
@@ -41,6 +42,14 @@ class Board:
         self.data = b''
 
         self._connect(socket_path)
+        self._serial = Path(socket_path).stem
+
+    @property
+    def serial(self):
+        """
+        Serial number for the board
+        """
+        return self._serial
 
     def _greeting_response(self, data):
         """

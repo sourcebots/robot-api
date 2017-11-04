@@ -1,6 +1,4 @@
 import json
-from pathlib import Path
-
 from robot.board import Board
 
 
@@ -27,7 +25,6 @@ class MotorBoard(Board):
 
     def __init__(self, socket_path):
         super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
 
         m0_id = "m0"
         m1_id = "m1"
@@ -86,11 +83,6 @@ class MotorBoard(Board):
         :return: `Motor` object for motor connected to the `m1` slot
         """
         return self._m1
-
-    @property
-    def serial(self):
-        """Serial number for the board"""
-        return self._serial
 
     def _get_status(self, motor_id):
         return self._string_to_voltage(
