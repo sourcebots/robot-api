@@ -42,12 +42,9 @@ class MockRobotD:
             name = "MOCK{}".format(len(self.runners))
         return self.new_board(MockServoAssembly, name)
 
-    def new_camera(self, name=None, camera=None):
+    def new_camera(self,camera, name=None):
         if not name:
             name = "MOCK{}".format(len(self.runners))
-        if not camera:
-            root_dir = os.path.dirname(os.path.realpath(__file__))
-            camera = FileCamera(root_dir+'/empty.png', 'c270')
         return self.new_board(MockCamera, name, camera)
 
     def new_gamestate(self, name="serial"):

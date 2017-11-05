@@ -8,11 +8,19 @@ from robot.robot import Robot
 from tests.mock_robotd import MockRobotD
 from sb_vision.camera import FileCamera
 
+IMAGE_ROOT = os.path.dirname(os.path.realpath(__file__)) + "/test_data/"
+IMAGE_WITH_NO_MARKER = IMAGE_ROOT + 'photo_empty.jpg'
+IMAGE_WITH_MARKER = IMAGE_ROOT + 'photo_1.jpg'
+
+CAMERA_SEES_NO_MARKER = FileCamera(IMAGE_WITH_NO_MARKER, 'c270')
+CAMERA_SEES_MARKER = FileCamera(IMAGE_WITH_MARKER, 'c270')
+
 
 class CameraTest(unittest.TestCase):
     """
     Tests pertaining to the camera object
     """
+
     # TODO add test for Serial number
     def setUp(self):
         mock = MockRobotD(root_dir="/tmp/robotd")
@@ -21,11 +29,10 @@ class CameraTest(unittest.TestCase):
         time.sleep(0.2)
         self.mock = mock
         self.robot = Robot(robotd_path="/tmp/robotd")
-        self.image_root = os.path.dirname(os.path.realpath(__file__))
 
     def test_insert_cameras(self):
-        self.mock.new_camera('ABC')
-        self.mock.new_camera('DEF')
+        self.mock.new_camera(CAMERA_SEES_NO_MARKER, 'ABC')
+        self.mock.new_camera(CAMERA_SEES_NO_MARKER, 'DEF')
         # Give it a tiny bit to init the boards
         time.sleep(0.4)
 
@@ -38,35 +45,22 @@ class CameraTest(unittest.TestCase):
         self.assertTrue('DEF' in boards)
 
     def test_cant_see_anything(self):
-        self.camera = self.mock.new_camera()
+        self.camera = self.mock.new_camera(CAMERA_SEES_NO_MARKER)
         time.sleep(0.2)
         tokens = self.robot.cameras[0].see()
         self.assertEqual(tokens, [])
 
     def test_can_see_something(self):
-        self.camera = self.mock.new_camera(camera=FileCamera(self.image_root + '/tagsampler.png', 'c270'))
+        self.camera = self.mock.new_camera(CAMERA_SEES_MARKER)
         time.sleep(0.2)
         camera = self.robot.cameras[0]
         tokens = camera.see()
 
         # Check the correct markers are spotted
-        self.assertEqual({x.id for x in tokens}, {0, 1, 24, 25})
-
-    def test_marker_sizes(self):
-        # Change the marker sizes value in both robotd and robot-api
-        written_sizes = {0: (0.9, 0.9), 1: (0.9, 0.9), 24: (0.2, 0.2), 25: (0.2, 0.2)}
-        MARKER_SIZES_ROBOTD.update(written_sizes)
-        self.camera = self.mock.new_camera(camera=FileCamera(self.image_root + '/tagsampler.png', 'c270'))
-        time.sleep(0.2)
-        camera = self.robot.cameras[0]
-        tokens = camera.see()
-
-        # Check the correct sizes are read
-        read_sizes = {x.id:x.size for x in tokens}
-        self.assertEqual(written_sizes, read_sizes)
+        self.assertEqual({x.id for x in tokens}, {9})
 
     def test_unique_error(self):
-        self.camera = self.mock.new_camera()
+        self.camera = self.mock.new_camera(CAMERA_SEES_NO_MARKER)
         time.sleep(0.2)
         tokens = self.robot.cameras[0].see()
         with self.assertRaisesRegexp(IndexError, "Trying to index an empty list"):

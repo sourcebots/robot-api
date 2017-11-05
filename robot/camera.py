@@ -31,9 +31,6 @@ class Camera(Board):
         thread.start()
         self.sock_thread = thread
 
-    def _clean_up(self):
-        pass
-
     def _stop_poll(self):
         """
         Stop polling the camera
