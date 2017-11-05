@@ -55,8 +55,6 @@ class Camera(Board):
     def _cam_listener_worker(self):
         """
         Worker thread for listening to the camera socket
-
-        Works until `self._running` is set.
         """
         while self._alive:
             data = self.receive()
