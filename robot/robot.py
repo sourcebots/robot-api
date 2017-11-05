@@ -180,7 +180,7 @@ class Robot:
             camera._stop_poll()
         for board_type in self.all_known_boards:
             for board in board_type:
-                board._clean_up()
+                del board
 
     def __del__(self):
         self.close()
