@@ -31,9 +31,6 @@ class Camera(Board):
         thread.start()
         self.sock_thread = thread
 
-    def _clean_up(self):
-        pass
-
     def _stop_poll(self):
         """
         Stop polling the camera
@@ -74,7 +71,7 @@ class Camera(Board):
         for token in data["markers"]:
             markers.append(Marker(token))
         # Sort by distance
-        return ResultList(sorted(markers, key=lambda x: x.distance_metres))
+        return ResultList(markers)
 
     @property
     def serial(self):

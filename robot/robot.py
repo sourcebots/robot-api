@@ -25,6 +25,13 @@ class Robot:
         self.known_servo_boards = []
         self.known_cameras = []
         self.known_gamestates = []
+        self.all_known_boards = [
+            self.known_power_boards,
+            self.known_motor_boards,
+            self.known_servo_boards,
+            self.known_cameras,
+            self.known_gamestates,
+        ]
 
         self._wait_for_power_board()
 
@@ -172,7 +179,14 @@ class Robot:
         """
         return self._game.mode
 
-    def __del__(self):
+    def close(self):
         # stop the polling threads
         for camera in self.known_cameras:
             camera._stop_poll()
+        for board_type in self.all_known_boards:
+            for board in board_type:
+                del board
+
+    def __del__(self):
+        self.close()
+
