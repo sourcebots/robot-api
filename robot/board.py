@@ -37,19 +37,18 @@ class Board:
     RECV_BUFFER_BYTES = 2048
 
     def __init__(self, socket_path):
-        self.socket_path = socket_path
+        self.socket_path = Path(socket_path)
         self.socket = None
         self.data = b''
 
         self._connect(socket_path)
-        self._serial = Path(socket_path).stem
 
     @property
     def serial(self):
         """
         Serial number for the board
         """
-        return self._serial
+        return self.socket_path.stem
 
     def _greeting_response(self, data):
         """
@@ -67,7 +66,7 @@ class Board:
         self.socket.settimeout(self.SEND_TIMEOUT_SECS)
 
         try:
-            self.socket.connect(str(self.socket_path))
+            self.socket.connect(str(socket_path))
         except ConnectionRefusedError as e:
             print('Error connecting to:', socket_path)
             raise e
