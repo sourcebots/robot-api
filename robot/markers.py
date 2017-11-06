@@ -37,7 +37,6 @@ class PolarCoord:
     def __init__(self, rot, dist_m):
         self._rot_x_rad = rot[0]
         self._rot_y_rad = rot[1]
-        self._rot_z_rad = rot[2]
         self._distance_metres = dist_m
 
     # TODO add tests for all these
@@ -57,13 +56,6 @@ class PolarCoord:
         """
         return self._rot_y_rad
 
-    @property
-    def rot_z_rad(self):
-        """
-        Rotation of marker relative to camera in the #TODO axis
-        (axis is in the location of the camera)
-        """
-        return self._rot_z_rad
 
     @property
     def rot_x_deg(self):
@@ -82,15 +74,6 @@ class PolarCoord:
         """
         # TODO describe which axis this is
         return math.degrees(self._rot_y_rad)
-
-    @property
-    def rot_z_deg(self):
-        """
-        Rotation of marker relative to camera in the #TODO axis.
-        (axis is in the location of the camera)
-        """
-        # TODO describe which axis this is
-        return math.degrees(self._rot_z_rad)
 
     @property
     def distance_metres(self):
@@ -141,11 +124,6 @@ class Marker:
         """Pixel co-ordinates of the centre of the marker"""
         return tuple(self._pixel_centre)
 
-    @property
-    def distance_metres(self):
-        """Distance of the marker from the camera in metres"""
-        return self.polar.distance_metres
-
     # Helper functions, Might need to vary these per-game
 
     def is_wall_marker(self):
@@ -155,14 +133,6 @@ class Marker:
     def is_token_marker(self):
         """ If the marker is a token marker """
         return self.id in TOKEN
-
-    @property
-    def polar(self):
-        """
-        Position of the marker in the polar co-ordinates system, Axis is at the
-        camera's position
-        """
-        return PolarCoord(self._polar[0], self._polar[1])
 
     @property
     def cartesian(self):

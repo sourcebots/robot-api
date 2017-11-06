@@ -29,9 +29,6 @@ class Camera(Board):
         thread.start()
         self.sock_thread = thread
 
-    def _clean_up(self):
-        pass
-
     def _stop_poll(self):
         """
         Stop polling the camera
@@ -53,8 +50,6 @@ class Camera(Board):
     def _cam_listener_worker(self):
         """
         Worker thread for listening to the camera socket
-
-        Works until `self._running` is set.
         """
         while self._alive:
             data = self.receive()
@@ -74,7 +69,7 @@ class Camera(Board):
         for token in data["markers"]:
             markers.append(Marker(token))
         # Sort by distance
-        return ResultList(sorted(markers, key=lambda x: x.distance_metres))
+        return ResultList(markers)
 
     def see(self):
         """
