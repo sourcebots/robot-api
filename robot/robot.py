@@ -41,6 +41,8 @@ class Robot:
 
         self._display_boards()
         self._wait_for_power_board()
+        self.wait_start()
+        self.power_board.power_on()
 
     def _display_boards(self):
         print("Found the following hardware devices:")
@@ -48,20 +50,22 @@ class Robot:
             for board in board_list:
                 print(str(board))  # Force string representation
 
+    def wait_start(self):
+        print('Waiting for start button.')
+        start_time = time.time()
+        led_value = True
+        while not self.power_board.start_button_pressed:
+            if time.time() - start_time >= 0.1:
+                led_value = not led_value
+                start_time = time.time()
+                self.power_board.set_start_led(led_value)
+        self.power_board.set_start_led(False)
+        print('Starting user code')
+
     def _wait_for_power_board(self):
         power_boards = self.power_boards
         if not power_boards:
             raise RuntimeError('Cannot find Power Board!')
-
-        print('Turning on power board.')
-        self.power_board.power_on()
-
-        print('Waiting for start button.')
-        self.power_board.set_start_led(True)
-        while not self.power_board.start_button_pressed:
-            time.sleep(0.05)
-        self.power_board.set_start_led(False)
-        print('Start button pressed!')
 
     def _update_boards(self, known_boards, board_type, directory_name):
         """
