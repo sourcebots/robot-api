@@ -25,6 +25,7 @@ class Robot:
         self.known_servo_boards = []
         self.known_cameras = []
         self.known_gamestates = []
+        print("Initializing Hardware...")
         self.all_known_boards = [
             self.known_power_boards,
             self.known_motor_boards,
@@ -43,6 +44,7 @@ class Robot:
         self._wait_for_power_board()
         self.wait_start()
         self.power_board.power_on()
+        print("Starting user code.")
 
     def _display_boards(self):
         print("Found the following hardware devices:")
@@ -60,7 +62,6 @@ class Robot:
                 start_time = time.time()
                 self.power_board.set_start_led(led_value)
         self.power_board.set_start_led(False)
-        print('Starting user code')
 
     def _wait_for_power_board(self):
         power_boards = self.power_boards
