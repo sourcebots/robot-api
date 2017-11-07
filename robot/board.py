@@ -157,3 +157,9 @@ class Board:
 
     def _clean_up(self):
         self.socket.detach()
+
+    def __str__(self):
+        return "{} - {}".format(
+            self.__name__,
+            self.serial
+        )

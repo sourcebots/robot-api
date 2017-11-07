@@ -32,8 +32,21 @@ class Robot:
             self.known_cameras,
             self.known_gamestates,
         ]
+        self.physical_boards = [
+            self.known_power_boards,
+            self.known_motor_boards,
+            self.known_servo_boards,
+            self.known_cameras,
+        ]
 
+        self._display_boards()
         self._wait_for_power_board()
+
+    def _display_boards(self):
+        print("Found the following hardware devices:")
+        for board_list in self.physical_boards:
+            for board in board_list:
+                print(str(board))  # Force string representation
 
     def _wait_for_power_board(self):
         power_boards = self.power_boards
