@@ -1,0 +1,18 @@
+Source: robot-api
+Section: electronics
+Priority: optional
+Maintainer: Andrew Barrett-Sprot <abarrettsprot@gmail.com>
+Build-Depends: debhelper (>= 9),
+               dh-python,
+               python3,
+               python3-setuptools,
+Standards-Version: 3.9.6
+
+Package: robot-api
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         python3,
+         ${python3:Depends},
+Description: Robot control API
+ Provides a control system for interfacing with robotd.
