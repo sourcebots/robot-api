@@ -2,6 +2,35 @@
 
 This is the userspace API for the robot, which is what students will interface with to program their robots.
 
+# Installation instructions
+
+## Building the debian package
+
+``` bash
+# Install build tools:
+sudo apt install build-essential devscripts debhelper dh-systemd equivs
+
+# cd to the root of this project
+cd path/to/robotd
+
+# Install dependencies
+sudo mk-build-deps -ir
+
+# Build the package:
+debuild -uc -us
+
+```
+
+## Instaling the debian package
+
+After building, the .deb file should appear in the parent directory, just run
+
+``` bash
+sudo dpkg -i
+```
+
+to install the package
+
 # How to use
 
 Import Robot and initialise it:
