@@ -21,7 +21,7 @@ debuild -uc -us
 
 ```
 
-## Instaling the debian package
+## Installing the debian package
 
 After building, the .deb file should appear in the parent directory, just run
 
