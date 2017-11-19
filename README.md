@@ -8,7 +8,7 @@ This is the userspace API for the robot, which is what students will interface w
 
 ``` bash
 # Install build tools:
-sudo apt install build-essential devscripts debhelper dh-systemd equivs
+sudo apt install build-essential devscripts debhelper equivs
 
 # cd to the root of this project
 cd path/to/robotd
@@ -26,7 +26,10 @@ debuild -uc -us
 After building, the .deb file should appear in the parent directory, just run
 
 ``` bash
-sudo dpkg -i
+# Go up a directory (there should be a .deb file here)
+cd ..
+# Install the package
+sudo dpkg -i robot-api_0_all.deb
 ```
 
 to install the package
