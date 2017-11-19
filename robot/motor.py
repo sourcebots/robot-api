@@ -55,7 +55,7 @@ class MotorBoard(Board):
         elif -1 <= voltage <= 1:
             return voltage
         else:
-            raise ValueError('Incorrect voltage value, valid values: between -1 and 1, "free", or "brake"')
+            raise ValueError('Incorrect voltage value, valid values: between -1 and 1, "coast", or "brake"')
 
     @staticmethod
     def _voltage_to_string(voltage):
