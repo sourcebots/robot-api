@@ -40,13 +40,13 @@ class MotorBoardTest(unittest.TestCase):
         board = boards[0]
         self.mock.remove_board(mock_motor)
         with self.assertRaises(ConnectionError):
-            board.m0.power = 1
+            board.m0 = 1
 
         # Re-add it
         self.mock.new_motorboard('ABC')
         time.sleep(0.2)
 
-        board.m0.power = 1
+        board.m0 = 1
 
     def test_two_clients(self):
         """ Checks you can interface a motor board multiple times"""
@@ -56,10 +56,10 @@ class MotorBoardTest(unittest.TestCase):
         robot2 = Robot(robotd_path="/tmp/robotd")
         # Give it a tiny bit to init the boards
         time.sleep(0.2)
-        self.robot.motor_boards[0].m0.power = 1
-        self.robot.motor_boards[0].m0.power = -1
-        robot2.motor_boards[0].m0.power = 1
-        robot2.motor_boards[0].m0.power = -1
+        self.robot.motor_boards[0].m0 = 1
+        self.robot.motor_boards[0].m0 = -1
+        robot2.motor_boards[0].m0 = 1
+        robot2.motor_boards[0].m0 = -1
 
     def test_multiple_indexes(self):
         """ Checks you can index motor boards plenty of times"""
@@ -92,9 +92,9 @@ class MotorBoardTest(unittest.TestCase):
 
     def _try_power_expect(self, motor, board, value, expect):
         if motor == 'm0':
-            self.robot.motor_boards[0].m0.power = value
+            self.robot.motor_boards[0].m0 = value
         elif motor == 'm1':
-            self.robot.motor_boards[0].m1.power = value
+            self.robot.motor_boards[0].m1 = value
         else:
             raise ValueError()
         got_value = board.message_queue.get()
@@ -102,9 +102,9 @@ class MotorBoardTest(unittest.TestCase):
         self.assertEqual(got_value, {motor: expect})
         # Test the value can be read
         if motor == 'm0':
-            self.assertEqual(self.robot.motor_boards[0].m0.power, value)
+            self.assertEqual(self.robot.motor_boards[0].m0, value)
         elif motor == 'm1':
-            self.assertEqual(self.robot.motor_boards[0].m1.power, value)
+            self.assertEqual(self.robot.motor_boards[0].m1, value)
         else:
             raise ValueError()
 
