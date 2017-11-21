@@ -62,5 +62,32 @@ class PowerBoardTest(unittest.TestCase):
         # check the new board has gone
         self.assertTrue('ABC' not in self.robot.power_boards)
 
+    def test_buzz_args(self):
+        with self.assertRaises(ValueError):
+            self.robot.power_boards[0].buzz(1, note='c', frequency=100)
+
+        with self.assertRaises(ValueError):
+            self.robot.power_boards[0].buzz(1)
+
+        with self.assertRaises(KeyError)
+            self.robot.power_boards[0].buzz(1, note='J')
+
+    def test_buzz_message(self):
+        self.robot.power_boards[0].buzz(1, note='c')
+        msg = self.power_board.message_queue.get()
+        self.assertIn('buzz', msg)
+        self.assertEqual(msg['buzz'], {
+            'frequency': 261,
+            'duration': 1000
+        })
+
+        self.robot.power_boards[0].buzz(4, frequency=200)
+        msg = self.power_board.message_queue.get()
+        self.assertIn('buzz', msg)
+        self.assertEqual(msg['buzz'], {
+            'frequency': 200,
+            'duration': 4000
+        })
+
     def tearDown(self):
         self.mock.stop()
