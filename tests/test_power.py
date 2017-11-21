@@ -69,7 +69,7 @@ class PowerBoardTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.robot.power_boards[0].buzz(1)
 
-        with self.assertRaises(KeyError)
+        with self.assertRaises(KeyError):
             self.robot.power_boards[0].buzz(1, note='J')
 
     def test_buzz_message(self):
