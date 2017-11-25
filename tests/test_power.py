@@ -72,6 +72,9 @@ class PowerBoardTest(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.robot.power_board.buzz(1, note='J')
 
+        with self.assertRaises(TypeError):
+            self.robot.power_board.buzz(1, 'c')
+
     def test_buzz_message(self):
         self.power_board.clear_queue()
         self.robot.power_board.buzz(1, note='c')

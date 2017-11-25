@@ -53,7 +53,7 @@ class PowerBoard(Board):
         status = self.send_and_receive({})
         return status["start-button"]
 
-    def buzz(self, duration, note=None, frequency=None):
+    def buzz(self, duration, *, note=None, frequency=None):
         if bool(note) == bool(frequency):
             raise ValueError("Please only provide note or frequency")
         if note is not None:
