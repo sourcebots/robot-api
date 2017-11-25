@@ -51,6 +51,9 @@ jobs:
       - run:
           name: run tests
           command: python3 -m unittest
+      - run:
+          name: type check
+          command: mypy robot/
 
       - store_artifacts:
           path: test-reports
