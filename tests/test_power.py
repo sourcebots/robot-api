@@ -73,6 +73,7 @@ class PowerBoardTest(unittest.TestCase):
             self.robot.power_board.buzz(1, note='J')
 
     def test_buzz_message(self):
+        self.power_board.clear_queue()
         self.robot.power_board.buzz(1, note='c')
         msg = self.power_board.message_queue.get()
         self.assertIn('buzz', msg)

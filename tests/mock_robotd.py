@@ -143,6 +143,10 @@ class MockPowerBoard(Board):
     def status(self):
         return self._status
 
+    def clear_queue(self):
+        while not self.message_queue.empty():
+            self.message_queue.get()
+
 
 class MockCamera(RobotDCamera):
     board_type_id = 'camera'
