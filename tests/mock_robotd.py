@@ -15,6 +15,10 @@ class MockBoardMixin:
         super().__init__(*args, **kwargs)
         self.message_queue = Queue()
 
+    def clear_queue(self):
+        while not self.message_queue.empty():
+            self.message_queue.get()
+
     @classmethod
     def name(cls, node):
         """Board name - actually fetched over serial."""
