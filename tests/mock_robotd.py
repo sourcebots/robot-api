@@ -86,7 +86,7 @@ class MockRobotD:
             runner.cleanup()
 
 
-class MockMotorBoard(Board, MockBoardMixin):
+class MockMotorBoard(MockBoardMixin, Board):
     """
     Mock class for simulating a motor board
     """
@@ -98,7 +98,7 @@ class MockMotorBoard(Board, MockBoardMixin):
         self._status = {'m0': robot.BRAKE, 'm1': robot.COAST}
 
 
-class MockServoAssembly(Board, MockBoardMixin):
+class MockServoAssembly(MockBoardMixin, Board):
     """
     Mock class for simulating a servo board
     """
@@ -114,7 +114,7 @@ class MockServoAssembly(Board, MockBoardMixin):
         self.message_queue = Queue()
 
 
-class MockPowerBoard(Board, MockBoardMixin):
+class MockPowerBoard(MockBoardMixin, Board):
     """
     Mock class for simulating a power board with a button
     """
