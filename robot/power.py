@@ -57,7 +57,7 @@ class PowerBoard(Board):
         if note is None and frequency is None:
             raise ValueError("Either note or frequency must be provided")
         if note is not None and frequency is not None:
-            raise TypeError("Only provide note or frequency")
+            raise ValueError("Only provide note or frequency")
         if note is not None:
             if note not in self.BUZZ_NOTES:
                 raise KeyError("{} is an invalid note".format(note))
