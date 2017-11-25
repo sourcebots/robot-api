@@ -64,16 +64,16 @@ class PowerBoardTest(unittest.TestCase):
 
     def test_buzz_args(self):
         with self.assertRaises(ValueError):
-            self.robot.power_boards[0].buzz(1, note='c', frequency=100)
+            self.robot.power_board.buzz(1, note='c', frequency=100)
 
         with self.assertRaises(ValueError):
-            self.robot.power_boards[0].buzz(1)
+            self.robot.power_board.buzz(1)
 
         with self.assertRaises(KeyError):
-            self.robot.power_boards[0].buzz(1, note='J')
+            self.robot.power_board.buzz(1, note='J')
 
     def test_buzz_message(self):
-        self.robot.power_boards[0].buzz(1, note='c')
+        self.robot.power_board.buzz(1, note='c')
         msg = self.power_board.message_queue.get()
         self.assertIn('buzz', msg)
         self.assertEqual(msg['buzz'], {
@@ -81,7 +81,7 @@ class PowerBoardTest(unittest.TestCase):
             'duration': 1000
         })
 
-        self.robot.power_boards[0].buzz(4, frequency=200)
+        self.robot.power_board.buzz(4, frequency=200)
         msg = self.power_board.message_queue.get()
         self.assertIn('buzz', msg)
         self.assertEqual(msg['buzz'], {
