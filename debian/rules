@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+
+export PYBUILD_NAME=robot-api
+export PYBUILD_RULES=3.4
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_install:
+	find debian/ -name __pycache__ -type d -delete
+	dh_install
