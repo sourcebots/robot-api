@@ -157,3 +157,7 @@ class Board:
 
     def _clean_up(self):
         self.socket.detach()
+
+    def __del__(self):
+        self._clean_up()
+
