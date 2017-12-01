@@ -6,90 +6,6 @@ from robot.board import Board
 from robot.markers import Marker
 
 
-class Camera(Board):
-    """
-    Object representing an Apriltag camera in robotd
-
-    Polls the robot daemon for new images
-    """
-
-    def __init__(self, socket_path):
-        self._latest = None
-        self._got_image = threading.Event()
-        super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
-        self._stop = threading.Event()
-        self._latest_lock = threading.Lock()
-        self._start_listening()
-
-    def _start_listening(self):
-        """
-        Start listening thread
-        """
-        thread = threading.Thread(target=self._cam_listener_worker)
-        self._alive = True
-        thread.start()
-        self.sock_thread = thread
-
-    def _stop_poll(self):
-        """
-        Stop polling the camera
-        """
-        self._alive = False
-        self.sock_thread.join()
-
-    @property
-    def _alive(self):
-        return not self._stop.is_set()
-
-    @_alive.setter
-    def _alive(self, value):
-        if value:
-            self._stop.clear()
-        else:
-            self._stop.set()
-
-    def _cam_listener_worker(self):
-        """
-        Worker thread for listening to the camera socket
-        """
-        while self._alive:
-            data = self.receive()
-            if data:
-                self._got_image.set()
-                with self._latest_lock:
-                    self._latest = data
-
-    @staticmethod
-    def _see_to_results(data):
-        """
-        Converts the string output that comes from the camera in robotd to a list of #Marker objects
-        :param data: json string data to convert
-        :return: #ResultList object (that imitates a list) of markers
-        """
-        markers = []
-        for token in data["markers"]:
-            markers.append(Marker(token))
-        # Sort by distance
-        return ResultList(markers)
-
-    @property
-    def serial(self):
-        """
-        Serial number for the board
-        """
-        return self._serial
-
-    def see(self):
-        """
-        Look for markers
-        :return: List of #Marker objects
-        """
-        self._got_image.wait()
-        with self._latest_lock:
-            return self._see_to_results(self._latest)
-
-
 class ResultList(MutableSequence):
     """
     This class pretends to be a list, except it returns
@@ -131,3 +47,87 @@ class ResultList(MutableSequence):
 
     def __iter__(self):
         return self.data.__iter__()
+
+
+class Camera(Board):
+    """
+    Object representing an Apriltag camera in robotd
+
+    Polls the robot daemon for new images
+    """
+
+    def __init__(self, socket_path):
+        self._latest = None
+        self._got_image = threading.Event()
+        super().__init__(socket_path)
+        self._serial = Path(socket_path).stem
+        self._stop = threading.Event()
+        self._latest_lock = threading.Lock()
+        self._start_listening()
+
+    def _start_listening(self):
+        """
+        Start listening thread
+        """
+        thread = threading.Thread(target=self._cam_listener_worker)
+        self._alive = True
+        thread.start()
+        self.sock_thread = thread
+
+    def _stop_poll(self):
+        """
+        Stop polling the camera
+        """
+        self._alive = False
+        self.sock_thread.join()
+
+    @property
+    def _alive(self) -> bool:
+        return not self._stop.is_set()
+
+    @_alive.setter
+    def _alive(self, value):
+        if value:
+            self._stop.clear()
+        else:
+            self._stop.set()
+
+    def _cam_listener_worker(self):
+        """
+        Worker thread for listening to the camera socket
+        """
+        while self._alive:
+            data = self.receive()
+            if data:
+                self._got_image.set()
+                with self._latest_lock:
+                    self._latest = data
+
+    @staticmethod
+    def _see_to_results(data) -> ResultList:
+        """
+        Converts the string output that comes from the camera in robotd to a list of #Marker objects
+        :param data: json string data to convert
+        :return: #ResultList object (that imitates a list) of markers
+        """
+        markers = []
+        for token in data["markers"]:
+            markers.append(Marker(token))
+        # Sort by distance
+        return ResultList(markers)
+
+    @property
+    def serial(self):
+        """
+        Serial number for the board
+        """
+        return self._serial
+
+    def see(self):
+        """
+        Look for markers
+        :return: List of #Marker objects
+        """
+        self._got_image.wait()
+        with self._latest_lock:
+            return self._see_to_results(self._latest)

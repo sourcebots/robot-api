@@ -66,7 +66,7 @@ class Board:
         greeting = self.receive()
         self._greeting_response(greeting)
 
-    def _get_lc_error(self):
+    def _get_lc_error(self) -> str:
         """
         :return: The text for a lost connection error
         """

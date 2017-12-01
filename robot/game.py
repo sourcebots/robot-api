@@ -1,7 +1,7 @@
 from enum import Enum
 import json
 from pathlib import Path
-
+from typing import Union
 from robot.board import Board
 
 
@@ -27,7 +27,7 @@ class GameState(Board):
         return self._serial
 
     @property
-    def zone(self):
+    def zone(self) -> int:
         """
         get the zone the robot starts in. This is changed by inserting a competition zone USB stick in it,
         the value defaults to 0 if there is no stick plugged in.
@@ -36,12 +36,10 @@ class GameState(Board):
         return self.send_and_receive({})['zone']
 
     @property
-    def mode(self):
+    def mode(self) -> GameMode:
         """
         Whether or not the robot is in competition mode
         :return: if the robot is in competition mode
         """
         value = self.send_and_receive({})['mode']
-        for enum in GameMode:
-            if value == enum.value:
-                return enum
+        return GameMode(value)

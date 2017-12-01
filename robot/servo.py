@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-
+from typing import Dict
 from enum import Enum
 
 from robot.board import Board
@@ -25,7 +25,7 @@ class Servo:
         self._get_pos = get_pos
 
     @property
-    def position(self):
+    def position(self) -> float:
         return self._get_pos()
 
     @position.setter
@@ -43,7 +43,7 @@ class Gpio:
         self._pin_mode_set = pin_mode_set
 
     @property
-    def mode(self):
+    def mode(self) -> PinMode:
         return PinMode(self._pin_mode_get())
 
     @mode.setter
@@ -57,7 +57,7 @@ class Gpio:
                              "or PinMode.OUTPUT_LOW")
         self._pin_mode_set(mode)
 
-    def read(self):
+    def read(self) -> PinValue:
         if self._pin_mode_get() not in [PinMode.INPUT, PinMode.INPUT_PULLUP]:
             raise Exception("Pin mode needs to be either PinMode.INPUT or PinMode.INPUT_PULLUP to read")
         return self._pin_read()
@@ -72,14 +72,14 @@ class ServoBoard(Board):
         servo_ids = range(0, 16)  # servos with a port 0-15
         gpio_pins = range(2, 13)  # gpio pins 2-12
 
-        self._servos = {}
+        self._servos: Dict[int, Servo] = {}
         for x in servo_ids:
             self._servos[x] = Servo(
                 x,
                 (lambda pos, x=x: self._set_servo_pos(x, pos)),
                 (lambda x=x: self._get_servo_pos(x)),
             )
-        self._gpios = {
+        self._gpios: Dict[int, Gpio] = {
             x: Gpio(
                 x,
                 (lambda x=x: self._read_pin(x)),
@@ -87,7 +87,7 @@ class ServoBoard(Board):
                 (lambda value, x=x: self._set_pin_mode(x, value))
             )
             for x in gpio_pins
-            }
+        }
 
     @property
     def serial(self):
@@ -100,26 +100,26 @@ class ServoBoard(Board):
     # Servo code
 
     @property
-    def servos(self):
+    def servos(self) -> Dict[int, Servo]:
         """
         List of `Servo` objects for the servo board
         """
         return self._servos
 
-    def _set_servo_pos(self, servo, pos):
+    def _set_servo_pos(self, servo: int, pos: float):
         self.send_and_receive({'servos': {servo: pos}})
 
-    def _get_servo_pos(self, servo):
+    def _get_servo_pos(self, servo: int) -> float:
         data = self.send_and_receive({})
         values = data['servos']
-        return values[str(servo)]
+        return float(values[str(servo)])
 
     # GPIO code
     @property
-    def gpios(self):
+    def gpios(self) -> Dict[int, Gpio]:
         return self._gpios
 
-    def _read_pin(self, pin):
+    def _read_pin(self, pin) -> PinValue:
         # request a check for that pin by trying to set it to None
         data = self.send_and_receive({'read-pins': [pin]})
         # example data value:
@@ -131,7 +131,7 @@ class ServoBoard(Board):
         status = self.send_and_receive({})
         return status['servos'][str(port)]
 
-    def _get_pin_mode(self, pin):
+    def _get_pin_mode(self, pin) -> PinMode:
         data = self.send_and_receive({})
         # example data value:
         # {'pins':{2:'pullup'}}
@@ -141,10 +141,10 @@ class ServoBoard(Board):
     def _set_pin_mode(self, pin, value: PinMode):
         self.send_and_receive({'pins': {pin: value.value}})
 
-    def read_analogue(self):
+    def read_analogue(self) -> dict:
         command = {'read-analogue': True}
         return self.send_and_receive(command)['analogue-values']
 
-    def read_ultrasound(self, trigger_pin, echo_pin):
+    def read_ultrasound(self, trigger_pin, echo_pin) -> float:
         command = {'read-ultrasound': [trigger_pin, echo_pin]}
-        return self.send_and_receive(command)['ultrasound']
+        return float(self.send_and_receive(command)['ultrasound'])

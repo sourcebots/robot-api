@@ -1,32 +1,10 @@
 import math
-
+from collections import namedtuple
 from robot.game_specific import WALL, TOKEN
+from typing import Tuple
 
 
-class CartCoord:
-    """
-    Represents a cartesian co-ordinate point
-    """
-
-    def __init__(self, x, y, z):
-        self._x = x
-        self._y = y
-        self._z = z
-
-    @property
-    def x(self):
-        """ X co-ordinate of the cartesian position"""
-        return self._x
-
-    @property
-    def y(self):
-        """ Y co-ordinate of the cartesian position"""
-        return self._y
-
-    @property
-    def z(self):
-        """ Z co-ordinate of the cartesian position"""
-        return self._z
+CartCoord = namedtuple("CardCoord", ["x", "y", "z"])
 
 
 class PolarCoord:
@@ -41,7 +19,7 @@ class PolarCoord:
 
     # TODO add tests for all these
     @property
-    def rot_x_rad(self):
+    def rot_x_rad(self) -> float:
         """
         Rotation of marker relative to camera in the #TODO axis
         (axis is in the location of the camera)
@@ -49,7 +27,7 @@ class PolarCoord:
         return self._rot_x_rad
 
     @property
-    def rot_y_rad(self):
+    def rot_y_rad(self) -> float:
         """
         Rotation of marker relative to camera in the #TODO axis
         (axis is in the location of the camera)
@@ -58,7 +36,7 @@ class PolarCoord:
 
 
     @property
-    def rot_x_deg(self):
+    def rot_x_deg(self) -> float:
         """
         Rotation of marker relative to camera in the #TODO axis.
         (axis is in the location of the camera)
@@ -67,7 +45,7 @@ class PolarCoord:
         return math.degrees(self._rot_x_rad)
 
     @property
-    def rot_y_deg(self):
+    def rot_y_deg(self) -> float:
         """
         Rotation of marker relative to camera in the #TODO axis.
         (axis is in the location of the camera)
@@ -76,7 +54,7 @@ class PolarCoord:
         return math.degrees(self._rot_y_rad)
 
     @property
-    def distance_metres(self):
+    def distance_metres(self) -> float:
         """
         Distance of marker from camera in Metres
         """
@@ -92,20 +70,15 @@ class Marker:
     def __init__(self, data):
         self._raw_data = data
 
-        # Go through all the data, add an _ at the start.
-        data = {"_" + k: v for k, v in data.items()}
-
-        self.__dict__.update(data)
-
     @property
-    def id(self):
+    def id(self) -> int:
         """ID of the marker seen"""
-        return self._id
+        return self._raw_data['id']
 
     @property
-    def size(self):
+    def size(self) -> Tuple:
         """Marker size in metres"""
-        return tuple(self._size)
+        return tuple(self._raw_data['size'])
 
     # Disabled because it's always 0.0
     # TODO fix the certainty being 0
@@ -117,24 +90,23 @@ class Marker:
     def pixel_corners(self):
         """Pixel co-ordinates of the of the corners of the marker"""
         # TODO define what the order of these corners are
-        return [tuple(x) for x in self._pixel_corners]
+        return [tuple(x) for x in self._raw_data['pixel_corners']]
 
     @property
     def pixel_centre(self):
         """Pixel co-ordinates of the centre of the marker"""
-        return tuple(self._pixel_centre)
+        return tuple(self._raw_data['pixel_centre'])
 
     # Helper functions, Might need to vary these per-game
 
-    def is_wall_marker(self):
+    def is_wall_marker(self) -> bool:
         """ If the marker is a wall marker """
         return self.id in WALL
 
-    def is_token_marker(self):
+    def is_token_marker(self) -> bool:
         """ If the marker is a token marker """
         return self.id in TOKEN
 
     @property
     def cartesian(self):
         raise NotImplementedError("This is not implemented.")
-        return CartCoord()
