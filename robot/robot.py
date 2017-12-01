@@ -1,12 +1,15 @@
 from pathlib import Path
 import time
+from typing import List, Union
 
 from robot.board import BoardList
 from robot.camera import Camera
-from robot.game import GameState
+from robot.game import GameState, GameMode
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
+
+Board = Union[Camera, GameState, MotorBoard, PowerBoard, ServoBoard]
 
 
 class Robot:
@@ -18,13 +21,13 @@ class Robot:
 
     ROBOTD_ADDRESS = "/var/robotd"
 
-    def __init__(self, robotd_path=ROBOTD_ADDRESS):
+    def __init__(self, robotd_path:str=ROBOTD_ADDRESS) -> None:
         self.robotd_path = Path(robotd_path)
-        self.known_power_boards = []
-        self.known_motor_boards = []
-        self.known_servo_boards = []
-        self.known_cameras = []
-        self.known_gamestates = []
+        self.known_power_boards: List[PowerBoard] = []
+        self.known_motor_boards: List[MotorBoard] = []
+        self.known_servo_boards: List[ServoBoard] = []
+        self.known_cameras: List[Camera] = []
+        self.known_gamestates: List[GameState] = []
         self.all_known_boards = [
             self.known_power_boards,
             self.known_motor_boards,
@@ -75,13 +78,13 @@ class Robot:
         return sorted(boards, key=lambda b: b.serial)
 
     @staticmethod
-    def _dictify_boards(boards):
+    def _dictify_boards(boards: List[Board]) -> BoardList:
         # Convert lists of boards into a dictionary
         return BoardList({board.serial: board for board in boards})
 
     # TODO: Parameterise the functions below so we only need one
     @property
-    def motor_boards(self):
+    def motor_boards(self) -> BoardList:
         """
         :return: list of available Motor boards, can be indexed by serial or by number
         """
@@ -90,7 +93,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def power_boards(self):
+    def power_boards(self) -> BoardList:
         """
         :return: list of available Power boards, can be indexed by serial or by number
         """
@@ -99,7 +102,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def servo_boards(self):
+    def servo_boards(self) -> BoardList:
         """
         :return: list of available Servo boards, can be indexed by serial or by number
         """
@@ -108,7 +111,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def cameras(self):
+    def cameras(self) -> BoardList:
         """
         :return: list of available cameras, can be indexed by serial or by number
         """
@@ -117,7 +120,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def _games(self):
+    def _games(self) -> BoardList:
         """
         :return: list of available GameStates, can be indexed by serial or by number
         """
@@ -126,33 +129,33 @@ class Robot:
         return self._dictify_boards(boards)
 
     @staticmethod
-    def _single_index(name, list_of_boards):
+    def _single_index(name, list_of_boards: BoardList):
         if list_of_boards:
             return list_of_boards[0]
         else:
             raise AttributeError("No {}s connected".format(name))
 
     @property
-    def power_board(self):
+    def power_board(self) -> PowerBoard:
         return self._single_index("power board", self.power_boards)
 
     @property
-    def motor_board(self):
+    def motor_board(self) -> MotorBoard:
         return self._single_index("motor board", self.motor_boards)
 
     @property
-    def servo_board(self):
+    def servo_board(self) -> ServoBoard:
         return self._single_index("servo board", self.servo_boards)
 
     @property
-    def camera(self):
+    def camera(self) -> Camera:
         """
         Get the object representing the camera information
         """
         return self._single_index("camera", self.cameras)
 
     @property
-    def _game(self):
+    def _game(self) -> GameState:
         """
         Get the object representing the game information
 
@@ -161,7 +164,7 @@ class Robot:
         return self._single_index("game states", self._games)
 
     @property
-    def zone(self):
+    def zone(self) -> int:
         """
         Get the zone the robot is in. This is changed by inserting a competition zone USB stick in it,
         the value defaults to 0 if there is no stick plugged in.
@@ -171,7 +174,7 @@ class Robot:
         return self._game.zone
 
     @property
-    def mode(self):
+    def mode(self) -> GameMode:
         """
         Get which mode the robot is in,
         :return: either GameMode.COMPETITION or GameMode.DEVELOPMENT, if the robot is in
