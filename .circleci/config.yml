@@ -53,7 +53,7 @@ jobs:
           command: python3 -m unittest
       - run:
           name: type check
-          command: mypy robot/
+          command: mypy --strict-optional --ignore-missing-imports --follow-imports=skip robot/
 
       - store_artifacts:
           path: test-reports
