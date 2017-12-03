@@ -70,7 +70,7 @@ class Camera(Board):
         markers = []
         for token in data["markers"]:
             markers.append(Marker(token))
-        # Sort by distance
+
         return ResultList(markers)
 
     @property
