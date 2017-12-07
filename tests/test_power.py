@@ -69,11 +69,21 @@ class PowerBoardTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.robot.power_board.buzz(1)
 
+        with self.assertRaises(TypeError):
+            self.robot.power_board.buzz(1, 'c')
+
+        with self.assertRaises(TypeError):
+            self.robot.power_board.buzz(1, 'c', 100)
+
+    def test_note_case(self):
         with self.assertRaises(KeyError):
             self.robot.power_board.buzz(1, note='J')
 
-        with self.assertRaises(TypeError):
-            self.robot.power_board.buzz(1, 'c')
+        with self.assertRaises(KeyError):
+            self.robot.power_board.buzz(1, note='j')
+
+        self.robot.power_board.buzz(1, note='c')
+        self.robot.power_board.buzz(1, note='C')
 
     def test_buzz_message(self):
         self.power_board.clear_queue()
