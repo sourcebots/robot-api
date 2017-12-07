@@ -41,7 +41,7 @@ class Board:
         self.socket = None
         self.data = b''
 
-        self._connect(socket_path)
+        self._connect()
 
     @property
     def serial(self):
@@ -57,16 +57,15 @@ class Board:
         """
         pass
 
-    def _connect(self, socket_path):
+    def _connect(self):
         """
         (re)connect to a new socket
-        :param socket_path: Path for the unix socket
         """
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.socket.settimeout(self.SEND_TIMEOUT_SECS)
 
         try:
-            self.socket.connect(str(socket_path))
+            self.socket.connect(str(self.socket_path))
         except ConnectionRefusedError as e:
             print('Error connecting to:', socket_path)
             raise e
