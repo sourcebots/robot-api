@@ -67,7 +67,7 @@ class Board:
         try:
             self.socket.connect(str(self.socket_path))
         except ConnectionRefusedError as e:
-            print('Error connecting to:', socket_path)
+            print('Error connecting to: ', self.socket_path)
             raise e
 
         greeting = self.receive()
