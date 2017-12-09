@@ -7,8 +7,8 @@ setup(
     url='https://github.com/sourcebots/robot-api',
     author='SourceBots',
     license='MIT',
-    install_requires=['pyserial'],
+    install_requires=[],
     dependency_links=['git+ssh://git@github.com/sourcebots/robotd.git#egg=robotd'],
-    tests_require=['cffi'],
+    tests_require=[],
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
 )
