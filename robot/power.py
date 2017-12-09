@@ -14,9 +14,6 @@ class PowerBoard(Board):
         'uc': 523
     }
 
-    def __init__(self, socket_path):
-        super().__init__(socket_path)
-
     def power_on(self):
         """
         Turn on power to all power board outputs

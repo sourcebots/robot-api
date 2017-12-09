@@ -13,9 +13,6 @@ class Camera(Board):
     Polls the robot daemon for new images
     """
 
-    def __init__(self, socket_path):
-        super().__init__(socket_path)
-
     @staticmethod
     def _see_to_results(data):
         """
