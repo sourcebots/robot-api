@@ -102,7 +102,7 @@ class Board:
             time.sleep(backoff)
 
             try:
-                self._connect(self.socket_path)
+                self._connect()
             except (ConnectionRefusedError, FileNotFoundError):
                 continue
 
