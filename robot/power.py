@@ -3,6 +3,20 @@ from robot.board import Board
 
 
 class PowerBoard(Board):
+    BUZZ_NOTES = {
+        'c': 261,
+        'd': 294,
+        'e': 329,
+        'f': 349,
+        'g': 392,
+        'a': 440,
+        'b': 493,
+        'uc': 523
+    }
+
+    def __init__(self, socket_path):
+        super().__init__(socket_path)
+
     def power_on(self):
         """
         Turn on power to all power board outputs
@@ -27,3 +41,14 @@ class PowerBoard(Board):
 
         status = self.send_and_receive({})
         return status["start-button"]
+
+    def buzz(self, duration, note=None, frequency=None):
+        if note is None and frequency is None:
+            raise ValueError("Either note or frequency must be provided")
+        if note is not None:
+            if note not in self.BUZZ_NOTES:
+                raise KeyError("{} is an invalid note".format(note))
+            frequency = self.BUZZ_NOTES.get(note.lower())
+        if frequency is None:
+            raise ValueError("Invalid frequency")
+        self.send_and_receive({'buzz': {'frequency': frequency, 'duration': duration * 1000}})
