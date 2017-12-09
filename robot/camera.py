@@ -1,6 +1,7 @@
 from collections.abc import MutableSequence
 from pathlib import Path
-import threading
+import socket
+import time
 
 from robot.board import Board
 from robot.markers import Marker
@@ -14,53 +15,8 @@ class Camera(Board):
     """
 
     def __init__(self, socket_path):
-        self._latest = None
-        self._got_image = threading.Event()
         super().__init__(socket_path)
         self._serial = Path(socket_path).stem
-        self._stop = threading.Event()
-        self._latest_lock = threading.Lock()
-        self._start_listening()
-
-    def _start_listening(self):
-        """
-        Start listening thread
-        """
-        thread = threading.Thread(target=self._cam_listener_worker)
-        self._alive = True
-        thread.start()
-        self.sock_thread = thread
-
-    def _stop_poll(self):
-        """
-        Stop polling the camera
-        """
-        self._alive = False
-        self.sock_thread.join()
-
-    @property
-    def _alive(self):
-        return not self._stop.is_set()
-
-    @_alive.setter
-    def _alive(self, value):
-        if value:
-            self._stop.clear()
-        else:
-            self._stop.set()
-
-    def _cam_listener_worker(self):
-        """
-        Worker thread for listening to the camera socket
-
-        Works until `self._running` is set.
-        """
-        while self._alive:
-            data = self.receive()
-            if data:
-                self._got_image.set()
-                with self._latest_lock:
-                    self._latest = data
 
     @staticmethod
     def _see_to_results(data):
@@ -74,6 +30,7 @@ class Camera(Board):
             markers.append(Marker(token))
         # Sort by distance
         return ResultList(sorted(markers, key=lambda x: x.distance_metres))
+        return ResultList(markers)
 
     @property
     def serial(self):
@@ -87,9 +44,16 @@ class Camera(Board):
         Look for markers
         :return: List of #Marker objects
         """
-        self._got_image.wait()
-        with self._latest_lock:
-            return self._see_to_results(self._latest)
+        abort_after = time.time() + 10
+
+        self.send({'see': True})
+
+        while True:
+            try:
+                return self._see_to_results(self.receive(should_retry=True))
+            except socket.timeout:
+                if time.time() > abort_after:
+                    raise
 
 
 class ResultList(MutableSequence):

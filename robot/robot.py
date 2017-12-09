@@ -64,8 +64,13 @@ class Robot:
         boards = known_boards[:]
         # Add all boards that weren't previously there
         for board in new_paths - known_paths:
-            print('New board found:', board)
-            boards.append(board_type(board))
+            print("New board found:", board)
+
+            try:
+                new_board = board_type(board)
+                boards.append(new_board)
+            except (FileNotFoundError, ConnectionRefusedError) as e:
+                print("Could not connect to the board:", board, e)
 
         return sorted(boards, key=lambda b: b.serial)
 
@@ -178,9 +183,10 @@ class Robot:
         # stop the polling threads
         for camera in self.known_cameras:
             camera._stop_poll()
+        # remove all the boards
         for board_type in self.all_known_boards:
             for board in board_type:
-                board._clean_up()
+                del board
 
     def __del__(self):
         self.close()

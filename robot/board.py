@@ -2,37 +2,29 @@ import json
 import time
 import socket
 
-import collections
-from collections import OrderedDict
+from collections import Mapping
 
-
-class BoardList(collections.MutableMapping):
+class BoardList(Mapping):
 
     def __init__(self, *args, **kwargs):
-        self.store = OrderedDict(*args, **kwargs)
-        self.store_list = list(self.store.values())
+        self._store = dict(*args, **kwargs)
+        self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
 
     def __getitem__(self, attr):
         if type(attr) is int:
-            return self.store_list[attr]
-        return self.store[attr]
-
-    def __setitem__(self, key, value):
-        raise NotImplementedError("Cannot mutate board list")
-
-    def __delitem__(self, key):
-        raise NotImplementedError("Cannot mutate board list")
+            return self._store_list[attr]
+        return self._store[attr]
 
     def __iter__(self):
-        return iter(self.store_list)
+        return iter(self._store_list)
 
     def __len__(self):
-        return len(self.store_list)
+        return len(self._store_list)
 
 
 class Board:
 
-    SEND_TIMEOUT_SECS = 5
+    SEND_TIMEOUT_SECS = 6
     RECV_BUFFER_BYTES = 2048
 
     def __init__(self, socket_path):
@@ -152,5 +144,12 @@ class Board:
         self.send(message, should_retry)
         return self.receive(should_retry)
 
+    def __del__(self):
+        self._clean_up()
+
     def _clean_up(self):
         self.socket.detach()
+
+    def __del__(self):
+        self._clean_up()
+
