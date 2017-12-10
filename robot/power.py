@@ -62,4 +62,4 @@ class PowerBoard(Board):
             frequency = self.BUZZ_NOTES[note.lower()]
         if frequency is None:
             raise ValueError("Invalid frequency")
-        self.send_and_receive({'buzz': {'frequency': frequency, 'duration': duration * 1000}})
+        self.send_and_receive({'buzz': {'frequency': frequency, 'duration': int(duration * 1000)}})
