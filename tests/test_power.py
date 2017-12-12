@@ -103,5 +103,16 @@ class PowerBoardTest(unittest.TestCase):
             'duration': 4000
         })
 
+    def test_fractional_buzz_duration(self):
+        self.power_board.clear_queue()
+        self.robot.power_board.buzz(0.5, note='c')
+        msg = self.power_board.message_queue.get()
+        self.assertIn('buzz', msg)
+        self.assertEqual(msg['buzz'], {
+            'frequency': 261,
+            'duration': 500
+        })
+        self.assertIsInstance(msg['buzz']['duration'], int)
+
     def tearDown(self):
         self.mock.stop()
