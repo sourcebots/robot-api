@@ -10,6 +10,29 @@ from robotd.master import BoardRunner
 from sb_vision.camera import FileCamera
 
 
+class MockBoardMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.message_queue = Queue()
+
+    def clear_queue(self):
+        while not self.message_queue.empty():
+            self.message_queue.get()
+
+    @classmethod
+    def name(cls, node):
+        """Board name - actually fetched over serial."""
+        return node['name']
+
+    def status(self):
+        return self._status
+
+    def command(self, cmd):
+        print("{} Command: {}".format(self._name, cmd))
+        self._status.update(cmd)
+        self.message_queue.put(cmd)
+
+
 class MockRobotD:
     DEFAULT_ROOT_DIR = "/var/"
 
@@ -63,7 +86,7 @@ class MockRobotD:
             runner.cleanup()
 
 
-class MockMotorBoard(Board):
+class MockMotorBoard(MockBoardMixin, Board):
     """
     Mock class for simulating a motor board
     """
@@ -73,23 +96,9 @@ class MockMotorBoard(Board):
         super().__init__(node)
         self._name = name
         self._status = {'m0': robot.BRAKE, 'm1': robot.COAST}
-        self.message_queue = Queue()
-
-    @classmethod
-    def name(cls, node):
-        """Board name - actually fetched over serial."""
-        return node['name']
-
-    def status(self):
-        return self._status
-
-    def command(self, cmd):
-        self._status.update(cmd)
-        print("{} Command: {}".format(self._name, cmd))
-        self.message_queue.put(cmd)
 
 
-class MockServoAssembly(Board):
+class MockServoAssembly(MockBoardMixin, Board):
     """
     Mock class for simulating a servo board
     """
@@ -104,21 +113,8 @@ class MockServoAssembly(Board):
         }
         self.message_queue = Queue()
 
-    @classmethod
-    def name(cls, node):
-        """Board name - actually fetched over serial."""
-        return node['name']
 
-    def status(self):
-        return self._status
-
-    def command(self, cmd):
-        print("{} Command: {}".format(self._name, cmd))
-        self._status.update(cmd)
-        self.message_queue.put(cmd)
-
-
-class MockPowerBoard(Board):
+class MockPowerBoard(MockBoardMixin, Board):
     """
     Mock class for simulating a power board with a button
     """
@@ -129,23 +125,6 @@ class MockPowerBoard(Board):
         self._name = name
         self.message_queue = Queue()
         self._status = {'start-button': True}
-
-    @classmethod
-    def name(cls, node):
-        """Board name - actually fetched over serial."""
-        return node['name']
-
-    def command(self, cmd):
-        print("{} Command: {}".format(self._name, cmd))
-        self._status.update(cmd)
-        self.message_queue.put(cmd)
-
-    def status(self):
-        return self._status
-
-    def clear_queue(self):
-        while not self.message_queue.empty():
-            self.message_queue.get()
 
 
 class MockCamera(RobotDCamera):
