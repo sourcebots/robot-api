@@ -53,13 +53,13 @@ class PowerBoard(Board):
         status = self.send_and_receive({})
         return status["start-button"]
 
-    def buzz(self, duration, note=None, frequency=None):
+    def buzz(self, duration, *, note=None, frequency=None):
         if note is None and frequency is None:
             raise ValueError("Either note or frequency must be provided")
+        if note is not None and frequency is not None:
+            raise ValueError("Only provide note or frequency")
         if note is not None:
-            if note not in self.BUZZ_NOTES:
-                raise KeyError("{} is an invalid note".format(note))
-            frequency = self.BUZZ_NOTES.get(note.lower())
+            frequency = self.BUZZ_NOTES[note.lower()]
         if frequency is None:
             raise ValueError("Invalid frequency")
-        self.send_and_receive({'buzz': {'frequency': frequency, 'duration': duration * 1000}})
+        self.send_and_receive({'buzz': {'frequency': frequency, 'duration': int(duration * 1000)}})
