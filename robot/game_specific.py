@@ -38,7 +38,12 @@ COLUMN_W_FACING_W = (COLUMN_W & COLUMN_FACING_W).pop()
 
 COLUMN = (COLUMN_N | COLUMN_E | COLUMN_S | COLUMN_W)
 
-TOKEN = set(range(44, 84))
+TOKEN = set(range(44, 64))
+
+TOKEN_ZONE_0 = set(range(44,49))
+TOKEN_ZONE_1 = set(range(49,54))
+TOKEN_ZONE_2 = set(range(54,59))
+TOKEN_ZONE_3 = set(range(59,64))
 
 # The following constants are used to define the marker sizes
 
