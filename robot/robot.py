@@ -180,9 +180,6 @@ class Robot:
         return self._game.mode
 
     def close(self):
-        # stop the polling threads
-        for camera in self.known_cameras:
-            camera._stop_poll()
         # remove all the boards
         for board_type in self.all_known_boards:
             for board in board_type:
