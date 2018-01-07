@@ -4,8 +4,7 @@ if [ -z "$FLAKE8" ]; then
 fi
 
 # Ideally we'd just run flake8 once, however there isn't a good way to ignore
-# the docstring errors only in the tests, so instead we have to run flake8
-# twice.
+# the docstring errors only in the tests, so instead we have to run it twice.
 
 "$FLAKE8" robot
 result=$?
