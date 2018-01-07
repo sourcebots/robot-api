@@ -112,7 +112,7 @@ class ServoBoard(Board):
                 (lambda value, x=x: self._set_pin_mode(x, value)),
             )
             for x in gpio_pins
-            }
+        }
 
     @property
     def serial(self):

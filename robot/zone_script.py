@@ -27,7 +27,7 @@ def poll(robot_root_path, zone_id, stop_event: Event = Event()):
     while not stop_event.is_set():
         try:
             if state is State.CONNECT:
-                sock.connect(robot_root_path+"game/state")
+                sock.connect(robot_root_path + "game/state")
                 state = State.MESSAGE
 
             if state is State.MESSAGE:

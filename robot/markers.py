@@ -54,7 +54,6 @@ class PolarCoord:
         """
         return self._rot_y_rad
 
-
     @property
     def rot_x_deg(self):
         """

@@ -7,6 +7,7 @@ from robot.board import Board
 BRAKE = 0
 COAST = "coast"
 
+
 class MotorBoard(Board):
     """A motor board with two motor outputs."""
 
