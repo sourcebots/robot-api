@@ -1,13 +1,12 @@
-import os
 import time
-
 from multiprocessing import Queue
 
 import robot
-from robotd.devices import Camera as RobotDCamera, GameState as RobotDGameState
+
+from robotd.devices import Camera as RobotDCamera
+from robotd.devices import GameState as RobotDGameState
 from robotd.devices_base import Board
 from robotd.master import BoardRunner
-from sb_vision.camera import FileCamera
 
 
 class MockBoardMixin:

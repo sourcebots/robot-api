@@ -1,6 +1,5 @@
-import unittest
-
 import time
+import unittest
 
 from robot.robot import Robot
 from tests.mock_robotd import MockRobotD

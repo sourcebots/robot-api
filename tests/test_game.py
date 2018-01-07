@@ -1,9 +1,8 @@
 import time
 import unittest
-from threading import Thread, Event
+from threading import Event, Thread
 
-from robot import zone_script
-from robot import Robot
+from robot import Robot, zone_script
 from robot.game import GameMode
 from tests.mock_robotd import MockRobotD
 
