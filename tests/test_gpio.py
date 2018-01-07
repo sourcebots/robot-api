@@ -18,8 +18,14 @@ class GPIOTest(unittest.TestCase):
         board = self.mock.new_servoboard()
         time.sleep(0.2)
         for gpio in range(2, 13):
-            for mode in [PinMode.INPUT, PinMode.INPUT_PULLUP, PinMode.OUTPUT_HIGH, PinMode.OUTPUT_LOW]:
+            for mode in (
+                PinMode.INPUT,
+                PinMode.INPUT_PULLUP,
+                PinMode.OUTPUT_HIGH,
+                PinMode.OUTPUT_LOW,
+            ):
                 self._try_mode(gpio, board, mode)
+
             # Invalid error
             with self.assertRaises(ValueError):
                 self._try_mode(gpio, board, "Hi")

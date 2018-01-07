@@ -26,7 +26,10 @@ class GameTest(unittest.TestCase):
     def test_game_state(self):
         self.mock.new_gamestate()
         zone = 2
-        self.thread = Thread(target=zone_script.poll, args=("/tmp/robotd/", zone, self.stop_event))
+        self.thread = Thread(
+            target=zone_script.poll,
+            args=("/tmp/robotd/", zone, self.stop_event),
+        )
         time.sleep(0.2)
         # Check before
         self.assertEqual(self.robot.zone, 0)
