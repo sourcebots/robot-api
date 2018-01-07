@@ -2,8 +2,15 @@
 if [ -z "$FLAKE8" ]; then
     FLAKE8=flake8
 fi
+
 # Ideally we'd just run flake8 once, however there isn't a good way to ignore
 # the docstring errors only in the tests, so instead we have to run flake8
 # twice.
-"$FLAKE8" robot && "$FLAKE8" --ignore=D tests
-exit $?
+
+"$FLAKE8" robot
+result=$?
+
+"$FLAKE8" --ignore=D tests
+result=$((result | $?))
+
+exit $result
