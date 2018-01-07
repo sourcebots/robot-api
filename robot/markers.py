@@ -44,7 +44,6 @@ class PolarCoord:
     def rot_x_rad(self):
         """
         Rotation of marker relative to camera in the #TODO axis
-        (axis is in the location of the camera)
         """
         return self._rot_x_rad
 
@@ -52,7 +51,6 @@ class PolarCoord:
     def rot_y_rad(self):
         """
         Rotation of marker relative to camera in the #TODO axis
-        (axis is in the location of the camera)
         """
         return self._rot_y_rad
 
@@ -61,7 +59,6 @@ class PolarCoord:
     def rot_x_deg(self):
         """
         Rotation of marker relative to camera in the #TODO axis.
-        (axis is in the location of the camera)
         """
         # TODO describe which axis this is
         return math.degrees(self._rot_x_rad)
