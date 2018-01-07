@@ -1,7 +1,5 @@
-import json
-from pathlib import Path
-
 from enum import Enum
+from pathlib import Path
 
 from robot.board import Board
 

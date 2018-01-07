@@ -9,10 +9,8 @@ along with a file named zone-<X> where <X> is the id of the zone (0 to 3) to use
 import json
 import socket
 import time
-
 from enum import Enum
 from threading import Event
-
 
 sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 

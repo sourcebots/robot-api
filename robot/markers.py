@@ -1,6 +1,6 @@
 import math
 
-from robot.game_specific import WALL, TOKEN
+from robot.game_specific import TOKEN, WALL
 
 
 class CartCoord:

@@ -1,5 +1,5 @@
-from pathlib import Path
 import time
+from pathlib import Path
 
 from robot.board import BoardList
 from robot.camera import Camera
@@ -211,4 +211,3 @@ class Robot:
 
     def __del__(self):
         self.close()
-

@@ -1,7 +1,7 @@
-from collections.abc import MutableSequence
-from pathlib import Path
 import socket
 import time
+from collections.abc import MutableSequence
+from pathlib import Path
 
 from robot.board import Board
 from robot.markers import Marker

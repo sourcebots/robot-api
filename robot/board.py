@@ -1,8 +1,8 @@
 import json
-import time
 import socket
-
+import time
 from collections import Mapping
+
 
 class BoardList(Mapping):
     """A mapping of ``Board``s allowing access by index or identity."""
@@ -165,4 +165,3 @@ class Board:
 
     def __del__(self):
         self._clean_up()
-
