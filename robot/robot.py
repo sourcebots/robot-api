@@ -108,7 +108,11 @@ class Robot:
         """
         :return: A ``BoardList`` of available ``ServoBoard``s.
         """
-        boards = self._update_boards(self.known_servo_boards, ServoBoard, 'servo_assembly')
+        boards = self._update_boards(
+            self.known_servo_boards,
+            ServoBoard,
+            'servo_assembly',
+        )
         self.known_servo_boards = boards
         return self._dictify_boards(boards)
 

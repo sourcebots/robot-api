@@ -59,17 +59,27 @@ class Gpio:
         """
         Set the mode the pin should be in.
 
-        :param mode: PinMode.INPUT, PinMode.INPUT_PULLUP, or PinMode.OUTPUT_HIGH or PinMode.OUTPUT_LOW
+        :param mode: The ``PinMode`` to set the pin to.
         """
-        if mode not in [PinMode.INPUT, PinMode.INPUT_PULLUP, PinMode.OUTPUT_HIGH, PinMode.OUTPUT_LOW]:
-            raise ValueError("Mode should be one of PinMode.INPUT, PinMode.INPUT_PULLUP, PinMode.OUTPUT_HIGH, "
-                             "or PinMode.OUTPUT_LOW")
+        if mode not in (
+            PinMode.INPUT,
+            PinMode.INPUT_PULLUP,
+            PinMode.OUTPUT_HIGH,
+            PinMode.OUTPUT_LOW,
+        ):
+            raise ValueError("Mode should be a valid 'PinMode', got {!r}".format(mode))
         self._pin_mode_set(mode)
 
     def read(self):
         """Read the current ``PinValue`` of the pin."""
-        if self._pin_mode_get() not in [PinMode.INPUT, PinMode.INPUT_PULLUP]:
-            raise Exception("Pin mode needs to be either PinMode.INPUT or PinMode.INPUT_PULLUP to read")
+        valid_read_modes = (PinMode.INPUT, PinMode.INPUT_PULLUP)
+        if self._pin_mode_get() not in valid_read_modes:
+            raise Exception(
+                "Pin mode needs to be in a valid read ``PinMode`` to be read. "
+                "Valid modes are: {}.".format(
+                    ", ".join(str(x) for x in valid_read_modes),
+                ),
+            )
         return self._pin_read()
 
 

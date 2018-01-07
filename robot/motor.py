@@ -2,7 +2,9 @@ from pathlib import Path
 
 from robot.board import Board
 
-BRAKE = 0  # 0 so setting the motors to 0 has exactly the same affect as setting the motors to BRAKE
+# BRAKE is set to 0 so setting the motors to 0 has exactly the same affect as
+# setting the motors to BRAKE
+BRAKE = 0
 COAST = "coast"
 
 class MotorBoard(Board):
@@ -27,7 +29,10 @@ class MotorBoard(Board):
         elif -1 <= voltage <= 1:
             return voltage
         else:
-            raise ValueError('Incorrect voltage value, valid values: between -1 and 1, "coast", or "brake"')
+            raise ValueError(
+                "Incorrect voltage value, valid values: between -1 and 1, "
+                "'coast', or 'brake'",
+            )
 
     @staticmethod
     def _power_to_string(voltage):
@@ -44,7 +49,10 @@ class MotorBoard(Board):
         elif -1 <= voltage <= 1:
             return voltage
         else:
-            raise ValueError('Incorrect voltage value, valid values: between -1 and 1, robot.COAST, or robot.BRAKE')
+            raise ValueError(
+                "Incorrect voltage value, valid values: between -1 and 1, "
+                "robot.COAST, or robot.BRAKE",
+            )
 
     @property
     def m0(self):
