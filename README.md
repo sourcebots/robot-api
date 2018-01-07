@@ -1,5 +1,7 @@
 # Robot
 
+[![CircleCI](https://circleci.com/gh/sourcebots/robot-api.svg?style=shield)](https://circleci.com/gh/sourcebots/robot-api)
+
 This is the userspace API for the robot, which is what students will interface with to program their robots.
 
 # Installation instructions
