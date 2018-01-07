@@ -13,7 +13,7 @@ class PowerBoard(Board):
         'g': 392,
         'a': 440,
         'b': 493,
-        'uc': 523
+        'uc': 523,
     }
 
     def __init__(self, socket_path):

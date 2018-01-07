@@ -75,7 +75,7 @@ class MotorBoard(Board):
 
     def _get_status(self, motor_id):
         return self._string_to_power(
-            self.send_and_receive({})[motor_id]
+            self.send_and_receive({})[motor_id],
         )
 
     def _update_motor(self, motor_id, voltage):

@@ -64,7 +64,7 @@ class Board:
         """
         return "Lost Connection to {conn} at {path}".format(
             conn=str(self.__class__.__name__),
-            path=self.socket_path
+            path=self.socket_path,
         )
 
     def _socket_with_single_retry(self, handler):
@@ -126,7 +126,7 @@ class Board:
         while b'\n' not in self.data:
             if should_retry:
                 message = self._socket_with_single_retry(
-                    lambda: self._recv_from_socket(4096)
+                    lambda: self._recv_from_socket(4096),
                 )
             else:
                 message = self._recv_from_socket(4096)

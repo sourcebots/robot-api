@@ -84,7 +84,7 @@ class ServoBoard(Board):
                 x,
                 (lambda x=x: self._read_pin(x)),
                 (lambda x=x: self._get_pin_mode(x)),
-                (lambda value, x=x: self._set_pin_mode(x, value))
+                (lambda value, x=x: self._set_pin_mode(x, value)),
             )
             for x in gpio_pins
             }
