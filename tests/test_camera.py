@@ -62,7 +62,7 @@ class CameraTest(unittest.TestCase):
         time.sleep(0.2)
         tokens = self.robot.cameras[0].see()
         with self.assertRaisesRegexp(IndexError, "Trying to index an empty list"):
-            _ = tokens[0]
+            tokens[0]
 
     def tearDown(self):
         self.mock.stop()
