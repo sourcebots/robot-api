@@ -87,7 +87,7 @@ class ResultList(MutableSequence):
     def __setitem__(self, key, value):
         self.data[key] = value
 
-    def insert(self, index, value):
+    def insert(self, index, value):  # noqa: D102
         self.data.insert(index, value)
 
     def __len__(self):
