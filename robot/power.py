@@ -5,6 +5,8 @@ from robot.board import Board
 
 
 class PowerBoard(Board):
+    """A power board, controlling the power distribution for the robot."""
+
     BUZZ_NOTES = {
         'c': 261,
         'd': 294,
@@ -22,26 +24,24 @@ class PowerBoard(Board):
 
     @property
     def serial(self):
-        """
-        Serial number for the board
-        """
-
+        """Serial number of the board."""
         return self._serial
 
     def power_on(self):
         """
-        Turn on power to all power board outputs
+        Turn on power to all power board outputs.
         """
 
         self.send_and_receive({'power': True})
 
     def power_off(self):
         """
-        Turn off power to all power board outputs
+        Turn off power to all power board outputs.
         """
         self.send_and_receive({'power': False})
 
     def set_start_led(self, value):
+        """Set the state of the start LED."""
         self.send_and_receive({'start-led': bool(value)})
 
     @property
@@ -54,6 +54,7 @@ class PowerBoard(Board):
         return status["start-button"]
 
     def buzz(self, duration, *, note=None, frequency=None):
+        """Enqueue a note to be played by the buzzer on the power board."""
         if note is None and frequency is None:
             raise ValueError("Either note or frequency must be provided")
         if note is not None and frequency is not None:

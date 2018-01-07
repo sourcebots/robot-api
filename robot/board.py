@@ -5,6 +5,7 @@ import socket
 from collections import Mapping
 
 class BoardList(Mapping):
+    """A mapping of ``Board``s allowing access by index or identity."""
 
     def __init__(self, *args, **kwargs):
         self._store = dict(*args, **kwargs)
@@ -23,6 +24,7 @@ class BoardList(Mapping):
 
 
 class Board:
+    """Base class for connections to ``robotd`` board sockets."""
 
     SEND_TIMEOUT_SECS = 6
     RECV_BUFFER_BYTES = 2048
@@ -36,14 +38,16 @@ class Board:
 
     def _greeting_response(self, data):
         """
-        Handle the response to the greeting command
+        Handle the response to the greeting command.
+
         NOTE: This is called on reconnect in addition to first connection
         """
         pass
 
     def _connect(self, socket_path):
         """
-        (re)connect to a new socket
+        Connect or reconnect to a socket.
+
         :param socket_path: Path for the unix socket
         """
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -60,6 +64,8 @@ class Board:
 
     def _get_lc_error(self):
         """
+        Describe a lost connection error.
+
         :return: The text for a lost connection error
         """
         return "Lost Connection to {conn} at {path}".format(
@@ -100,7 +106,8 @@ class Board:
 
     def send(self, message, should_retry=True):
         """
-        Send a message to robotd
+        Send a message to robotd.
+
         :param retry: used internally
         :param message: message to send
         """
@@ -123,6 +130,9 @@ class Board:
         return data
 
     def receive(self, should_retry=True):
+        """
+        Receive a message from robotd.
+        """
         while b'\n' not in self.data:
             if should_retry:
                 message = self._socket_with_single_retry(
@@ -141,6 +151,9 @@ class Board:
         return json.loads(line.decode('utf-8'))
 
     def send_and_receive(self, message, should_retry=True):
+        """
+        Send a message to robotd and wait for a response.
+        """
         self.send(message, should_retry)
         return self.receive(should_retry)
 

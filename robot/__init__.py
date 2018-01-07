@@ -1,5 +1,7 @@
-from robot.robot import Robot
-from robot.motor import BRAKE, COAST
-from robot.game import GameMode
-from robot.game_specific import *
-from robot.servo import PinMode, PinValue
+"""Userspace API for a robot running ``robotd``."""
+
+from robot.robot import Robot  # noqa
+from robot.motor import BRAKE, COAST  # noqa
+from robot.game import GameMode  # noqa
+from robot.game_specific import *  # noqa
+from robot.servo import PinMode, PinValue  # noqa
