@@ -64,7 +64,7 @@ class MockRobotD:
             name = "MOCK{}".format(len(self.runners))
         return self.new_board(MockServoAssembly, name)
 
-    def new_camera(self,camera, name=None):
+    def new_camera(self, camera, name=None):
         if not name:
             name = "MOCK{}".format(len(self.runners))
         return self.new_board(MockCamera, name, camera)

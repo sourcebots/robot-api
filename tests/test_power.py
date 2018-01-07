@@ -91,7 +91,7 @@ class PowerBoardTest(unittest.TestCase):
         self.assertIn('buzz', msg)
         self.assertEqual(msg['buzz'], {
             'frequency': 261,
-            'duration': 1000
+            'duration': 1000,
         })
 
         self.robot.power_board.buzz(4, frequency=200)
@@ -99,7 +99,7 @@ class PowerBoardTest(unittest.TestCase):
         self.assertIn('buzz', msg)
         self.assertEqual(msg['buzz'], {
             'frequency': 200,
-            'duration': 4000
+            'duration': 4000,
         })
 
     def test_fractional_buzz_duration(self):
@@ -109,7 +109,7 @@ class PowerBoardTest(unittest.TestCase):
         self.assertIn('buzz', msg)
         self.assertEqual(msg['buzz'], {
             'frequency': 261,
-            'duration': 500
+            'duration': 500,
         })
         self.assertIsInstance(msg['buzz']['duration'], int)
 

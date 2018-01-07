@@ -17,7 +17,7 @@ class GPIOTest(unittest.TestCase):
     def test_set_edge_conditions(self):
         board = self.mock.new_servoboard()
         time.sleep(0.2)
-        for gpio in range(2,13):
+        for gpio in range(2, 13):
             for mode in [PinMode.INPUT, PinMode.INPUT_PULLUP, PinMode.OUTPUT_HIGH, PinMode.OUTPUT_LOW]:
                 self._try_mode(gpio, board, mode)
             # Invalid error
