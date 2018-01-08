@@ -127,10 +127,6 @@ class ServoBoard(Board):
         values = data['pin-values']
         return PinValue(values[str(pin)])
 
-    def _get_status(self):
-        status = self.send_and_receive({})
-        return status['servos'][str(port)]
-
     def _get_pin_mode(self, pin):
         data = self.send_and_receive({})
         # example data value:
