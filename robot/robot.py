@@ -185,7 +185,7 @@ class Robot:
         """
         for board_type in self.all_known_boards:
             for board in board_type:
-                del board
+                board.close()
 
     def __del__(self):
         self.close()
