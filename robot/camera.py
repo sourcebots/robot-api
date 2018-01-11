@@ -62,7 +62,7 @@ class ResultList(MutableSequence):
     a much more useful error description if the user indexes an empty array.
 
     This is to mitigate a common beginners issue where an array is indexed
-    without checking that the array has any items
+    without checking that the array has any items.
     """
 
     def __delitem__(self, index):
