@@ -27,7 +27,6 @@ class Camera(Board):
         """
         markers = [Marker(x) for x in data["markers"]]
 
-        # Sort by distance
         return ResultList(sorted(markers, key=lambda x: x.distance_metres))
 
     @property
