@@ -25,9 +25,10 @@ class Camera(Board):
         :param data: json string data to convert
         :return: #ResultList object (that imitates a list) of markers
         """
-        markers = [Marker(x) for x in data["markers"]]
-
-        return ResultList(sorted(markers, key=lambda x: x.distance_metres))
+        return ResultList(sorted(
+            (Marker(x) for x in data["markers"]),
+            key=lambda x: x.distance_metres,
+        ))
 
     @property
     def serial(self):
