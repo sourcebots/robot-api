@@ -56,44 +56,20 @@ class Camera(Board):
                     raise
 
 
-class ResultList(MutableSequence):
+class ResultList(list):
     """
-    This class pretends to be a list, except it returns
-    a much more useful error description if the user indexes an empty array.
+    This class returns a more beginner-friendly error messages if the user
+    indexes into it, but it is empty.
 
     This is to mitigate a common beginners issue where an array is indexed
     without checking that the array has any items.
     """
 
-    def __delitem__(self, index):
-        del self.data[index]
-
-    def __init__(self, data):
-        self.data = data
-
-    def __getitem__(self, item):
+    def __getitem__(self, *args, **kwargs):
         try:
-            return self.data[item]
+            return super().__getitem__(*args, **kwargs)
         except IndexError as e:
-            if len(self.data) == 0:
+            if not self:
                 raise IndexError("Trying to index an empty list")
             else:
                 raise
-
-    def __setitem__(self, key, value):
-        self.data[key] = value
-
-    def insert(self, index, value):
-        self.data.insert(index, value)
-
-    def __len__(self):
-        return len(self.data)
-
-    def __repr__(self):
-        return self.data.__repr__()
-
-    def __eq__(self, other):
-        return self.data.__eq__(other)
-
-    def __iter__(self):
-        return self.data.__iter__()
