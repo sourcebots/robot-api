@@ -73,12 +73,12 @@ class ResultList(MutableSequence):
 
     def __getitem__(self, item):
         try:
-            self.data[item]
+            return self.data[item]
         except IndexError as e:
             if len(self.data) == 0:
                 raise IndexError("Trying to index an empty list")
             else:
-                raise e
+                raise
 
     def __setitem__(self, key, value):
         self.data[key] = value

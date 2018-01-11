@@ -3,6 +3,7 @@ import unittest
 
 import time
 
+from robot.camera import ResultList
 from robot.game_specific import MARKER_SIZES as MARKER_SIZES_ROBOTD
 from robot.robot import Robot
 from tests.mock_robotd import MockRobotD
@@ -20,6 +21,8 @@ class CameraTest(unittest.TestCase):
     """
     Tests pertaining to the camera object
     """
+
+    longMessage = True
 
     # TODO add test for Serial number
     def setUp(self):
@@ -56,8 +59,13 @@ class CameraTest(unittest.TestCase):
         camera = self.robot.cameras[0]
         tokens = camera.see()
 
-        # Check the correct markers are spotted
-        self.assertEqual({x.id for x in tokens}, {9})
+        self.assertEqual({x.id for x in tokens}, {9}, "Saw wrong markers")
+
+        self.assertEqual(
+            9,
+            tokens[0].id,
+            "Failed to get first marker by index",
+        )
 
     def test_unique_error(self):
         self.camera = self.mock.new_camera(CAMERA_SEES_NO_MARKER)
@@ -68,3 +76,77 @@ class CameraTest(unittest.TestCase):
 
     def tearDown(self):
         self.mock.stop()
+
+
+class ResultListTest(unittest.TestCase):
+    def test_empty(self):
+        rl = ResultList([])
+
+        self.assertEqual(0, len(rl))
+        self.assertEqual([], [x for x in rl])
+
+        with self.assertRaises(IndexError) as e_info:
+            rl[0]
+
+        self.assertEqual(
+            "Trying to index an empty list",
+            str(e_info.exception),
+        )
+
+        with self.assertRaises(IndexError) as e_info:
+            rl[1]
+
+        self.assertEqual(
+            "Trying to index an empty list",
+            str(e_info.exception),
+        )
+
+    def test_one_item(self):
+        expected = ["spam"]
+        rl = ResultList(expected)
+
+        self.assertEqual(1, len(rl))
+        self.assertEqual(expected, [x for x in rl])
+
+        self.assertEqual(expected[0], rl[0])
+
+        with self.assertRaises(IndexError) as e_info:
+            rl[1]
+
+        self.assertEqual(
+            "list index out of range",
+            str(e_info.exception),
+        )
+
+    def test_two_items(self):
+        expected = ["spam", "ham"]
+        rl = ResultList(expected)
+
+        self.assertEqual(2, len(rl))
+        self.assertEqual(expected, [x for x in rl])
+
+        self.assertEqual(expected[0], rl[0])
+        self.assertEqual(expected[1], rl[1])
+
+        with self.assertRaises(IndexError):
+            rl[2]
+
+        with self.assertRaises(IndexError):
+            rl[5]
+
+    def test_many_items(self):
+        expected = ["spam", "ham"] * 3
+        rl = ResultList(expected)
+
+        self.assertEqual(6, len(rl))
+        self.assertEqual(expected, [x for x in rl])
+
+        self.assertEqual(expected[0], rl[0])
+        self.assertEqual(expected[1], rl[1])
+        self.assertEqual(expected[2], rl[2])
+        self.assertEqual(expected[3], rl[3])
+        self.assertEqual(expected[4], rl[4])
+        self.assertEqual(expected[5], rl[5])
+
+        with self.assertRaises(IndexError):
+            rl[6]
