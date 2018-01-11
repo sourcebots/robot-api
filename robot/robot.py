@@ -183,8 +183,8 @@ class Robot:
         """
         Close all the baord connections this instance holds.
         """
-        for board_type in self.all_known_boards:
-            for board in board_type:
+        for board_group in self.all_known_boards:
+            for board in board_group:
                 board.close()
 
     def __del__(self):
