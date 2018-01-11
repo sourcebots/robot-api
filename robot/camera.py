@@ -25,9 +25,8 @@ class Camera(Board):
         :param data: json string data to convert
         :return: #ResultList object (that imitates a list) of markers
         """
-        markers = []
-        for token in data["markers"]:
-            markers.append(Marker(token))
+        markers = [Marker(x) for x in data["markers"]]
+
         # Sort by distance
         return ResultList(sorted(markers, key=lambda x: x.distance_metres))
 
