@@ -187,6 +187,10 @@ class Robot:
             for board in board_group:
                 board.close()
 
+            # Clear the group so that any further access doesn't accidentally
+            # reanimate the boards (which isn't supported).
+            del board_group[:]
+
     def __del__(self):
         self.close()
 
