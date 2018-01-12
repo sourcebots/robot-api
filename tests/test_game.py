@@ -1,6 +1,5 @@
 import time
 import unittest
-from threading import Thread, Event
 
 from robot import Robot
 from robot.game import GameMode
@@ -14,8 +13,6 @@ class GameTest(unittest.TestCase):
         time.sleep(0.2)
         self.mock = mock
         self.robot = Robot(robotd_path="/tmp/robotd")
-        self.stop_event = Event()
-        self.thread = None
 
     def test_default_state(self):
         self.mock.new_gamestate()
@@ -25,6 +22,3 @@ class GameTest(unittest.TestCase):
 
     def tearDown(self):
         self.mock.stop()
-        self.stop_event.set()
-        if self.thread and self.thread.is_alive():
-            self.thread.join()
