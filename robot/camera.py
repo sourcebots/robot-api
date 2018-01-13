@@ -1,7 +1,7 @@
-from collections.abc import MutableSequence
-from pathlib import Path
 import socket
 import time
+from collections.abc import MutableSequence
+from pathlib import Path
 
 from robot.board import Board
 from robot.markers import Marker
@@ -9,9 +9,7 @@ from robot.markers import Marker
 
 class Camera(Board):
     """
-    Object representing an Apriltag camera in robotd
-
-    Polls the robot daemon for new images
+    A camera providing a view of the outside world expressed as ``Marker``s.
     """
 
     def __init__(self, socket_path):
@@ -21,9 +19,11 @@ class Camera(Board):
     @staticmethod
     def _see_to_results(data):
         """
-        Converts the string output that comes from the camera in robotd to a list of #Marker objects
-        :param data: json string data to convert
-        :return: #ResultList object (that imitates a list) of markers
+        Convert the data from ``robotd`` into a sorted of ``Marker``s.
+
+        :param data: the data returned from ``robotd``.
+        :return: A ``ResultList`` of ``Markers``, sorted by distance from the
+                camera.
         """
         markers = []
         for token in data["markers"]:
@@ -34,15 +34,17 @@ class Camera(Board):
 
     @property
     def serial(self):
-        """
-        Serial number for the board
-        """
+        """Serial number of the camera."""
         return self._serial
 
     def see(self):
         """
-        Look for markers
-        :return: List of #Marker objects
+        Capture and process a new snapshot of the world the camera can see.
+
+        Images are captured and processed on-demand in a "blocking" fashion, so
+        this method may take a noticeable amount of time to complete its work.
+
+        :return: A list of ``Marker`` objects which were identified.
         """
         abort_after = time.time() + 10
 
@@ -58,11 +60,13 @@ class Camera(Board):
 
 class ResultList(MutableSequence):
     """
-    This class pretends to be a list, except it returns
-    a much more useful error description if the user indexes an empty array.
+    A ``list``-like class with nicer error messages.
 
-    This is to mitigate a common beginners issue where an array is indexed
-    without checking that the array has any items
+    In particular, this class provides a slightly better error description when
+    accessing index 0 and the list is empty.
+
+    This is to mitigate a common beginners issue where a list is indexed
+    without checking that the list has any items.
     """
 
     def __delitem__(self, index):
@@ -83,7 +87,7 @@ class ResultList(MutableSequence):
     def __setitem__(self, key, value):
         self.data[key] = value
 
-    def insert(self, index, value):
+    def insert(self, index, value):  # noqa: D102
         self.data.insert(index, value)
 
     def __len__(self):

@@ -1,12 +1,12 @@
-import json
-from pathlib import Path
-
 from enum import Enum
+from pathlib import Path
 
 from robot.board import Board
 
 
 class PinMode(Enum):
+    """A pin-mode for a pin on the servo board."""
+
     INPUT = 'hi-z'
     INPUT_PULLUP = 'pullup'
     OUTPUT_HIGH = 'high'
@@ -14,11 +14,15 @@ class PinMode(Enum):
 
 
 class PinValue(Enum):
+    """A value state for a pin on the servo board."""
+
     HIGH = 'high'
     LOW = 'low'
 
 
 class Servo:
+    """A servo output on a ``ServoBoard``."""
+
     def __init__(self, servo_id, set_pos, get_pos):
         self.servo_id = servo_id
         self._set_pos = set_pos
@@ -26,6 +30,7 @@ class Servo:
 
     @property
     def position(self):
+        """The configured position the servo output."""
         return self._get_pos()
 
     @position.setter
@@ -36,6 +41,8 @@ class Servo:
 
 
 class Gpio:
+    """A general-purpose input-output pin on a ``ServoBoard``."""
+
     def __init__(self, pin_id, pin_read, pin_mode_get, pin_mode_set):
         self._pin_id = pin_id
         self._pin_read = pin_read
@@ -44,26 +51,44 @@ class Gpio:
 
     @property
     def mode(self):
+        """The ``PinMode`` the pin is currently in."""
         return PinMode(self._pin_mode_get())
 
     @mode.setter
     def mode(self, mode: PinMode):
         """
-        The mode the pin should be in
-        :param mode: PinMode.INPUT, PinMode.INPUT_PULLUP, or PinMode.OUTPUT_HIGH or PinMode.OUTPUT_LOW
+        Set the mode the pin should be in.
+
+        :param mode: The ``PinMode`` to set the pin to.
         """
-        if mode not in [PinMode.INPUT, PinMode.INPUT_PULLUP, PinMode.OUTPUT_HIGH, PinMode.OUTPUT_LOW]:
-            raise ValueError("Mode should be one of PinMode.INPUT, PinMode.INPUT_PULLUP, PinMode.OUTPUT_HIGH, "
-                             "or PinMode.OUTPUT_LOW")
+        if mode not in (
+            PinMode.INPUT,
+            PinMode.INPUT_PULLUP,
+            PinMode.OUTPUT_HIGH,
+            PinMode.OUTPUT_LOW,
+        ):
+            raise ValueError("Mode should be a valid 'PinMode', got {!r}".format(mode))
         self._pin_mode_set(mode)
 
     def read(self):
-        if self._pin_mode_get() not in [PinMode.INPUT, PinMode.INPUT_PULLUP]:
-            raise Exception("Pin mode needs to be either PinMode.INPUT or PinMode.INPUT_PULLUP to read")
+        """Read the current ``PinValue`` of the pin."""
+        valid_read_modes = (PinMode.INPUT, PinMode.INPUT_PULLUP)
+        if self._pin_mode_get() not in valid_read_modes:
+            raise Exception(
+                "Pin mode needs to be in a valid read ``PinMode`` to be read. "
+                "Valid modes are: {}.".format(
+                    ", ".join(str(x) for x in valid_read_modes),
+                ),
+            )
         return self._pin_read()
 
 
 class ServoBoard(Board):
+    """
+    A servo board, providing access to ``Servo``s and ``Gpio`` pins.
+
+    This is an arduino with a servo shield attached.
+    """
 
     def __init__(self, socket_path):
         super().__init__(socket_path)
@@ -84,26 +109,21 @@ class ServoBoard(Board):
                 x,
                 (lambda x=x: self._read_pin(x)),
                 (lambda x=x: self._get_pin_mode(x)),
-                (lambda value, x=x: self._set_pin_mode(x, value))
+                (lambda value, x=x: self._set_pin_mode(x, value)),
             )
             for x in gpio_pins
-            }
+        }
 
     @property
     def serial(self):
-        """
-        Serial number for the board
-        """
-
+        """Serial number of the board."""
         return self._serial
 
     # Servo code
 
     @property
     def servos(self):
-        """
-        List of `Servo` objects for the servo board
-        """
+        """List of ``Servo`` outputs for the servo board."""
         return self._servos
 
     def _set_servo_pos(self, servo, pos):
@@ -117,6 +137,7 @@ class ServoBoard(Board):
     # GPIO code
     @property
     def gpios(self):
+        """List of ``Gpio`` pins for the servo board."""
         return self._gpios
 
     def _read_pin(self, pin):
@@ -138,9 +159,18 @@ class ServoBoard(Board):
         self.send_and_receive({'pins': {pin: value.value}})
 
     def read_analogue(self):
+        """Read analogue values from the connected board."""
         command = {'read-analogue': True}
         return self.send_and_receive(command)['analogue-values']
 
     def read_ultrasound(self, trigger_pin, echo_pin):
+        """
+        Read an ultrasound value from an ultrasound sensor.
+
+        :param trigger_pin: The pin number on the servo board that the sensor's
+                            trigger pin is connected to.
+        :param echo_pin: The pin number on the servo board that the sensor's
+                         echo pin is connected to.
+        """
         command = {'read-ultrasound': [trigger_pin, echo_pin]}
         return self.send_and_receive(command)['ultrasound']

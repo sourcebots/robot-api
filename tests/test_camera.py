@@ -1,12 +1,10 @@
 import os
+import time
 import unittest
 
-import time
-
-from robot.game_specific import MARKER_SIZES as MARKER_SIZES_ROBOTD
 from robot.robot import Robot
-from tests.mock_robotd import MockRobotD
 from sb_vision.camera import FileCamera
+from tests.mock_robotd import MockRobotD
 
 IMAGE_ROOT = os.path.dirname(os.path.realpath(__file__)) + "/test_data/"
 IMAGE_WITH_NO_MARKER = IMAGE_ROOT + 'photo_empty.jpg'
@@ -64,7 +62,7 @@ class CameraTest(unittest.TestCase):
         time.sleep(0.2)
         tokens = self.robot.cameras[0].see()
         with self.assertRaisesRegexp(IndexError, "Trying to index an empty list"):
-            _ = tokens[0]
+            tokens[0]
 
     def tearDown(self):
         self.mock.stop()
