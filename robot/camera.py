@@ -1,4 +1,3 @@
-from collections.abc import MutableSequence
 import socket
 import time
 
@@ -8,28 +7,31 @@ from robot.markers import Marker
 
 class Camera(Board):
     """
-    Object representing an Apriltag camera in robotd
-
-    Polls the robot daemon for new images
+    A camera providing a view of the outside world expressed as ``Marker``s.
     """
 
     @staticmethod
     def _see_to_results(data):
         """
-        Converts the string output that comes from the camera in robotd to a list of #Marker objects
-        :param data: json string data to convert
-        :return: #ResultList object (that imitates a list) of markers
-        """
-        markers = []
-        for token in data["markers"]:
-            markers.append(Marker(token))
+        Convert the data from ``robotd`` into a sorted of ``Marker``s.
 
-        return ResultList(markers)
+        :param data: the data returned from ``robotd``.
+        :return: A ``ResultList`` of ``Markers``, sorted by distance from the
+                camera.
+        """
+        return ResultList(sorted(
+            (Marker(x) for x in data["markers"]),
+            key=lambda x: x.distance_metres,
+        ))
 
     def see(self):
         """
-        Look for markers
-        :return: List of #Marker objects
+        Capture and process a new snapshot of the world the camera can see.
+
+        Images are captured and processed on-demand in a "blocking" fashion, so
+        this method may take a noticeable amount of time to complete its work.
+
+        :return: A list of ``Marker`` objects which were identified.
         """
         abort_after = time.time() + 10
 
@@ -43,44 +45,22 @@ class Camera(Board):
                     raise
 
 
-class ResultList(MutableSequence):
+class ResultList(list):
     """
-    This class pretends to be a list, except it returns
-    a much more useful error description if the user indexes an empty array.
+    A ``list`` class with nicer error messages.
 
-    This is to mitigate a common beginners issue where an array is indexed
-    without checking that the array has any items
+    In particular, this class provides a slightly better error description when
+    accessing indexes and the list is empty.
+
+    This is to mitigate a common beginners issue where a list is indexed
+    without checking that the list has any items.
     """
 
-    def __delitem__(self, index):
-        del self.data[index]
-
-    def __init__(self, data):
-        self.data = data
-
-    def __getitem__(self, item):
+    def __getitem__(self, *args, **kwargs):
         try:
-            self.data[item]
+            return super().__getitem__(*args, **kwargs)
         except IndexError as e:
-            if len(self.data) == 0:
-                raise IndexError("Trying to index an empty list")
+            if not self:
+                raise IndexError("Trying to index an empty list") from None
             else:
-                raise e
-
-    def __setitem__(self, key, value):
-        self.data[key] = value
-
-    def insert(self, index, value):
-        self.data.insert(index, value)
-
-    def __len__(self):
-        return len(self.data)
-
-    def __repr__(self):
-        return self.data.__repr__()
-
-    def __eq__(self, other):
-        return self.data.__eq__(other)
-
-    def __iter__(self):
-        return self.data.__iter__()
+                raise

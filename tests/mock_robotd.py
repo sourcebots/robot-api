@@ -1,13 +1,12 @@
-import os
 import time
-
 from multiprocessing import Queue
 
 import robot
-from robotd.devices import Camera as RobotDCamera, GameState as RobotDGameState
+
+from robotd.devices import Camera as RobotDCamera
+from robotd.devices import GameState as RobotDGameState
 from robotd.devices_base import Board
 from robotd.master import BoardRunner
-from sb_vision.camera import FileCamera
 
 
 class MockBoardMixin:
@@ -65,7 +64,7 @@ class MockRobotD:
             name = "MOCK{}".format(len(self.runners))
         return self.new_board(MockServoAssembly, name)
 
-    def new_camera(self,camera, name=None):
+    def new_camera(self, camera, name=None):
         if not name:
             name = "MOCK{}".format(len(self.runners))
         return self.new_board(MockCamera, name, camera)
