@@ -2,25 +2,7 @@ import json
 import socket
 import time
 from collections import Mapping
-
-
-class BoardList(Mapping):
-    """A mapping of ``Board``s allowing access by index or identity."""
-
-    def __init__(self, *args, **kwargs):
-        self._store = dict(*args, **kwargs)
-        self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
-
-    def __getitem__(self, attr):
-        if type(attr) is int:
-            return self._store_list[attr]
-        return self._store[attr]
-
-    def __iter__(self):
-        return iter(self._store_list)
-
-    def __len__(self):
-        return len(self._store_list)
+from typing import Union
 
 
 class Board:
@@ -169,3 +151,22 @@ class Board:
         self.socket.detach()
 
     __del__ = close
+
+
+class BoardList(Mapping[Union[str, int], Board]):
+    """A mapping of ``Board``s allowing access by index or identity."""
+
+    def __init__(self, *args, **kwargs):
+        self._store = dict(*args, **kwargs)
+        self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
+
+    def __getitem__(self, attr) -> Board:
+        if type(attr) is int:
+            return self._store_list[attr]
+        return self._store[attr]
+
+    def __iter__(self):
+        return iter(self._store_list)
+
+    def __len__(self) -> int:
+        return len(self._store_list)
