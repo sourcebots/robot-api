@@ -13,7 +13,7 @@ This is the userspace API for the robot, which is what students will interface w
 sudo apt install build-essential devscripts debhelper equivs
 
 # cd to the root of this project
-cd path/to/robot-apis
+cd path/to/robot-api
 
 # Install dependencies
 sudo mk-build-deps -ir
