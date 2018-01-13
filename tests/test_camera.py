@@ -2,6 +2,7 @@ import os
 import time
 import unittest
 
+from robot.camera import ResultList
 from robot.robot import Robot
 from sb_vision.camera import FileCamera
 from tests.mock_robotd import MockRobotD
@@ -18,6 +19,8 @@ class CameraTest(unittest.TestCase):
     """
     Tests pertaining to the camera object
     """
+
+    longMessage = True
 
     # TODO add test for Serial number
     def setUp(self):
@@ -54,8 +57,13 @@ class CameraTest(unittest.TestCase):
         camera = self.robot.cameras[0]
         tokens = camera.see()
 
-        # Check the correct markers are spotted
-        self.assertEqual({x.id for x in tokens}, {9})
+        self.assertEqual({x.id for x in tokens}, {9}, "Saw wrong markers")
+
+        self.assertEqual(
+            9,
+            tokens[0].id,
+            "Failed to get first marker by index",
+        )
 
     def test_unique_error(self):
         self.camera = self.mock.new_camera(CAMERA_SEES_NO_MARKER)
@@ -66,3 +74,124 @@ class CameraTest(unittest.TestCase):
 
     def tearDown(self):
         self.mock.stop()
+
+
+class ResultListTest(unittest.TestCase):
+    # Note: these tests deliberately ignore the implementation detail that
+    # ``ResultList`` happens to be a subclass of ``list`` and deliberately
+    # directly test the common operations which the class will experience --
+    # indexing, iteration, length checking and boolishness.
+
+    longMessage = True
+
+    def test_empty(self):
+        rl = ResultList([])
+
+        self.assertFalse(rl, "Wrong bool conversion")
+        self.assertEqual(0, len(rl), "Wrong length")
+        self.assertEqual([], [x for x in rl], "Wrong result from iterating")
+
+        with self.assertRaises(IndexError) as e_info:
+            rl[0]
+
+        self.assertEqual(
+            "Trying to index an empty list",
+            str(e_info.exception),
+        )
+
+        with self.assertRaises(IndexError) as e_info:
+            rl[1]
+
+        self.assertEqual(
+            "Trying to index an empty list",
+            str(e_info.exception),
+        )
+
+        with self.assertRaises(TypeError):
+            rl["0"]
+
+        with self.assertRaises(TypeError):
+            rl["spam"]
+
+    def test_one_item(self):
+        expected = ["spam"]
+        rl = ResultList(expected)
+
+        self.assertTrue(rl, "Wrong bool converstion")
+        self.assertEqual(1, len(rl), "Wrong length")
+        self.assertEqual(
+            expected,
+            [x for x in rl],
+            "Wrong result from iterating",
+        )
+
+        self.assertEqual(expected[0], rl[0], "Wrong value returned at index 0")
+
+        with self.assertRaises(IndexError) as e_info:
+            rl[1]
+
+        self.assertEqual(
+            "list index out of range",
+            str(e_info.exception),
+        )
+
+        with self.assertRaises(TypeError):
+            rl["0"]
+
+        with self.assertRaises(TypeError):
+            rl["spam"]
+
+    def test_two_items(self):
+        expected = ["spam", "ham"]
+        rl = ResultList(expected)
+
+        self.assertTrue(rl, "Wrong bool converstion")
+        self.assertEqual(2, len(rl), "Wrong length")
+        self.assertEqual(
+            expected,
+            [x for x in rl],
+            "Wrong result from iterating",
+        )
+
+        self.assertEqual(expected[0], rl[0], "Wrong value returned at index 0")
+        self.assertEqual(expected[1], rl[1], "Wrong value returned at index 1")
+
+        with self.assertRaises(IndexError):
+            rl[2]
+
+        with self.assertRaises(IndexError):
+            rl[5]
+
+        with self.assertRaises(TypeError):
+            rl["0"]
+
+        with self.assertRaises(TypeError):
+            rl["spam"]
+
+    def test_many_items(self):
+        expected = ["spam", "ham"] * 3
+        rl = ResultList(expected)
+
+        self.assertTrue(rl, "Wrong bool converstion")
+        self.assertEqual(6, len(rl), "Wrong length")
+        self.assertEqual(
+            expected,
+            [x for x in rl],
+            "Wrong result from iterating",
+        )
+
+        self.assertEqual(expected[0], rl[0], "Wrong value returned at index 0")
+        self.assertEqual(expected[1], rl[1], "Wrong value returned at index 1")
+        self.assertEqual(expected[2], rl[2], "Wrong value returned at index 2")
+        self.assertEqual(expected[3], rl[3], "Wrong value returned at index 3")
+        self.assertEqual(expected[4], rl[4], "Wrong value returned at index 4")
+        self.assertEqual(expected[5], rl[5], "Wrong value returned at index 5")
+
+        with self.assertRaises(IndexError):
+            rl[6]
+
+        with self.assertRaises(TypeError):
+            rl["0"]
+
+        with self.assertRaises(TypeError):
+            rl["spam"]

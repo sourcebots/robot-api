@@ -25,12 +25,10 @@ class Camera(Board):
         :return: A ``ResultList`` of ``Markers``, sorted by distance from the
                 camera.
         """
-        markers = []
-        for token in data["markers"]:
-            markers.append(Marker(token))
-        # Sort by distance
-        return ResultList(sorted(markers, key=lambda x: x.distance_metres))
-        return ResultList(markers)
+        return ResultList(sorted(
+            (Marker(x) for x in data["markers"]),
+            key=lambda x: x.distance_metres,
+        ))
 
     @property
     def serial(self):
@@ -58,46 +56,22 @@ class Camera(Board):
                     raise
 
 
-class ResultList(MutableSequence):
+class ResultList(list):
     """
-    A ``list``-like class with nicer error messages.
+    A ``list`` class with nicer error messages.
 
     In particular, this class provides a slightly better error description when
-    accessing index 0 and the list is empty.
+    accessing indexes and the list is empty.
 
     This is to mitigate a common beginners issue where a list is indexed
     without checking that the list has any items.
     """
 
-    def __delitem__(self, index):
-        del self.data[index]
-
-    def __init__(self, data):
-        self.data = data
-
-    def __getitem__(self, item):
+    def __getitem__(self, *args, **kwargs):
         try:
-            self.data[item]
+            return super().__getitem__(*args, **kwargs)
         except IndexError as e:
-            if len(self.data) == 0:
-                raise IndexError("Trying to index an empty list")
+            if not self:
+                raise IndexError("Trying to index an empty list") from None
             else:
-                raise e
-
-    def __setitem__(self, key, value):
-        self.data[key] = value
-
-    def insert(self, index, value):  # noqa: D102
-        self.data.insert(index, value)
-
-    def __len__(self):
-        return len(self.data)
-
-    def __repr__(self):
-        return self.data.__repr__()
-
-    def __eq__(self, other):
-        return self.data.__eq__(other)
-
-    def __iter__(self):
-        return self.data.__iter__()
+                raise
