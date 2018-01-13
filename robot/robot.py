@@ -1,5 +1,5 @@
-from pathlib import Path
 import time
+from pathlib import Path
 
 from robot.board import BoardList
 from robot.camera import Camera
@@ -11,7 +11,11 @@ from robot.servo import ServoBoard
 
 class Robot:
     """
-    Robot API
+    Core class of the Robot API.
+
+    This class provides access to the various boards which comprise the API.
+
+    Internally it:
     - Speaks to robotd over unix socket
     - Always grabs from sockets, avoids caching
     """
@@ -70,7 +74,8 @@ class Robot:
 
     def _update_boards(self, known_boards, board_type, directory_name):
         """
-        Update the number of boards against the known boards
+        Update the number of boards against the known boards.
+
         :param known_boards:
         :param board_type:
         :param directory_name:
@@ -101,7 +106,7 @@ class Robot:
     @property
     def motor_boards(self):
         """
-        :return: list of available Motor boards, can be indexed by serial or by number
+        :return: A ``BoardList`` of available ``MotorBoard``s.
         """
         boards = self._update_boards(self.known_motor_boards, MotorBoard, 'motor')
         self.known_motor_boards = boards
@@ -110,7 +115,7 @@ class Robot:
     @property
     def power_boards(self):
         """
-        :return: list of available Power boards, can be indexed by serial or by number
+        :return: A ``BoardList`` of available ``PowerBoard``s.
         """
         boards = self._update_boards(self.known_power_boards, PowerBoard, 'power')
         self.known_power_boards = boards
@@ -119,16 +124,20 @@ class Robot:
     @property
     def servo_boards(self):
         """
-        :return: list of available Servo boards, can be indexed by serial or by number
+        :return: A ``BoardList`` of available ``ServoBoard``s.
         """
-        boards = self._update_boards(self.known_servo_boards, ServoBoard, 'servo_assembly')
+        boards = self._update_boards(
+            self.known_servo_boards,
+            ServoBoard,
+            'servo_assembly',
+        )
         self.known_servo_boards = boards
         return self._dictify_boards(boards)
 
     @property
     def cameras(self):
         """
-        :return: list of available cameras, can be indexed by serial or by number
+        :return: A ``BoardList`` of available cameras.
         """
         boards = self._update_boards(self.known_cameras, Camera, 'camera')
         self.known_cameras = boards
@@ -137,7 +146,7 @@ class Robot:
     @property
     def _games(self):
         """
-        :return: list of available GameStates, can be indexed by serial or by number
+        :return: A ``BoardList`` of available ``GameStates``.
         """
         boards = self._update_boards(self.known_gamestates, GameState, 'game')
         self.known_gamestates = boards
@@ -152,37 +161,56 @@ class Robot:
 
     @property
     def power_board(self):
+        """
+        :return: The first ``PowerBoard``, if attached.
+
+        Raises an ``AttributeError`` if there are no power boards attached.
+        """
         return self._single_index("power board", self.power_boards)
 
     @property
     def motor_board(self):
+        """
+        :return: The first ``MotorBoard``, if attached.
+
+        Raises an ``AttributeError`` if there are no motor boards attached.
+        """
         return self._single_index("motor board", self.motor_boards)
 
     @property
     def servo_board(self):
+        """
+        :return: The first ``ServoBoard``, if attached.
+
+        Raises an ``AttributeError`` if there are no servo boards attached.
+        """
         return self._single_index("servo board", self.servo_boards)
 
     @property
     def camera(self):
         """
-        Get the object representing the camera information
+        :return: The first ``Camera``, if attached.
+
+        Raises an ``AttributeError`` if there are no cameras attached.
         """
         return self._single_index("camera", self.cameras)
 
     @property
     def _game(self):
         """
-        Get the object representing the game information
+        :return: The first ``GameStates``, if any.
 
-        This is a private method, users should use self.zone to access the same information stored here.
+        Raises an ``AttributeError``
         """
         return self._single_index("game states", self._games)
 
     @property
     def zone(self):
         """
-        Get the zone the robot is in. This is changed by inserting a competition zone USB stick in it,
-        the value defaults to 0 if there is no stick plugged in.
+        The zone the robot is in.
+
+        This is changed by inserting a competition zone USB stick in it, the
+        value defaults to 0 if there is no stick plugged in.
 
         :return: ID of the zone the robot started in (0-3)
         """
@@ -191,18 +219,20 @@ class Robot:
     @property
     def mode(self):
         """
-        Get which mode the robot is in,
-        :return: either GameMode.COMPETITION or GameMode.DEVELOPMENT, if the robot is in
-        competition or development mode respectively.
+        The ``GameMode`` the robot is in.
+
+        :return: one of ``GameMode.COMPETITION`` or ``GameMode.DEVELOPMENT``.
         """
         return self._game.mode
 
     def close(self):
-        # remove all the boards
-        for board_type in self.all_known_boards:
-            for board in board_type:
-                del board
+        for board_group in self.all_known_boards:
+            for board in board_group:
+                board.close()
+
+            # Clear the group so that any further access doesn't accidentally
+            # reanimate the boards (which isn't supported).
+            del board_group[:]
 
     def __del__(self):
         self.close()
-

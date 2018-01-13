@@ -1,9 +1,8 @@
+import time
 import unittest
 
-import time
-
+from robot import COAST
 from robot.robot import Robot
-from robot import COAST, BRAKE
 from tests.mock_robotd import MockRobotD
 
 
