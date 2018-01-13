@@ -37,7 +37,7 @@ jobs:
       - run: apt-get update -y
       - run: apt-get install -y libcv-dev libopencv-photo-dev libopencv-contrib-dev libusb-1.0.0-dev
       - run: pip3 install -r requirements.txt
-      - run: pip3 install -r requirements_test.txt
+      - run: pip3 install -r script/linting/requirements.txt
       - run: git clone git@github.com:sourcebots/sb-vision.git
       - run: cd sb-vision; pip3 install .
       - run: git clone git@github.com:sourcebots/robotd.git
@@ -54,6 +54,9 @@ jobs:
       - run:
           name: type check
           command: mypy --strict-optional --ignore-missing-imports --follow-imports=skip robot/
+
+      # run linting!
+      - run: script/linting/lint
 
       - store_artifacts:
           path: test-reports

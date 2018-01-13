@@ -1,36 +1,30 @@
 import json
-import time
 import socket
+import time
+from collections import Mapping
 
-import collections
-from collections import OrderedDict
 
-
-class BoardList(collections.MutableMapping):
+class BoardList(Mapping):
+    """A mapping of ``Board``s allowing access by index or identity."""
 
     def __init__(self, *args, **kwargs):
-        self.store = OrderedDict(*args, **kwargs)
-        self.store_list = list(self.store.values())
+        self._store = dict(*args, **kwargs)
+        self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
 
     def __getitem__(self, attr):
         if type(attr) is int:
-            return self.store_list[attr]
-        return self.store[attr]
-
-    def __setitem__(self, key, value):
-        raise NotImplementedError("Cannot mutate board list")
-
-    def __delitem__(self, key):
-        raise NotImplementedError("Cannot mutate board list")
+            return self._store_list[attr]
+        return self._store[attr]
 
     def __iter__(self):
-        return iter(self.store_list)
+        return iter(self._store_list)
 
     def __len__(self):
-        return len(self.store_list)
+        return len(self._store_list)
 
 
 class Board:
+    """Base class for connections to ``robotd`` board sockets."""
 
     SEND_TIMEOUT_SECS = 6
     RECV_BUFFER_BYTES = 2048
@@ -44,14 +38,16 @@ class Board:
 
     def _greeting_response(self, data):
         """
-        Handle the response to the greeting command
+        Handle the response to the greeting command.
+
         NOTE: This is called on reconnect in addition to first connection
         """
         pass
 
     def _connect(self, socket_path):
         """
-        (re)connect to a new socket
+        Connect or reconnect to a socket.
+
         :param socket_path: Path for the unix socket
         """
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -68,15 +64,22 @@ class Board:
 
     def _get_lc_error(self) -> str:
         """
+        Describe a lost connection error.
+
         :return: The text for a lost connection error
         """
         return "Lost Connection to {conn} at {path}".format(
             conn=str(self.__class__.__name__),
-            path=self.socket_path
+            path=self.socket_path,
         )
 
     def _socket_with_single_retry(self, handler):
-        retryable_errors = (socket.timeout, BrokenPipeError, OSError, ConnectionResetError)
+        retryable_errors = (
+            socket.timeout,
+            BrokenPipeError,
+            OSError,
+            ConnectionResetError,
+        )
 
         backoffs = [
             0.1,
@@ -108,7 +111,8 @@ class Board:
 
     def send(self, message, should_retry=True):
         """
-        Send a message to robotd
+        Send a message to robotd.
+
         :param retry: used internally
         :param message: message to send
         """
@@ -131,10 +135,13 @@ class Board:
         return data
 
     def receive(self, should_retry=True):
+        """
+        Receive a message from robotd.
+        """
         while b'\n' not in self.data:
             if should_retry:
                 message = self._socket_with_single_retry(
-                    lambda: self._recv_from_socket(4096)
+                    lambda: self._recv_from_socket(4096),
                 )
             else:
                 message = self._recv_from_socket(4096)
@@ -149,11 +156,16 @@ class Board:
         return json.loads(line.decode('utf-8'))
 
     def send_and_receive(self, message, should_retry=True):
+        """
+        Send a message to robotd and wait for a response.
+        """
         self.send(message, should_retry)
         return self.receive(should_retry)
 
-    def __del__(self):
-        self._clean_up()
-
-    def _clean_up(self):
+    def close(self):
+        """
+        Close the the connection to the underlying robotd board.
+        """
         self.socket.detach()
+
+    __del__ = close

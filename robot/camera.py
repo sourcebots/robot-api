@@ -1,133 +1,74 @@
-from collections.abc import MutableSequence
 from pathlib import Path
-import threading
-
 from robot.board import Board
 from robot.markers import Marker
-
-
-class ResultList(MutableSequence):
-    """
-    This class pretends to be a list, except it returns
-    a much more useful error description if the user indexes an empty array.
-
-    This is to mitigate a common beginners issue where an array is indexed
-    without checking that the array has any items
-    """
-
-    def __delitem__(self, index):
-        del self.data[index]
-
-    def __init__(self, data):
-        self.data = data
-
-    def __getitem__(self, item):
-        try:
-            self.data[item]
-        except IndexError as e:
-            if len(self.data) == 0:
-                raise IndexError("Trying to index an empty list")
-            else:
-                raise e
-
-    def __setitem__(self, key, value):
-        self.data[key] = value
-
-    def insert(self, index, value):
-        self.data.insert(index, value)
-
-    def __len__(self):
-        return len(self.data)
-
-    def __repr__(self):
-        return self.data.__repr__()
-
-    def __eq__(self, other):
-        return self.data.__eq__(other)
-
-    def __iter__(self):
-        return self.data.__iter__()
+import time
 
 
 class Camera(Board):
     """
-    Object representing an Apriltag camera in robotd
-
-    Polls the robot daemon for new images
+    A camera providing a view of the outside world expressed as ``Marker``s.
     """
 
     def __init__(self, socket_path):
-        self._latest = None
-        self._got_image = threading.Event()
         super().__init__(socket_path)
         self._serial = Path(socket_path).stem
-        self._stop = threading.Event()
-        self._latest_lock = threading.Lock()
-        self._start_listening()
-
-    def _start_listening(self):
-        """
-        Start listening thread
-        """
-        thread = threading.Thread(target=self._cam_listener_worker)
-        self._alive = True
-        thread.start()
-        self.sock_thread = thread
-
-    def _stop_poll(self):
-        """
-        Stop polling the camera
-        """
-        self._alive = False
-        self.sock_thread.join()
-
-    @property
-    def _alive(self) -> bool:
-        return not self._stop.is_set()
-
-    @_alive.setter
-    def _alive(self, value):
-        if value:
-            self._stop.clear()
-        else:
-            self._stop.set()
-
-    def _cam_listener_worker(self):
-        """
-        Worker thread for listening to the camera socket
-        """
-        while self._alive:
-            data = self.receive()
-            if data:
-                self._got_image.set()
-                with self._latest_lock:
-                    self._latest = data
 
     @staticmethod
     def _see_to_results(data) -> ResultList:
         """
-        Converts the string output that comes from the camera in robotd to a list of #Marker objects
-        :param data: json string data to convert
-        :return: #ResultList object (that imitates a list) of markers
+        Convert the data from ``robotd`` into a sorted of ``Marker``s.
+
+        :param data: the data returned from ``robotd``.
+        :return: A ``ResultList`` of ``Markers``, sorted by distance from the
+                camera.
         """
-        markers = []
-        for token in data["markers"]:
-            markers.append(Marker(token))
-        # Sort by distance
-        return ResultList(markers)
+        return ResultList(sorted(
+            (Marker(x) for x in data["markers"]),
+            key=lambda x: x.distance_metres,
+        ))
 
     @property
     def serial(self):
-        """
-        Serial number for the board
-        """
+        """Serial number of the camera."""
         return self._serial
 
     def see(self):
         """
-        Look for markers
-        :return: List of #Marker objects
+        Capture and process a new snapshot of the world the camera can see.
+
+        Images are captured and processed on-demand in a "blocking" fashion, so
+        this method may take a noticeable amount of time to complete its work.
+
+        :return: A list of ``Marker`` objects which were identified.
         """
-        self._got_image.wait()
-        with self._latest_lock:
-            return self._see_to_results(self._latest)
+        abort_after = time.time() + 10
+
+        self.send({'see': True})
+
+        while True:
+            try:
+                return self._see_to_results(self.receive(should_retry=True))
+            except socket.timeout:
+                if time.time() > abort_after:
+                    raise
+
+
+class ResultList(list):
+    """
+    A ``list`` class with nicer error messages.
+
+    In particular, this class provides a slightly better error description when
+    accessing indexes and the list is empty.
+
+    This is to mitigate a common beginners issue where a list is indexed
+    without checking that the list has any items.
+    """
+
+    def __getitem__(self, *args, **kwargs):
+        try:
+            return super().__getitem__(*args, **kwargs)
+        except IndexError as e:
+            if not self:
+                raise IndexError("Trying to index an empty list") from None
+            else:
+                raise

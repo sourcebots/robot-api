@@ -1,50 +1,25 @@
-import json
 from pathlib import Path
 
 from robot.board import Board
 
-
-BRAKE = 0  # 0 so setting the motors to 0 has exactly the same affect as setting the motors to BRAKE
+# BRAKE is set to 0 so setting the motors to 0 has exactly the same affect as
+# setting the motors to BRAKE
+BRAKE = 0
 COAST = "coast"
 
 
-class Motor:
-
-    def __init__(self, motor_board, motor_id):
-        self.motor_board = motor_board
-        self.motor_id = motor_id
-
-    @property
-    def voltage(self):
-        return self.motor_board._get_status(self.motor_id)
-
-    @voltage.setter
-    def voltage(self, voltage):
-        self.motor_board._update_motor(self.motor_id, voltage)
-
-
 class MotorBoard(Board):
+    """A motor board with two motor outputs."""
 
     def __init__(self, socket_path):
         super().__init__(socket_path)
         self._serial = Path(socket_path).stem
 
-        m0_id = "m0"
-        m1_id = "m1"
-
-        self._m0 = Motor(self, m0_id)
-        self._m1 = Motor(self, m1_id)
-
-        # Set 'm0' and 'm1' to the motors
-        self.motor_index = {
-            m0_id: self._m0,
-            m1_id: self._m1
-        }
-
     @staticmethod
-    def _string_to_voltage(voltage):
+    def _string_to_power(voltage):
         """
-        Converts a string to a Voltage value
+        Converts a string to a Voltage value.
+
         :param voltage:
         :return:
         """
@@ -55,13 +30,17 @@ class MotorBoard(Board):
         elif -1 <= voltage <= 1:
             return voltage
         else:
-            raise ValueError('Incorrect voltage value, valid values: between -1 and 1, "free", or "brake"')
+            raise ValueError(
+                "Incorrect voltage value, valid values: between -1 and 1, "
+                "'coast', or 'brake'",
+            )
 
     @staticmethod
-    def _voltage_to_string(voltage):
+    def _power_to_string(voltage):
         """
-        Inverse of #MotorBoard.string_to_voltage
-        Converts more human readable info to that robotd can read
+        Converts a voltage value to the equivalent API value.
+
+        This is the reverse of inverse of ``MotorBoard.string_to_voltage``.
         """
         if voltage is COAST:
             return 'coast'
@@ -71,37 +50,49 @@ class MotorBoard(Board):
         elif -1 <= voltage <= 1:
             return voltage
         else:
-            raise ValueError('Incorrect voltage value, valid values: between -1 and 1, robot.COAST, or robot.BRAKE')
+            raise ValueError(
+                "Incorrect voltage value, valid values: between -1 and 1, "
+                "robot.COAST, or robot.BRAKE",
+            )
 
     @property
     def m0(self):
         """
-        :return: `Motor` object for motor connected to the `m0` slot
+        :return: The value of motor output 0.
         """
-        return self._m0
+        return self._get_status("m0")
+
+    @m0.setter
+    def m0(self, power):
+        self._update_motor("m0", power)
 
     @property
     def m1(self):
         """
-        :return: `Motor` object for motor connected to the `m1` slot
+        :return: The value of motor output 1.
         """
-        return self._m1
+        return self._get_status("m1")
+
+    @m1.setter
+    def m1(self, power):
+        self._update_motor("m1", power)
 
     @property
     def serial(self):
-        """Serial number for the board"""
+        """Serial number of the board."""
         return self._serial
 
     def _get_status(self, motor_id):
-        return self._string_to_voltage(
-            self.send_and_receive({})[motor_id]
+        return self._string_to_power(
+            self.send_and_receive({})[motor_id],
         )
 
     def _update_motor(self, motor_id, voltage):
         """
-        Set the value of a motor
+        Set the value of a motor output.
+
         :param motor_id: id of the motor, either 'm0' or 'm1'
         :param voltage: Voltage to set the motor to
         """
-        v_string = self._voltage_to_string(voltage)
+        v_string = self._power_to_string(voltage)
         self.send_and_receive({motor_id: v_string})
