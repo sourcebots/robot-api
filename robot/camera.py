@@ -68,6 +68,6 @@ class ResultList(list):
             return super().__getitem__(*args, **kwargs)
         except IndexError as e:
             if not self:
-                raise IndexError("Trying to index an empty list")
+                raise IndexError("Trying to index an empty list") from None
             else:
                 raise
