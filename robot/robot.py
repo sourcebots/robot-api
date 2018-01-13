@@ -209,7 +209,7 @@ class Robot:
 
     def close(self):
         """
-        Close all the baord connections this instance holds.
+        Close all the board connections this instance holds.
         """
         # remove all the boards
         for board_type in self.all_known_boards:
