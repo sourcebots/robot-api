@@ -109,6 +109,12 @@ class ResultListTest(unittest.TestCase):
             str(e_info.exception),
         )
 
+        with self.assertRaises(TypeError):
+            rl["0"]
+
+        with self.assertRaises(TypeError):
+            rl["spam"]
+
     def test_one_item(self):
         expected = ["spam"]
         rl = ResultList(expected)
@@ -131,6 +137,12 @@ class ResultListTest(unittest.TestCase):
             str(e_info.exception),
         )
 
+        with self.assertRaises(TypeError):
+            rl["0"]
+
+        with self.assertRaises(TypeError):
+            rl["spam"]
+
     def test_two_items(self):
         expected = ["spam", "ham"]
         rl = ResultList(expected)
@@ -151,6 +163,12 @@ class ResultListTest(unittest.TestCase):
 
         with self.assertRaises(IndexError):
             rl[5]
+
+        with self.assertRaises(TypeError):
+            rl["0"]
+
+        with self.assertRaises(TypeError):
+            rl["spam"]
 
     def test_many_items(self):
         expected = ["spam", "ham"] * 3
@@ -173,3 +191,9 @@ class ResultListTest(unittest.TestCase):
 
         with self.assertRaises(IndexError):
             rl[6]
+
+        with self.assertRaises(TypeError):
+            rl["0"]
+
+        with self.assertRaises(TypeError):
+            rl["spam"]
