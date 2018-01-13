@@ -182,7 +182,7 @@ class Robot:
         """
         :return: The first ``GameStates``, if any.
 
-        Raises an ``AttributeError``
+        Raises an ``AttributeError`` if there are no game state configured.
         """
         return self._single_index("game states", self._games)
 
