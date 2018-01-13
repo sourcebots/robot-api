@@ -79,11 +79,19 @@ class CameraTest(unittest.TestCase):
 
 
 class ResultListTest(unittest.TestCase):
+    # Note: these tests deliberately ignore the implementation detail that
+    # ``ResultList`` happens to be a subclass of ``list`` and deliberately
+    # directly test the common operations which the class will experience --
+    # indexing, iteration, length checking and boolishness.
+
+    longMessage = True
+
     def test_empty(self):
         rl = ResultList([])
 
-        self.assertEqual(0, len(rl))
-        self.assertEqual([], [x for x in rl])
+        self.assertFalse(rl, "Wrong bool conversion")
+        self.assertEqual(0, len(rl), "Wrong length")
+        self.assertEqual([], [x for x in rl], "Wrong result from iterating")
 
         with self.assertRaises(IndexError) as e_info:
             rl[0]
@@ -105,10 +113,15 @@ class ResultListTest(unittest.TestCase):
         expected = ["spam"]
         rl = ResultList(expected)
 
-        self.assertEqual(1, len(rl))
-        self.assertEqual(expected, [x for x in rl])
+        self.assertTrue(rl, "Wrong bool converstion")
+        self.assertEqual(1, len(rl), "Wrong length")
+        self.assertEqual(
+            expected,
+            [x for x in rl],
+            "Wrong result from iterating",
+        )
 
-        self.assertEqual(expected[0], rl[0])
+        self.assertEqual(expected[0], rl[0], "Wrong value returned at index 0")
 
         with self.assertRaises(IndexError) as e_info:
             rl[1]
@@ -122,11 +135,16 @@ class ResultListTest(unittest.TestCase):
         expected = ["spam", "ham"]
         rl = ResultList(expected)
 
-        self.assertEqual(2, len(rl))
-        self.assertEqual(expected, [x for x in rl])
+        self.assertTrue(rl, "Wrong bool converstion")
+        self.assertEqual(2, len(rl), "Wrong length")
+        self.assertEqual(
+            expected,
+            [x for x in rl],
+            "Wrong result from iterating",
+        )
 
-        self.assertEqual(expected[0], rl[0])
-        self.assertEqual(expected[1], rl[1])
+        self.assertEqual(expected[0], rl[0], "Wrong value returned at index 0")
+        self.assertEqual(expected[1], rl[1], "Wrong value returned at index 1")
 
         with self.assertRaises(IndexError):
             rl[2]
@@ -138,15 +156,20 @@ class ResultListTest(unittest.TestCase):
         expected = ["spam", "ham"] * 3
         rl = ResultList(expected)
 
-        self.assertEqual(6, len(rl))
-        self.assertEqual(expected, [x for x in rl])
+        self.assertTrue(rl, "Wrong bool converstion")
+        self.assertEqual(6, len(rl), "Wrong length")
+        self.assertEqual(
+            expected,
+            [x for x in rl],
+            "Wrong result from iterating",
+        )
 
-        self.assertEqual(expected[0], rl[0])
-        self.assertEqual(expected[1], rl[1])
-        self.assertEqual(expected[2], rl[2])
-        self.assertEqual(expected[3], rl[3])
-        self.assertEqual(expected[4], rl[4])
-        self.assertEqual(expected[5], rl[5])
+        self.assertEqual(expected[0], rl[0], "Wrong value returned at index 0")
+        self.assertEqual(expected[1], rl[1], "Wrong value returned at index 1")
+        self.assertEqual(expected[2], rl[2], "Wrong value returned at index 2")
+        self.assertEqual(expected[3], rl[3], "Wrong value returned at index 3")
+        self.assertEqual(expected[4], rl[4], "Wrong value returned at index 4")
+        self.assertEqual(expected[5], rl[5], "Wrong value returned at index 5")
 
         with self.assertRaises(IndexError):
             rl[6]
