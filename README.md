@@ -41,10 +41,3 @@ to install the package
 The robot-api tests require `robotd` (available at [https://github.com/sourcebots/robotd]) installed. 
 
 To run the tests, simply run `python3 -m unittest` and it will run all tests.
-
-
-# Zone ID script
-
-To run the zone script on USB insert, you must install the runusb script in [https://github.com/sourcebots/runusb]
-
-The zone ID script can be found at `robot/zone_script.py`, to use this for real robots you must put that script in a USB stick in the same directory as a file named `zone-<x>`, where `<x>` is the ID of the zone the robot should be with.
