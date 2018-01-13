@@ -38,6 +38,7 @@ jobs:
       - run: apt-get install -y libcv-dev libopencv-photo-dev libopencv-contrib-dev libusb-1.0.0-dev
       - run: pip3 install -r requirements.txt
       - run: pip3 install -r script/linting/requirements.txt
+      - run: pip3 install -r script/typing/requirements.txt
       - run: git clone git@github.com:sourcebots/sb-vision.git
       - run: cd sb-vision; pip3 install .
       - run: git clone git@github.com:sourcebots/robotd.git
@@ -51,9 +52,11 @@ jobs:
       - run:
           name: run tests
           command: python3 -m unittest
+
       - run:
-          name: type check
-          command: mypy --strict-optional --ignore-missing-imports --follow-imports=skip robot/
+          command: script/typing/check
+          environment:
+            MYPY: venv/bin/mypy
 
       # run linting!
       - run: script/linting/lint
