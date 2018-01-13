@@ -24,8 +24,8 @@ jobs:
       - run: apt-get install -y libcv-dev libopencv-photo-dev libopencv-contrib-dev libusb-1.0.0-dev
       - run: pip3 install -r requirements.txt
       - run: pip3 install -r script/linting/requirements.txt
-      - run: pip3 install git+https://github.com/sourcebots/sb-vision
-      - run: pip3 install git+https://github.com/sourcebots/robotd
+      - run: pip3 install git+https://github.com/sourcebots/sb-vision@8ace07108ee27bf86e3a59603f40dd62f6e65101
+      - run: pip3 install git+https://github.com/sourcebots/robotd@9992ff6d169365ab807df1965cbc1662e350ca04
       - save_cache:
           paths:
             - ./venv
