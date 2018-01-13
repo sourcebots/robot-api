@@ -162,8 +162,10 @@ class Board:
         self.send(message, should_retry)
         return self.receive(should_retry)
 
-    def __del__(self):
-        self._clean_up()
-
-    def _clean_up(self):
+    def close(self):
+        """
+        Close the the connection to the underlying robotd board.
+        """
         self.socket.detach()
+
+    __del__ = close

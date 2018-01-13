@@ -211,10 +211,13 @@ class Robot:
         """
         Close all the board connections this instance holds.
         """
-        # remove all the boards
-        for board_type in self.all_known_boards:
-            for board in board_type:
-                del board
+        for board_group in self.all_known_boards:
+            for board in board_group:
+                board.close()
+
+            # Clear the group so that any further access doesn't accidentally
+            # reanimate the boards (which isn't supported).
+            del board_group[:]
 
     def __del__(self):
         self.close()
