@@ -1,6 +1,5 @@
 import socket
 import time
-from collections.abc import MutableSequence
 from pathlib import Path
 
 from robot.board import Board
