@@ -36,44 +36,6 @@ sudo dpkg -i robot-api_0_all.deb
 
 to install the package
 
-# How to use
-
-Import Robot and initialise it:
-``` python
-from robot import Robot
-r = Robot()
-```
-
-Markers can be seen by:
-
-``` python
-markers = r.cameras[0].see()
-# or
-markers = r.camera.see()
-```
-
-Servo positions can be set by:
-
-``` python
-r.servo_boards[0].servos[0].position = -1
-# or
-r.servo_board.servos[0].position = -1
-```
-
-Motors can be set with:
-
-``` python
-r.motor_boards[0].m0.voltage = -1
-# or
-r.motor_board.m0.voltage = -1
-```
-
-The zone the robot is going to start in can be gotten with:
-
-``` python
-r.zone
-```
-
 # Testing
 
 The robot-api tests require `robotd` (available at [https://github.com/sourcebots/robotd] ) installed. 
