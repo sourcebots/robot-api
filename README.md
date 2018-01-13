@@ -38,9 +38,9 @@ to install the package
 
 # Testing
 
-The robot-api tests require `robotd` (available at [https://github.com/sourcebots/robotd] ) installed. 
+The robot-api tests require `robotd` (available at [https://github.com/sourcebots/robotd]) installed. 
 
-To run the tests, simply run `nosetests` (requires the `nose` python package) and it will run all tests.
+To run the tests, simply run `python3 -m unittest` and it will run all tests.
 
 
 # Zone ID script
