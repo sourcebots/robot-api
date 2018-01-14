@@ -1,15 +1,13 @@
 import time
-from typing import List, Union
+from typing import List, Union, TypeVar
 from pathlib import Path
 
-from robot.board import BoardList
+from robot.board import BoardList, BoardType
 from robot.camera import Camera
-from robot.game import GameState, GameMode
+from robot.game import GameState, GameMode, Zone
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
-
-Board = Union[Camera, GameState, MotorBoard, PowerBoard, ServoBoard]
 
 
 class Robot:
@@ -25,7 +23,7 @@ class Robot:
 
     ROBOTD_ADDRESS = "/var/robotd"
 
-    def __init__(self, robotd_path:str=ROBOTD_ADDRESS) -> None:
+    def __init__(self, robotd_path: str=ROBOTD_ADDRESS) -> None:
         self.robotd_path = Path(robotd_path)
         self.known_power_boards: List[PowerBoard] = []
         self.known_motor_boards: List[MotorBoard] = []
@@ -83,13 +81,13 @@ class Robot:
         return sorted(boards, key=lambda b: b.serial)
 
     @staticmethod
-    def _dictify_boards(boards: List[Board]) -> BoardList:
+    def _dictify_boards(boards: List[BoardType]) -> BoardList[BoardType]:
         # Convert lists of boards into a dictionary
         return BoardList({board.serial: board for board in boards})
 
     # TODO: Parameterise the functions below so we only need one
     @property
-    def motor_boards(self) -> BoardList:
+    def motor_boards(self) -> BoardList[MotorBoard]:
         """
         :return: A ``BoardList`` of available ``MotorBoard``s.
         """
@@ -98,7 +96,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def power_boards(self) -> BoardList:
+    def power_boards(self) -> BoardList[PowerBoard]:
         """
         :return: A ``BoardList`` of available ``PowerBoard``s.
         """
@@ -107,7 +105,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def servo_boards(self) -> BoardList:
+    def servo_boards(self) -> BoardList[ServoBoard]:
         """
         :return: A ``BoardList`` of available ``ServoBoard``s.
         """
@@ -120,7 +118,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def cameras(self) -> BoardList:
+    def cameras(self) -> BoardList[Camera]:
         """
         :return: A ``BoardList`` of available cameras.
         """
@@ -129,7 +127,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def _games(self) -> BoardList:
+    def _games(self) -> BoardList[GameState]:
         """
         :return: A ``BoardList`` of available ``GameStates``.
         """
@@ -138,7 +136,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @staticmethod
-    def _single_index(name, list_of_boards: BoardList):
+    def _single_index(name, list_of_boards: BoardList[BoardType]) -> BoardType:
         if list_of_boards:
             return list_of_boards[0]
         else:
@@ -190,7 +188,7 @@ class Robot:
         return self._single_index("game states", self._games)
 
     @property
-    def zone(self) -> int:
+    def zone(self) -> Zone:
         """
         The zone the robot is in.
 

@@ -2,7 +2,7 @@ import json
 import socket
 import time
 from collections import Mapping
-from typing import Union
+from typing import Union, TypeVar
 
 
 class Board:
@@ -153,14 +153,17 @@ class Board:
     __del__ = close
 
 
-class BoardList(Mapping[Union[str, int], Board]):
+BoardType = TypeVar('BoardType', bound=Board)
+
+
+class BoardList(Mapping[Union[str, int], BoardType]):
     """A mapping of ``Board``s allowing access by index or identity."""
 
     def __init__(self, *args, **kwargs):
         self._store = dict(*args, **kwargs)
         self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
 
-    def __getitem__(self, attr) -> Board:
+    def __getitem__(self, attr) -> BoardType:
         if type(attr) is int:
             return self._store_list[attr]
         return self._store[attr]

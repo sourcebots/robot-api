@@ -1,7 +1,9 @@
 from enum import Enum
 from pathlib import Path
-from typing import Union
+from typing import NewType
 from robot.board import Board
+
+Zone = NewType('Zone', int)
 
 
 class GameMode(Enum):
@@ -24,7 +26,7 @@ class GameState(Board):
         return self._serial
 
     @property
-    def zone(self) -> int:
+    def zone(self) -> Zone:
         """
         The zone in which the robot starts the match.
 
