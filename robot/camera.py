@@ -55,7 +55,7 @@ class Camera(Board):
         """Serial number of the camera."""
         return self._serial
 
-    def see(self):
+    def see(self) -> ResultList:
         """
         Capture and process a new snapshot of the world the camera can see.
 
