@@ -2,7 +2,7 @@ import time
 from typing import List, Union, TypeVar
 from pathlib import Path
 
-from robot.board import BoardList, BoardType
+from robot.board import BoardList, TBoard
 from robot.camera import Camera
 from robot.game import GameState, GameMode, Zone
 from robot.motor import MotorBoard
@@ -81,7 +81,7 @@ class Robot:
         return sorted(boards, key=lambda b: b.serial)
 
     @staticmethod
-    def _dictify_boards(boards: List[BoardType]) -> BoardList[BoardType]:
+    def _dictify_boards(boards: List[TBoard]) -> BoardList[TBoard]:
         # Convert lists of boards into a dictionary
         return BoardList({board.serial: board for board in boards})
 
@@ -136,7 +136,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @staticmethod
-    def _single_index(name, list_of_boards: BoardList[BoardType]) -> BoardType:
+    def _single_index(name, list_of_boards: BoardList[TBoard]) -> TBoard:
         if list_of_boards:
             return list_of_boards[0]
         else:

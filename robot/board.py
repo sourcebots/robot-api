@@ -153,17 +153,17 @@ class Board:
     __del__ = close
 
 
-BoardType = TypeVar('BoardType', bound=Board)
+TBoard = TypeVar('TBoard', bound=Board)
 
 
-class BoardList(Mapping[Union[str, int], BoardType]):
+class BoardList(Mapping[Union[str, int], TBoard]):
     """A mapping of ``Board``s allowing access by index or identity."""
 
     def __init__(self, *args, **kwargs):
         self._store = dict(*args, **kwargs)
         self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
 
-    def __getitem__(self, attr) -> BoardType:
+    def __getitem__(self, attr) -> TBoard:
         if type(attr) is int:
             return self._store_list[attr]
         return self._store[attr]
