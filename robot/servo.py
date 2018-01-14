@@ -99,14 +99,14 @@ class ServoBoard(Board):
         servo_ids = range(0, 16)  # servos with a port 0-15
         gpio_pins = range(2, 13)  # gpio pins 2-12
 
-        self._servos: Dict[int, Servo] = {}
+        self._servos = {}  # type: Dict[int, Servo]
         for x in servo_ids:
             self._servos[x] = Servo(
                 x,
                 (lambda pos, x=x: self._set_servo_pos(x, pos)),
                 (lambda x=x: self._get_servo_pos(x)),
             )
-        self._gpios: Dict[int, Gpio] = {
+        self._gpios = {  # type: Dict[int, Gpio]
             x: Gpio(
                 x,
                 (lambda x=x: self._read_pin(x)),

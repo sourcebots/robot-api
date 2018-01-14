@@ -25,11 +25,11 @@ class Robot:
 
     def __init__(self, robotd_path: str=ROBOTD_ADDRESS) -> None:
         self.robotd_path = Path(robotd_path)
-        self.known_power_boards: List[PowerBoard] = []
-        self.known_motor_boards: List[MotorBoard] = []
-        self.known_servo_boards: List[ServoBoard] = []
-        self.known_cameras: List[Camera] = []
-        self.known_gamestates: List[GameState] = []
+        self.known_power_boards = []  # type: List[PowerBoard]
+        self.known_motor_boards = []  # type: List[MotorBoard]
+        self.known_servo_boards = []  # type: List[ServoBoard]
+        self.known_cameras = []  # type: List[Camera]
+        self.known_gamestates = []  # type: List[GameState]
         self.all_known_boards = [
             self.known_power_boards,
             self.known_motor_boards,

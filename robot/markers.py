@@ -75,8 +75,7 @@ class Marker:
     @property
     def size(self) -> Tuple[Metres, Metres]:
         """Marker size in metres."""
-        size_data: Tuple[Metres, Metres] = self._raw_data['size']
-        return size_data
+        return self._raw_data['size']
 
     # Disabled because it's always 0.0
     # TODO fix the certainty being 0
