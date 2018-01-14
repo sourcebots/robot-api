@@ -68,6 +68,7 @@ class Marker:
     def __init__(self, data):
         self._raw_data = data
 
+    @property
     def id(self) -> int:
         """ID of the marker seen."""
         return self._raw_data['id']
