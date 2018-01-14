@@ -3,6 +3,7 @@ import socket
 import time
 from collections import Mapping
 from typing import Union, TypeVar
+from typing import Mapping as TMapping
 
 
 class Board:
@@ -156,7 +157,7 @@ class Board:
 TBoard = TypeVar('TBoard', bound=Board)
 
 
-class BoardList(Mapping[Union[str, int], TBoard]):
+class BoardList(TMapping[Union[str, int], TBoard]):
     """A mapping of ``Board``s allowing access by index or identity."""
 
     def __init__(self, *args, **kwargs):
