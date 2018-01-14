@@ -106,7 +106,7 @@ class ServoBoard(Board):
                 (lambda pos, x=x: self._set_servo_pos(x, pos)),
                 (lambda x=x: self._get_servo_pos(x)),
             )
-        self._gpios = {  # type: Dict[int, Gpio]
+        self._gpios = {
             x: Gpio(
                 x,
                 (lambda x=x: self._read_pin(x)),
@@ -114,7 +114,7 @@ class ServoBoard(Board):
                 (lambda value, x=x: self._set_pin_mode(x, value)),
             )
             for x in gpio_pins
-        }
+        }  # type: Dict[int, Gpio]
 
     @property
     def serial(self):
