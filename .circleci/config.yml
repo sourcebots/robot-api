@@ -53,10 +53,7 @@ jobs:
           name: run tests
           command: python3 -m unittest
 
-      - run:
-          command: script/typing/check
-          environment:
-            MYPY: venv/bin/mypy
+      - run: script/typing/check
 
       # run linting!
       - run: script/linting/lint
