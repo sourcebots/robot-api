@@ -4,7 +4,7 @@ from pathlib import Path
 
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
-from robot.game import GameState, GameMode, Zone
+from robot.game import GameState, GameMode, TZone
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
@@ -188,7 +188,7 @@ class Robot:
         return self._single_index("game states", self._games)
 
     @property
-    def zone(self) -> Zone:
+    def zone(self) -> TZone:
         """
         The zone the robot is in.
 
