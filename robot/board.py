@@ -4,6 +4,13 @@ import time
 from collections import Mapping
 from pathlib import Path
 
+# shadows the Path imported from pathlib
+class Path(str):
+    @property
+    def stem(self):
+        from os.path import basename
+        return basename(self)
+
 
 class BoardList(Mapping):
     """A mapping of ``Board``s allowing access by index or identity."""
