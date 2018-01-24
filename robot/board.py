@@ -31,7 +31,7 @@ class Board:
     RECV_BUFFER_BYTES = 2048
 
     def __init__(self, socket_path):
-        self.socket_path = Path(socket_path)
+        self.socket_path = socket_path
         self.socket = None
         self.data = b''
 
@@ -42,7 +42,7 @@ class Board:
         """
         Serial number for the board
         """
-        return self.socket_path.stem
+        return Path(self.socket_path).stem
 
     def _greeting_response(self, data):
         """
