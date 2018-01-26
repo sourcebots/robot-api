@@ -127,10 +127,10 @@ class ServoBoard(Board):
         return self._servos
 
     def _set_servo_pos(self, servo, pos):
-        self.send_and_receive({'servos': {servo: pos}})
+        self._send_and_receive({'servos': {servo: pos}})
 
     def _get_servo_pos(self, servo):
-        data = self.send_and_receive({})
+        data = self._send_and_receive({})
         values = data['servos']
         return values[str(servo)]
 
@@ -142,26 +142,26 @@ class ServoBoard(Board):
 
     def _read_pin(self, pin):
         # request a check for that pin by trying to set it to None
-        data = self.send_and_receive({'read-pins': [pin]})
+        data = self._send_and_receive({'read-pins': [pin]})
         # example data value:
         # {'pin-values':{2:'high'}}
         values = data['pin-values']
         return PinValue(values[str(pin)])
 
     def _get_pin_mode(self, pin):
-        data = self.send_and_receive({})
+        data = self._send_and_receive({})
         # example data value:
         # {'pins':{2:'pullup'}}
         values = data['pins']
         return PinMode(values[str(pin)])
 
     def _set_pin_mode(self, pin, value: PinMode):
-        self.send_and_receive({'pins': {pin: value.value}})
+        self._send_and_receive({'pins': {pin: value.value}})
 
     def read_analogue(self):
         """Read analogue values from the connected board."""
         command = {'read-analogue': True}
-        return self.send_and_receive(command)['analogue-values']
+        return self._send_and_receive(command)['analogue-values']
 
     def read_ultrasound(self, trigger_pin, echo_pin):
         """
@@ -173,4 +173,4 @@ class ServoBoard(Board):
                          echo pin is connected to.
         """
         command = {'read-ultrasound': [trigger_pin, echo_pin]}
-        return self.send_and_receive(command)['ultrasound']
+        return self._send_and_receive(command)['ultrasound']

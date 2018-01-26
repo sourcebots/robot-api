@@ -59,7 +59,7 @@ class Board:
             print('Error connecting to:', socket_path)
             raise e
 
-        greeting = self.receive()
+        greeting = self._receive()
         self._greeting_response(greeting)
 
     def _get_lc_error(self):
@@ -109,7 +109,7 @@ class Board:
 
         raise original_exception
 
-    def send(self, message, should_retry=True):
+    def _send(self, message, should_retry=True):
         """
         Send a message to robotd.
 
@@ -134,7 +134,7 @@ class Board:
             raise BrokenPipeError()
         return data
 
-    def receive(self, should_retry=True):
+    def _receive(self, should_retry=True):
         """
         Receive a message from robotd.
         """
@@ -155,17 +155,17 @@ class Board:
 
         return json.loads(line.decode('utf-8'))
 
-    def send_and_receive(self, message, should_retry=True):
+    def _send_and_receive(self, message, should_retry=True):
         """
         Send a message to robotd and wait for a response.
         """
-        self.send(message, should_retry)
-        return self.receive(should_retry)
+        self._send(message, should_retry)
+        return self._receive(should_retry)
 
-    def close(self):
+    def _close(self):
         """
         Close the the connection to the underlying robotd board.
         """
         self.socket.detach()
 
-    __del__ = close
+    __del__ = _close

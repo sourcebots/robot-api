@@ -33,14 +33,14 @@ class GameState(Board):
 
         :return: zone ID the robot started in (0-3)
         """
-        return self.send_and_receive({})['zone']
+        return self._send_and_receive({})['zone']
 
     @property
     def mode(self):
         """
         :return: The ``GameMode`` that the robot is currently in.
         """
-        value = self.send_and_receive({})['mode']
+        value = self._send_and_receive({})['mode']
         for enum in GameMode:
             if value == enum.value:
                 return enum
