@@ -174,3 +174,17 @@ class ServoBoard(Board):
         """
         command = {'read-ultrasound': [trigger_pin, echo_pin]}
         return self.send_and_receive(command)['ultrasound']
+
+    def custom_command(self, custom_command_str):
+        """
+        Send an arbitrary string to the servo assembly and return its response.
+
+        If you choose to extend the software that runs on the servo assembly,
+        you can use this function to control and use any new features you add.
+
+        :param custom_command_str: The string to send, which ends up as the
+                                   "argument" parameter to the "custom" function
+                                   in the servo assembly software.
+        """
+        command = {'custom-command': str(custom_command_str)}
+        return self.send_and_receive(command)['custom-command']
