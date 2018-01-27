@@ -69,14 +69,14 @@ class Robot:
         new_paths = {str(x) for x in boards_dir.glob('*')}  # type: Set[str]
         boards = known_boards[:]
         # Add all boards that weren't previously there
-        for board in new_paths - known_paths:
-            print("New board found:", board)
+        for board_path in new_paths - known_paths:
+            print("New board found:", board_path)
 
             try:
-                new_board = board_type(board)
+                new_board = board_type(board_path)
                 boards.append(new_board)
             except (FileNotFoundError, ConnectionRefusedError) as e:
-                print("Could not connect to the board:", board, e)
+                print("Could not connect to the board:", board_path, e)
 
         return sorted(boards, key=lambda b: b.serial)
 
