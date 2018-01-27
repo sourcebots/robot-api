@@ -1,5 +1,6 @@
 import time
 from pathlib import Path
+from typing import Set  # noqa: F401
 
 from robot.board import BoardList
 from robot.camera import Camera
@@ -63,9 +64,9 @@ class Robot:
         :param directory_name:
         :return:
         """
-        known_paths = {x.socket_path for x in known_boards}
-        boards_dir = self.robotd_path / directory_name
-        new_paths = {str(x) for x in boards_dir.glob('*')}
+        known_paths = {x.socket_path for x in known_boards}  # type: Set[Path]
+        boards_dir = self.robotd_path / directory_name  # type: Path
+        new_paths = {str(x) for x in boards_dir.glob('*')}  # type: Set[str]
         boards = known_boards[:]
         # Add all boards that weren't previously there
         for board in new_paths - known_paths:
