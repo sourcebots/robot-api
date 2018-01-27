@@ -2,7 +2,7 @@ from pathlib import Path
 from robot.board import Board
 from robot.markers import Marker
 import time
-from typing import List
+from typing import List, overload
 import socket
 
 
@@ -17,7 +17,15 @@ class ResultList(List[Marker]):
     without checking that the list has any items.
     """
 
+    @overload
     def __getitem__(self, index: int) -> Marker:
+        ...
+
+    @overload  # noqa: F811 (deliberately method replacement)
+    def __getitem__(self, index: slice) -> List[Marker]:
+        ...
+
+    def __getitem__(self, index):  # noqa: F811 (deliberately method replacement)
         try:
             return super().__getitem__(index)
         except IndexError as e:
