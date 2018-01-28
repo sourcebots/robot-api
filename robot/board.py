@@ -3,6 +3,7 @@ import socket
 import time
 from collections import Mapping
 from pathlib import Path
+from typing import Union
 
 
 class BoardList(Mapping):
@@ -30,7 +31,7 @@ class Board:
     SEND_TIMEOUT_SECS = 6
     RECV_BUFFER_BYTES = 2048
 
-    def __init__(self, socket_path):
+    def __init__(self, socket_path: Union[Path, str]):
         self.socket_path = Path(socket_path)
         self.socket = None
         self.data = b''
