@@ -1,5 +1,6 @@
 from enum import Enum
 from pathlib import Path
+from typing import Any, List, Tuple
 
 from robot.board import Board
 
@@ -83,6 +84,24 @@ class Gpio:
         return self._pin_read()
 
 
+class ArduinoError(Exception):
+    """Base class for exceptions fed back from the ``ServoBoard`` (arduino)."""
+
+    pass
+
+
+class CommandError(ArduinoError):
+    """The servo assembly experienced an error in processing a command."""
+
+    pass
+
+
+class InvalidResponse(ArduinoError):
+    """The servo assembly emitted an response which could not be processed."""
+
+    pass
+
+
 class ServoBoard(Board):
     """
     A servo board, providing access to ``Servo``s and ``Gpio`` pins.
@@ -118,6 +137,34 @@ class ServoBoard(Board):
     def serial(self):
         """Serial number of the board."""
         return self._serial
+
+    def direct_command(self, command_name, *args) -> List[str]:
+        """
+        Issue a command directly to the arduino.
+
+        :Example:
+        >>> # arrives on the arduino as "my-command 4"
+        >>> servo_board.direct_command('my-command', 4)
+        ["first line response from my command", "second line"]
+
+        The arguments to this method are bundled as a list and passed to robotd.
+        We expect to immediately get back a response message (as well as the
+        usual status blob) which contains either valid data from the arduino or
+        a description of the failure.
+        """
+        command = (command_name,) + args
+        response = self.send_and_receive({'command': command})['response']
+        status = response['status']
+
+        # consume the broadcast status
+        self.receive()
+
+        if status == 'ok':
+            return response['data']
+        else:
+            for cls in (CommandError, InvalidResponse):
+                if cls.__name__ == response['type']:
+                    raise cls(response['description'])
 
     # Servo code
 
