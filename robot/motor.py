@@ -9,9 +9,6 @@ COAST = "coast"
 class MotorBoard(Board):
     """A motor board with two motor outputs."""
 
-    def __init__(self, socket_path):
-        super().__init__(socket_path)
-
     @staticmethod
     def _string_to_power(voltage):
         """
