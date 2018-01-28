@@ -97,7 +97,7 @@ class CommandError(ArduinoError):
 
 
 class InvalidResponse(ArduinoError):
-    """The servo assembly emitted an response which could not be processed."""
+    """The servo assembly emitted a response which could not be processed."""
 
     pass
 
