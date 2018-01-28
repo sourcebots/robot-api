@@ -40,9 +40,7 @@ class Board:
 
     @property
     def serial(self):
-        """
-        Serial number for the board
-        """
+        """Serial number for the board."""
         return self.socket_path.stem
 
     def _greeting_response(self, data):
