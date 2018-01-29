@@ -2,7 +2,6 @@ import json
 import socket
 import time
 import unittest
-from queue import Queue
 from unittest import mock
 
 from robot.robot import Robot
