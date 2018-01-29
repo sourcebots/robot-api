@@ -66,7 +66,7 @@ class Robot:
         """
         known_paths = {x.socket_path for x in known_boards}  # type: Set[Path]
         boards_dir = self.robotd_path / directory_name  # type: Path
-        new_paths = {x for x in boards_dir.glob('*')}  # type: Set[Path]
+        new_paths = set(boards_dir.glob('*'))  # type: Set[Path]
         boards = known_boards[:]
         # Add all boards that weren't previously there
         for board_path in new_paths - known_paths:
