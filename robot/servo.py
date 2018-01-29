@@ -112,6 +112,7 @@ class ServoBoard(Board):
             for x in gpio_pins
         }
 
+    # Servo code
     @property
     def servos(self):
         """List of ``Servo`` outputs for the servo board."""
@@ -125,6 +126,7 @@ class ServoBoard(Board):
         values = data['servos']
         return values[str(servo)]
 
+    # GPIO code
     @property
     def gpios(self):
         """List of ``Gpio`` pins for the servo board."""
