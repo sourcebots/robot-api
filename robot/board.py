@@ -2,6 +2,8 @@ import json
 import socket
 import time
 from collections import Mapping
+from pathlib import Path
+from typing import Union
 
 
 class BoardList(Mapping):
@@ -29,12 +31,17 @@ class Board:
     SEND_TIMEOUT_SECS = 6
     RECV_BUFFER_BYTES = 2048
 
-    def __init__(self, socket_path):
-        self.socket_path = socket_path
+    def __init__(self, socket_path: Union[Path, str]):
+        self.socket_path = Path(socket_path)
         self.socket = None
         self.data = b''
 
-        self._connect(socket_path)
+        self._connect()
+
+    @property
+    def serial(self):
+        """Serial number for the board."""
+        return self.socket_path.stem
 
     def _greeting_response(self, data):
         """
@@ -44,7 +51,7 @@ class Board:
         """
         pass
 
-    def _connect(self, socket_path):
+    def _connect(self):
         """
         Connect or reconnect to a socket.
 
@@ -56,7 +63,7 @@ class Board:
         try:
             self.socket.connect(str(self.socket_path))
         except ConnectionRefusedError as e:
-            print('Error connecting to:', socket_path)
+            print('Error connecting to:', self.socket_path)
             raise e
 
         greeting = self.receive()
@@ -98,7 +105,7 @@ class Board:
             time.sleep(backoff)
 
             try:
-                self._connect(self.socket_path)
+                self._connect()
             except (ConnectionRefusedError, FileNotFoundError):
                 continue
 

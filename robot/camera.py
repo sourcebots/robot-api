@@ -1,6 +1,5 @@
 import socket
 import time
-from pathlib import Path
 
 from robot.board import Board
 from robot.markers import Marker
@@ -10,10 +9,6 @@ class Camera(Board):
     """
     A camera providing a view of the outside world expressed as ``Marker``s.
     """
-
-    def __init__(self, socket_path):
-        super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
 
     @staticmethod
     def _see_to_results(data):
@@ -28,11 +23,6 @@ class Camera(Board):
             (Marker(x) for x in data["markers"]),
             key=lambda x: x.distance_metres,
         ))
-
-    @property
-    def serial(self):
-        """Serial number of the camera."""
-        return self._serial
 
     def see(self):
         """

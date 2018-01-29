@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from robot.board import Board
 
 # BRAKE is set to 0 so setting the motors to 0 has exactly the same affect as
@@ -10,10 +8,6 @@ COAST = "coast"
 
 class MotorBoard(Board):
     """A motor board with two motor outputs."""
-
-    def __init__(self, socket_path):
-        super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
 
     @staticmethod
     def _string_to_power(voltage):
@@ -76,11 +70,6 @@ class MotorBoard(Board):
     @m1.setter
     def m1(self, power):
         self._update_motor("m1", power)
-
-    @property
-    def serial(self):
-        """Serial number of the board."""
-        return self._serial
 
     def _get_status(self, motor_id):
         return self._string_to_power(

@@ -1,5 +1,4 @@
 from enum import Enum
-from pathlib import Path
 
 from robot.board import Board
 
@@ -13,15 +12,6 @@ class GameMode(Enum):
 
 class GameState(Board):
     """A description of the initial game state the robot is operating under."""
-
-    def __init__(self, socket_path):
-        super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
-
-    @property
-    def serial(self):
-        """Id of the game connection."""
-        return self._serial
 
     @property
     def zone(self):

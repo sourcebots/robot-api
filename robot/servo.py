@@ -1,5 +1,4 @@
 from enum import Enum
-from pathlib import Path
 
 from robot.board import Board
 
@@ -92,7 +91,6 @@ class ServoBoard(Board):
 
     def __init__(self, socket_path):
         super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
 
         servo_ids = range(0, 16)  # servos with a port 0-15
         gpio_pins = range(2, 13)  # gpio pins 2-12
@@ -114,13 +112,7 @@ class ServoBoard(Board):
             for x in gpio_pins
         }
 
-    @property
-    def serial(self):
-        """Serial number of the board."""
-        return self._serial
-
     # Servo code
-
     @property
     def servos(self):
         """List of ``Servo`` outputs for the servo board."""
