@@ -5,7 +5,7 @@ import unittest
 from unittest import mock
 
 from robot.robot import Robot
-from robot.servo import CommandError, InvalidResponse, ServoBoard
+from robot.servo import ArduinoError, CommandError, InvalidResponse, ServoBoard
 from tests.mock_robotd import MockRobotD
 
 from robotd.devices import ServoAssembly
@@ -258,7 +258,7 @@ class ServoBoardGenericCommandTest(unittest.TestCase):
             "the command completes",
         )
 
-    def test_command_error(self):
+    def test_error_command_error(self):
         RESPONSE = 'the-response'
         self.fake_connection.responses += self.build_response_lines(2, [
             self.error_response(RESPONSE),
@@ -281,7 +281,7 @@ class ServoBoardGenericCommandTest(unittest.TestCase):
             "the command completes",
         )
 
-    def test_invalid_response(self):
+    def test_error_invalid_response(self):
         RESPONSE = 'the-response'
         self.fake_connection.responses += self.build_response_lines(2, [
             RESPONSE,
@@ -301,4 +301,24 @@ class ServoBoardGenericCommandTest(unittest.TestCase):
             self.response_queue,
             "There should be no pending messages from the robotd board after "
             "the command completes",
+        )
+
+    def test_unknown_error(self):
+        ERROR_MESSAGE = "fancy error description"
+
+        self._servo_assembly.command = mock.Mock(
+            return_value={
+                'status': 'error',
+                'type': 'newly-added-type',
+                'description': ERROR_MESSAGE,
+            },
+        )
+
+        with self.assertRaises(ArduinoError) as e_info:
+            self.board.direct_command('the-command')
+
+        self.assertIn(
+            ERROR_MESSAGE,
+            str(e_info.exception),
+            "Wrong error message",
         )

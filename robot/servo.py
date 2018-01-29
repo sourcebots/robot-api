@@ -166,6 +166,8 @@ class ServoBoard(Board):
                 if cls.__name__ == response['type']:
                     raise cls(response['description'])
 
+            raise ArduinoError(response['description'])
+
     # Servo code
 
     @property
