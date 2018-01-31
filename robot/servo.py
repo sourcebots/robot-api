@@ -131,7 +131,7 @@ class ServoBoard(Board):
             for x in gpio_pins
         }
 
-    def direct_command(self, command_name, *args) -> List[str]:
+    def direct_command(self, command_name: str, *args) -> List[str]:
         """
         Issue a command directly to the arduino.
 
