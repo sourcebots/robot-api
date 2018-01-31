@@ -1,6 +1,6 @@
 from enum import Enum
 from pathlib import Path
-from typing import Any, List, Tuple
+from typing import List
 
 from robot.board import Board
 
