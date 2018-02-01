@@ -147,5 +147,4 @@ class Marker:
 
         The camera's position is the origin of the co-ordinate space.
         """
-        raise NotImplementedError("This is not implemented.")
-        return CartCoord()
+        return CartCoord(*self._cartesian)
