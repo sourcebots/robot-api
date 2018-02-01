@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 from typing import Set  # noqa: F401
 
@@ -41,7 +40,10 @@ class Robot:
 
         self._display_boards()
         self._wait_for_power_board()
-        self.wait_start()
+
+        print('Waiting for start button.')
+        self.power_board.wait_start()
+
         self.power_board.power_on()
         print("Starting user code.")
 
@@ -50,17 +52,6 @@ class Robot:
         for board_list in self.all_known_boards:
             for board in board_list:
                 print(str(board))  # Force string representation
-
-    def wait_start(self):
-        print('Waiting for start button.')
-        start_time = time.time()
-        led_value = True
-        while not self.power_board.start_button_pressed:
-            if time.time() - start_time >= 0.1:
-                led_value = not led_value
-                start_time = time.time()
-                self.power_board.set_start_led(led_value)
-        self.power_board.set_start_led(False)
 
     def _wait_for_power_board(self):
         power_boards = self.power_boards
