@@ -15,20 +15,11 @@ class PowerBoardTest(unittest.TestCase):
 
     def test_on_off(self):
         self.power_board.message_queue.get()
+
         # power board switch on when booting
         msg = self.power_board.message_queue.get()
         self.assertIn('power', msg)
         self.assertEqual(msg['power'], True)
-
-        # Catch the start led turning on
-        msg = self.power_board.message_queue.get()
-        self.assertIn('start-led', msg)
-        self.assertEqual(msg['start-led'], True)
-
-        # Catch the start led turning off
-        msg = self.power_board.message_queue.get()
-        self.assertIn('start-led', msg)
-        self.assertEqual(msg['start-led'], False)
 
         self.robot.power_boards[0].power_off()
         msg = self.power_board.message_queue.get()
