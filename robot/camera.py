@@ -1,8 +1,9 @@
-from robot.board import Board
-from robot.markers import Marker
+import socket
 import time
 from typing import List, overload
-import socket
+
+from robot.board import Board
+from robot.markers import Marker
 
 
 class ResultList(List[Marker]):

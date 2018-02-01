@@ -1,9 +1,9 @@
 import json
 import socket
 import time
-from typing import Union, TypeVar
-from typing import Mapping as TMapping
 from pathlib import Path
+from typing import Mapping as TMapping
+from typing import TypeVar, Union
 
 
 class Board:

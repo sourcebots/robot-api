@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import NewType
+
 from robot.board import Board
 
 TZone = NewType('TZone', int)

@@ -1,7 +1,8 @@
 import math
 from collections import namedtuple
+from typing import List, NewType, Tuple
+
 from robot.game_specific import TOKEN, WALL
-from typing import NewType, Tuple, List
 
 TMetres = NewType('TMetres', float)
 TDegrees = NewType('TDegrees', float)

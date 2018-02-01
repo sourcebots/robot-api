@@ -1,11 +1,10 @@
 import time
-from typing import List, Union, TypeVar
 from pathlib import Path
-from typing import Set  # noqa: F401
+from typing import List, Set  # noqa: F401
 
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
-from robot.game import GameState, GameMode, TZone
+from robot.game import GameMode, GameState, TZone
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
