@@ -212,6 +212,10 @@ class Robot:
         return self._game.mode
 
     def close(self):
+        """
+        Cleanup robot instance.
+        """
+
         for board_group in self.all_known_boards:
             for board in board_group:
                 board.close()

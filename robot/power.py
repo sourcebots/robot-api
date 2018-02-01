@@ -1,5 +1,6 @@
-from robot.board import Board
 import time
+
+from robot.board import Board
 
 
 class PowerBoard(Board):
@@ -43,6 +44,9 @@ class PowerBoard(Board):
         return status["start-button"]
 
     def wait_start(self):
+        """
+        Block until the start button is pressed.
+        """
         start_time = time.time()
         led_value = True
         while not self.start_button_pressed:
