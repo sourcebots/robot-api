@@ -3,6 +3,7 @@ import time
 import unittest
 
 from robot.camera import ResultList
+from robot.markers import CartCoord, PolarCoord
 from robot.robot import Robot
 from sb_vision.camera import FileCamera
 from tests.mock_robotd import MockRobotD
@@ -63,6 +64,20 @@ class CameraTest(unittest.TestCase):
             9,
             tokens[0].id,
             "Failed to get first marker by index",
+        )
+
+        token, = tokens
+
+        self.assertIsInstance(
+            token.cartesian,
+            CartCoord,
+            "Invalid cartesian coordinates",
+        )
+
+        self.assertIsInstance(
+            token.polar,
+            PolarCoord,
+            "Invalid polar coordinates",
         )
 
     def test_unique_error(self):

@@ -1,4 +1,3 @@
-from pathlib import Path
 from robot.board import Board
 from robot.markers import Marker
 import time
@@ -40,10 +39,6 @@ class Camera(Board):
     A camera providing a view of the outside world expressed as ``Marker``s.
     """
 
-    def __init__(self, socket_path):
-        super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
-
     @staticmethod
     def _see_to_results(data) -> ResultList:
         """
@@ -58,11 +53,6 @@ class Camera(Board):
             key=lambda x: x.distance_metres,
         ))
 
-    @property
-    def serial(self):
-        """Serial number of the camera."""
-        return self._serial
-
     def see(self) -> ResultList:
         """
         Capture and process a new snapshot of the world the camera can see.
@@ -74,11 +64,11 @@ class Camera(Board):
         """
         abort_after = time.time() + 10
 
-        self.send({'see': True})
+        self._send({'see': True})
 
         while True:
             try:
-                return self._see_to_results(self.receive(should_retry=True))
+                return self._see_to_results(self._receive(should_retry=True))
             except socket.timeout:
                 if time.time() > abort_after:
                     raise

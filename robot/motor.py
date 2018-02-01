@@ -1,5 +1,3 @@
-from pathlib import Path
-from typing import TypeVar, Union
 from robot.board import Board
 
 # BRAKE is set to 0 so setting the motors to 0 has exactly the same affect as
@@ -10,10 +8,6 @@ COAST = "coast"
 
 class MotorBoard(Board):
     """A motor board with two motor outputs."""
-
-    def __init__(self, socket_path):
-        super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
 
     @staticmethod
     def _string_to_power(voltage):
@@ -77,14 +71,9 @@ class MotorBoard(Board):
     def m1(self, power: float):
         self._update_motor("m1", power)
 
-    @property
-    def serial(self):
-        """Serial number of the board."""
-        return self._serial
-
     def _get_status(self, motor_id: str):
         return self._string_to_power(
-            self.send_and_receive({})[motor_id],
+            self._send_and_receive({})[motor_id],
         )
 
     def _update_motor(self, motor_id: str, voltage: float):
@@ -95,4 +84,4 @@ class MotorBoard(Board):
         :param voltage: Voltage to set the motor to
         """
         v_string = self._power_to_string(voltage)
-        self.send_and_receive({motor_id: v_string})
+        self._send_and_receive({motor_id: v_string})

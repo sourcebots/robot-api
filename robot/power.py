@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from robot.board import Board
 
 
@@ -17,31 +15,22 @@ class PowerBoard(Board):
         'uc': 523,
     }
 
-    def __init__(self, socket_path):
-        super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
-
-    @property
-    def serial(self):
-        """Serial number of the board."""
-        return self._serial
-
     def power_on(self):
         """
         Turn on power to all power board outputs.
         """
 
-        self.send_and_receive({'power': True})
+        self._send_and_receive({'power': True})
 
     def power_off(self):
         """
         Turn off power to all power board outputs.
         """
-        self.send_and_receive({'power': False})
+        self._send_and_receive({'power': False})
 
     def set_start_led(self, value: bool):
         """Set the state of the start LED."""
-        self.send_and_receive({'start-led': value})
+        self._send_and_receive({'start-led': value})
 
     @property
     def start_button_pressed(self) -> bool:
@@ -49,7 +38,7 @@ class PowerBoard(Board):
         Read the status of the start button.
         """
 
-        status = self.send_and_receive({})
+        status = self._send_and_receive({})
         return status["start-button"]
 
     def buzz(self, duration, *, note=None, frequency=None):
@@ -62,7 +51,7 @@ class PowerBoard(Board):
             frequency = self.BUZZ_NOTES[note.lower()]
         if frequency is None:
             raise ValueError("Invalid frequency")
-        self.send_and_receive({'buzz': {
+        self._send_and_receive({'buzz': {
             'frequency': frequency,
             'duration': int(duration * 1000),
         }})
