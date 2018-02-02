@@ -153,7 +153,7 @@ class Marker:
         This co-ordinate space uses angles between the given axis and a line
         between the point and the camera.
         """
-        polar = self._raw_data['polar']
+        polar = self._raw_data['legacy_polar']
         return PolarCoord((polar[0], polar[1]), polar[2])
 
     @property
