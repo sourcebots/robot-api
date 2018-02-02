@@ -123,7 +123,7 @@ class Marker:
         return PolarCoord((polar[0], polar[1]), polar[2])
 
     @property
-    def cartesian(self):
+    def cartesian(self) -> CartCoord:
         """
         The position of the marker in Cartesian co-ordinates.
 
