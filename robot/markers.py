@@ -18,7 +18,7 @@ CartCoord = NamedTuple('CartCoord', (
 _SphericalCoord = NamedTuple('SphericalCoord', (
     ('rot_x_radians', Radians),
     ('rot_y_radians', Radians),
-    ('dist', Metres),
+    ('distance_metres', Metres),
 ))
 
 
