@@ -1,10 +1,10 @@
 import time
 from pathlib import Path
-from typing import List, Set  # noqa: F401
+from typing import List, Set, Union  # noqa: F401
 
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
-from robot.game import GameMode, GameState, TZone
+from robot.game import GameMode, GameState, Zone
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
@@ -23,7 +23,7 @@ class Robot:
 
     ROBOTD_ADDRESS = "/var/robotd"
 
-    def __init__(self, robotd_path: str=ROBOTD_ADDRESS) -> None:
+    def __init__(self, robotd_path: Union[str, Path]=ROBOTD_ADDRESS) -> None:
         self.robotd_path = Path(robotd_path)
         self.known_power_boards = []  # type: List[PowerBoard]
         self.known_motor_boards = []  # type: List[MotorBoard]
@@ -188,7 +188,7 @@ class Robot:
         return self._single_index("game states", self._games)
 
     @property
-    def zone(self) -> TZone:
+    def zone(self) -> Zone:
         """
         The zone the robot is in.
 

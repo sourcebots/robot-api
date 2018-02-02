@@ -3,7 +3,7 @@ from typing import NewType
 
 from robot.board import Board
 
-TZone = NewType('TZone', int)
+Zone = NewType('Zone', int)
 
 
 class GameMode(Enum):
@@ -17,7 +17,7 @@ class GameState(Board):
     """A description of the initial game state the robot is operating under."""
 
     @property
-    def zone(self) -> TZone:
+    def zone(self) -> Zone:
         """
         The zone in which the robot starts the match.
 

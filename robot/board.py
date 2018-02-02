@@ -2,8 +2,7 @@ import json
 import socket
 import time
 from pathlib import Path
-from typing import Mapping as TMapping
-from typing import TypeVar, Union
+from typing import Mapping, TypeVar, Union
 
 
 class Board:
@@ -162,15 +161,15 @@ class Board:
 TBoard = TypeVar('TBoard', bound=Board)
 
 
-class BoardList(TMapping[Union[str, int], TBoard]):
+class BoardList(Mapping[Union[str, int], TBoard]):
     """A mapping of ``Board``s allowing access by index or identity."""
 
     def __init__(self, *args, **kwargs):
         self._store = dict(*args, **kwargs)
         self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
 
-    def __getitem__(self, attr) -> TBoard:
-        if type(attr) is int:
+    def __getitem__(self, attr: Union[str, int]) -> TBoard:
+        if isinstance(attr, int):
             return self._store_list[attr]
         return self._store[attr]
 
