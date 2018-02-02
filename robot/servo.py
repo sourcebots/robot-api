@@ -1,5 +1,5 @@
 from enum import Enum
-from pathlib import Path
+from typing import List
 
 from robot.board import Board
 
@@ -83,6 +83,24 @@ class Gpio:
         return self._pin_read()
 
 
+class ArduinoError(Exception):
+    """Base class for exceptions fed back from the ``ServoBoard`` (arduino)."""
+
+    pass
+
+
+class CommandError(ArduinoError):
+    """The servo assembly experienced an error in processing a command."""
+
+    pass
+
+
+class InvalidResponse(ArduinoError):
+    """The servo assembly emitted a response which could not be processed."""
+
+    pass
+
+
 class ServoBoard(Board):
     """
     A servo board, providing access to ``Servo``s and ``Gpio`` pins.
@@ -92,7 +110,6 @@ class ServoBoard(Board):
 
     def __init__(self, socket_path):
         super().__init__(socket_path)
-        self._serial = Path(socket_path).stem
 
         servo_ids = range(0, 16)  # servos with a port 0-15
         gpio_pins = range(2, 13)  # gpio pins 2-12
@@ -114,10 +131,35 @@ class ServoBoard(Board):
             for x in gpio_pins
         }
 
-    @property
-    def serial(self):
-        """Serial number of the board."""
-        return self._serial
+    def direct_command(self, command_name: str, *args) -> List[str]:
+        """
+        Issue a command directly to the arduino.
+
+        :Example:
+        >>> # arrives on the arduino as "my-command 4"
+        >>> servo_board.direct_command('my-command', 4)
+        ["first line response from my command", "second line"]
+
+        The arguments to this method are bundled as a list and passed to robotd.
+        We expect to immediately get back a response message (as well as the
+        usual status blob) which contains either valid data from the arduino or
+        a description of the failure.
+        """
+        command = (command_name,) + args
+        response = self._send_and_receive({'command': command})['response']
+        status = response['status']
+
+        # consume the broadcast status
+        self._receive()
+
+        if status == 'ok':
+            return response['data']
+        else:
+            for cls in (CommandError, InvalidResponse):
+                if cls.__name__ == response['type']:
+                    raise cls(response['description'])
+
+            raise ArduinoError(response['description'])
 
     # Servo code
 
@@ -127,14 +169,15 @@ class ServoBoard(Board):
         return self._servos
 
     def _set_servo_pos(self, servo, pos):
-        self.send_and_receive({'servos': {servo: pos}})
+        self._send_and_receive({'servos': {servo: pos}})
 
     def _get_servo_pos(self, servo):
-        data = self.send_and_receive({})
+        data = self._send_and_receive({})
         values = data['servos']
         return values[str(servo)]
 
     # GPIO code
+
     @property
     def gpios(self):
         """List of ``Gpio`` pins for the servo board."""
@@ -142,26 +185,26 @@ class ServoBoard(Board):
 
     def _read_pin(self, pin):
         # request a check for that pin by trying to set it to None
-        data = self.send_and_receive({'read-pins': [pin]})
+        data = self._send_and_receive({'read-pins': [pin]})
         # example data value:
         # {'pin-values':{2:'high'}}
         values = data['pin-values']
         return PinValue(values[str(pin)])
 
     def _get_pin_mode(self, pin):
-        data = self.send_and_receive({})
+        data = self._send_and_receive({})
         # example data value:
         # {'pins':{2:'pullup'}}
         values = data['pins']
         return PinMode(values[str(pin)])
 
     def _set_pin_mode(self, pin, value: PinMode):
-        self.send_and_receive({'pins': {pin: value.value}})
+        self._send_and_receive({'pins': {pin: value.value}})
 
     def read_analogue(self):
         """Read analogue values from the connected board."""
         command = {'read-analogue': True}
-        return self.send_and_receive(command)['analogue-values']
+        return self._send_and_receive(command)['analogue-values']
 
     def read_ultrasound(self, trigger_pin, echo_pin):
         """
@@ -173,4 +216,4 @@ class ServoBoard(Board):
                          echo pin is connected to.
         """
         command = {'read-ultrasound': [trigger_pin, echo_pin]}
-        return self.send_and_receive(command)['ultrasound']
+        return self._send_and_receive(command)['ultrasound']
