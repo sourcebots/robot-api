@@ -20,8 +20,8 @@ jobs:
             . venv/bin/activate
       - run: apt-get update -y
       - run: apt-get install -y libcv-dev libopencv-photo-dev libopencv-contrib-dev libusb-1.0.0-dev
-      - run: pip3 install git+https://github.com/sourcebots/sb-vision@8ace07108ee27bf86e3a59603f40dd62f6e65101
-      - run: pip3 install git+https://github.com/sourcebots/robotd@9992ff6d169365ab807df1965cbc1662e350ca04
+      - run: pip3 install git+https://github.com/sourcebots/sb-vision@ebe16255c4b5e3ce08875129573865642689617d
+      - run: pip3 install git+https://github.com/sourcebots/robotd@4ae124ba4d75f4be64a2b0bbc3f4abd37c94726f
       - run: pip3 install -r requirements.txt
       - run: pip3 install -r script/linting/requirements.txt
       - run: pip3 install -r script/typing/requirements.txt
