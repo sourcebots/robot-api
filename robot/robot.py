@@ -4,7 +4,7 @@ from typing import List, Set  # noqa: F401
 
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
-from robot.game import GameMode, GameState, TZone
+from robot.game import GameMode, GameState, Zone
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
@@ -188,7 +188,7 @@ class Robot:
         return self._single_index("game states", self._games)
 
     @property
-    def zone(self) -> TZone:
+    def zone(self) -> Zone:
         """
         The zone the robot is in.
 

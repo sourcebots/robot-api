@@ -4,11 +4,11 @@ from typing import List, NewType, Tuple
 
 from robot.game_specific import TOKEN, WALL
 
-TMetres = NewType('TMetres', float)
-TDegrees = NewType('TDegrees', float)
-TRadians = NewType('TRadians', float)
-TPixel = NewType('TPixel', float)
-TPixelCoordinates = NewType('TPixelCoordinates', Tuple[TPixel, TPixel])
+Metres = NewType('Metres', float)
+Degrees = NewType('Degrees', float)
+Radians = NewType('Radians', float)
+Pixel = NewType('Pixel', float)
+PixelCoordinates = NewType('PixelCoordinates', Tuple[Pixel, Pixel])
 
 CartCoord = namedtuple("CardCoord", ["x", "y", "z"])
 
@@ -27,37 +27,37 @@ class PolarCoord:
 
     # TODO add tests for all these
     @property
-    def rot_x_rad(self) -> TRadians:
+    def rot_x_rad(self) -> Radians:
         """
         Rotation of marker relative to camera in the #TODO axis.
         """
         return self._rot_x_rad
 
     @property
-    def rot_y_rad(self) -> TRadians:
+    def rot_y_rad(self) -> Radians:
         """
         Rotation of marker relative to camera in the #TODO axis.
         """
         return self._rot_y_rad
 
     @property
-    def rot_x_deg(self) -> TDegrees:
+    def rot_x_deg(self) -> Degrees:
         """
         Rotation of marker relative to camera in the #TODO axis.
         """
         # TODO describe which axis this is
-        return TDegrees(math.degrees(self._rot_x_rad))
+        return Degrees(math.degrees(self._rot_x_rad))
 
     @property
-    def rot_y_deg(self) -> TDegrees:
+    def rot_y_deg(self) -> Degrees:
         """
         Rotation of marker relative to camera in the #TODO axis.
         """
         # TODO describe which axis this is
-        return TDegrees(math.degrees(self._rot_y_rad))
+        return Degrees(math.degrees(self._rot_y_rad))
 
     @property
-    def distance_metres(self) -> TMetres:
+    def distance_metres(self) -> Metres:
         """Distance of marker from camera in metres."""
         # TODO describe which axis this is
         return self._distance_metres
@@ -75,7 +75,7 @@ class Marker:
         return self._raw_data['id']
 
     @property
-    def size(self) -> Tuple[TMetres, TMetres]:
+    def size(self) -> Tuple[Metres, Metres]:
         """Marker size in metres."""
         return self._raw_data['size']
 
@@ -86,19 +86,19 @@ class Marker:
     #     return self._certainty
 
     @property
-    def pixel_corners(self) -> List[TPixelCoordinates]:
+    def pixel_corners(self) -> List[PixelCoordinates]:
         """Pixel co-ordinates of the of the corners of the marker."""
         # TODO define what the order of these corners are
-        return [TPixelCoordinates((x[0], x[1])) for x in self._raw_data['pixel_corners']]
+        return [PixelCoordinates((x[0], x[1])) for x in self._raw_data['pixel_corners']]
 
     @property
-    def pixel_centre(self) -> TPixelCoordinates:
+    def pixel_centre(self) -> PixelCoordinates:
         """Pixel co-ordinates of the centre of the marker."""
         pixel_center = self._raw_data['pixel_centre']
-        return TPixelCoordinates((pixel_center[0], pixel_center[1]))
+        return PixelCoordinates((pixel_center[0], pixel_center[1]))
 
     @property
-    def distance_metres(self) -> TMetres:
+    def distance_metres(self) -> Metres:
         """Distance of the marker from the camera in metres."""
         return self.polar.distance_metres
 

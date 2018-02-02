@@ -2,7 +2,7 @@ import json
 import socket
 import time
 from pathlib import Path
-from typing import Mapping as TMapping
+from typing import Mapping
 from typing import TypeVar, Union
 
 
@@ -162,7 +162,7 @@ class Board:
 TBoard = TypeVar('TBoard', bound=Board)
 
 
-class BoardList(TMapping[Union[str, int], TBoard]):
+class BoardList(Mapping[Union[str, int], TBoard]):
     """A mapping of ``Board``s allowing access by index or identity."""
 
     def __init__(self, *args, **kwargs):
