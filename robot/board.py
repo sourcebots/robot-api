@@ -2,8 +2,7 @@ import json
 import socket
 import time
 from pathlib import Path
-from typing import Mapping
-from typing import TypeVar, Union
+from typing import Mapping, TypeVar, Union
 
 
 class Board:
