@@ -1,6 +1,6 @@
 import time
 from pathlib import Path
-from typing import List, Set  # noqa: F401
+from typing import List, Set, Union  # noqa: F401
 
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
@@ -23,7 +23,7 @@ class Robot:
 
     ROBOTD_ADDRESS = "/var/robotd"
 
-    def __init__(self, robotd_path: str=ROBOTD_ADDRESS) -> None:
+    def __init__(self, robotd_path: Union[str, Path]=ROBOTD_ADDRESS) -> None:
         self.robotd_path = Path(robotd_path)
         self.known_power_boards = []  # type: List[PowerBoard]
         self.known_motor_boards = []  # type: List[MotorBoard]
