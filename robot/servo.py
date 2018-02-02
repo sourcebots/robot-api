@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from typing import Dict, List
 
 from robot.board import Board
 
@@ -29,7 +29,7 @@ class Servo:
         self._get_pos = get_pos
 
     @property
-    def position(self):
+    def position(self) -> float:
         """The configured position the servo output."""
         return self._get_pos()
 
@@ -50,7 +50,7 @@ class Gpio:
         self._pin_mode_set = pin_mode_set
 
     @property
-    def mode(self):
+    def mode(self) -> PinMode:
         """The ``PinMode`` the pin is currently in."""
         return PinMode(self._pin_mode_get())
 
@@ -70,7 +70,7 @@ class Gpio:
             raise ValueError("Mode should be a valid 'PinMode', got {!r}".format(mode))
         self._pin_mode_set(mode)
 
-    def read(self):
+    def read(self) -> PinValue:
         """Read the current ``PinValue`` of the pin."""
         valid_read_modes = (PinMode.INPUT, PinMode.INPUT_PULLUP)
         if self._pin_mode_get() not in valid_read_modes:
@@ -114,7 +114,7 @@ class ServoBoard(Board):
         servo_ids = range(0, 16)  # servos with a port 0-15
         gpio_pins = range(2, 13)  # gpio pins 2-12
 
-        self._servos = {}
+        self._servos = {}  # type: Dict[int, Servo]
         for x in servo_ids:
             self._servos[x] = Servo(
                 x,
@@ -129,7 +129,7 @@ class ServoBoard(Board):
                 (lambda value, x=x: self._set_pin_mode(x, value)),
             )
             for x in gpio_pins
-        }
+        }  # type: Dict[int, Gpio]
 
     def direct_command(self, command_name: str, *args) -> List[str]:
         """
@@ -164,26 +164,25 @@ class ServoBoard(Board):
     # Servo code
 
     @property
-    def servos(self):
+    def servos(self) -> Dict[int, Servo]:
         """List of ``Servo`` outputs for the servo board."""
         return self._servos
 
-    def _set_servo_pos(self, servo, pos):
+    def _set_servo_pos(self, servo: int, pos: float):
         self._send_and_receive({'servos': {servo: pos}})
 
-    def _get_servo_pos(self, servo):
+    def _get_servo_pos(self, servo: int) -> float:
         data = self._send_and_receive({})
         values = data['servos']
-        return values[str(servo)]
+        return float(values[str(servo)])
 
     # GPIO code
-
     @property
-    def gpios(self):
+    def gpios(self) -> Dict[int, Gpio]:
         """List of ``Gpio`` pins for the servo board."""
         return self._gpios
 
-    def _read_pin(self, pin):
+    def _read_pin(self, pin) -> PinValue:
         # request a check for that pin by trying to set it to None
         data = self._send_and_receive({'read-pins': [pin]})
         # example data value:
@@ -191,7 +190,7 @@ class ServoBoard(Board):
         values = data['pin-values']
         return PinValue(values[str(pin)])
 
-    def _get_pin_mode(self, pin):
+    def _get_pin_mode(self, pin) -> PinMode:
         data = self._send_and_receive({})
         # example data value:
         # {'pins':{2:'pullup'}}
@@ -201,7 +200,7 @@ class ServoBoard(Board):
     def _set_pin_mode(self, pin, value: PinMode):
         self._send_and_receive({'pins': {pin: value.value}})
 
-    def read_analogue(self):
+    def read_analogue(self) -> Dict[str, str]:
         """Read analogue values from the connected board."""
         command = {'read-analogue': True}
         return self._send_and_receive(command)['analogue-values']
@@ -216,4 +215,4 @@ class ServoBoard(Board):
                          echo pin is connected to.
         """
         command = {'read-ultrasound': [trigger_pin, echo_pin]}
-        return self._send_and_receive(command)['ultrasound']
+        return float(self._send_and_receive(command)['ultrasound'])
