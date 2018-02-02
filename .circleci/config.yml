@@ -33,7 +33,7 @@ jobs:
       - run:
           name: run tests
           command: python3 -m unittest
-          
+
       - run: script/typing/check
 
       # run linting!
