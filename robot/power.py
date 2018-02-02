@@ -28,12 +28,12 @@ class PowerBoard(Board):
         """
         self._send_and_receive({'power': False})
 
-    def set_start_led(self, value):
+    def set_start_led(self, value: bool):
         """Set the state of the start LED."""
-        self._send_and_receive({'start-led': bool(value)})
+        self._send_and_receive({'start-led': value})
 
     @property
-    def start_button_pressed(self):
+    def start_button_pressed(self) -> bool:
         """
         Read the status of the start button.
         """

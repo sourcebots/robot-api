@@ -1,28 +1,8 @@
 import json
 import socket
 import time
-from collections import Mapping
 from pathlib import Path
-from typing import Union
-
-
-class BoardList(Mapping):
-    """A mapping of ``Board``s allowing access by index or identity."""
-
-    def __init__(self, *args, **kwargs):
-        self._store = dict(*args, **kwargs)
-        self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
-
-    def __getitem__(self, attr):
-        if type(attr) is int:
-            return self._store_list[attr]
-        return self._store[attr]
-
-    def __iter__(self):
-        return iter(self._store_list)
-
-    def __len__(self):
-        return len(self._store_list)
+from typing import Mapping, TypeVar, Union
 
 
 class Board:
@@ -31,7 +11,7 @@ class Board:
     SEND_TIMEOUT_SECS = 6
     RECV_BUFFER_BYTES = 2048
 
-    def __init__(self, socket_path: Union[Path, str]):
+    def __init__(self, socket_path: Union[Path, str]) -> None:
         self.socket_path = Path(socket_path)
         self.socket = None
         self.data = b''
@@ -69,7 +49,7 @@ class Board:
         greeting = self._receive()
         self._greeting_response(greeting)
 
-    def _get_lc_error(self):
+    def _get_lc_error(self) -> str:
         """
         Describe a lost connection error.
 
@@ -176,3 +156,25 @@ class Board:
         self.socket.detach()
 
     __del__ = close
+
+
+TBoard = TypeVar('TBoard', bound=Board)
+
+
+class BoardList(Mapping[Union[str, int], TBoard]):
+    """A mapping of ``Board``s allowing access by index or identity."""
+
+    def __init__(self, *args, **kwargs):
+        self._store = dict(*args, **kwargs)
+        self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
+
+    def __getitem__(self, attr: Union[str, int]) -> TBoard:
+        if isinstance(attr, int):
+            return self._store_list[attr]
+        return self._store[attr]
+
+    def __iter__(self):
+        return iter(self._store_list)
+
+    def __len__(self) -> int:
+        return len(self._store_list)
