@@ -9,7 +9,7 @@ class SphericalCoordTest(unittest.TestCase):
         coords = SphericalCoord(
             rot_x_radians=Radians(math.pi / 2),
             rot_y_radians=Radians(-math.pi / 4),
-            dist=Metres(1),
+            distance_metres=Metres(1),
         )
 
         self.assertEqual(
