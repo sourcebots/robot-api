@@ -51,7 +51,7 @@ class Robot:
         print("Found the following hardware devices:")
         for board_list in self.all_known_boards:
             for board in board_list:
-                print(str(board))  # Force string representation
+                print(board)
 
     def _wait_for_power_board(self):
         power_boards = self.power_boards
