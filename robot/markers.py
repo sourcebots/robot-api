@@ -1,4 +1,5 @@
 import math
+import warnings
 from typing import List, NamedTuple, NewType, Tuple
 
 from robot.game_specific import TOKEN, WALL
@@ -153,6 +154,12 @@ class Marker:
         This co-ordinate space uses angles between the given axis and a line
         between the point and the camera.
         """
+        warnings.warn(
+            "Use of the 'polar' property is deprecated as the values returned "
+            "aren't from any know polar co-ordinate system. You should use the "
+            "'spherical' property instead.",
+            DeprecationWarning,
+        )
         polar = self._raw_data['legacy_polar']
         return PolarCoord((polar[0], polar[1]), polar[2])
 
