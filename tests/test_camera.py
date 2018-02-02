@@ -3,7 +3,7 @@ import time
 import unittest
 
 from robot.camera import ResultList
-from robot.markers import CartCoord, PolarCoord
+from robot.markers import CartCoord, PolarCoord, SphericalCoord
 from robot.robot import Robot
 from sb_vision.camera import FileCamera
 from tests.mock_robotd import MockRobotD
@@ -72,6 +72,12 @@ class CameraTest(unittest.TestCase):
             token.cartesian,
             CartCoord,
             "Invalid cartesian coordinates",
+        )
+
+        self.assertIsInstance(
+            token.spherical,
+            SphericalCoord,
+            "Invalid spherical coordinates",
         )
 
         self.assertIsInstance(

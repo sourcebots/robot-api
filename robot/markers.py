@@ -15,12 +15,43 @@ CartCoord = NamedTuple('CartCoord', (
     ('z', Metres),
 ))
 
+_SphericalCoord = NamedTuple('SphericalCoord', (
+    ('rot_x_radians', Radians),
+    ('rot_y_radians', Radians),
+    ('dist', Metres),
+))
 
-class PolarCoord:
+
+class SphericalCoord(_SphericalCoord):
     """
     Represents a point expressed in polar co-ordinates.
 
-    Strictly the space are spherical co-ordinates.
+    This co-ordinate space describes a point as a angles about the Cartesian x
+    and y axes and a distance from the observer.
+
+    Note: this co-ordinate space is differnt to the usual representation of a
+    spherical space which is less coupled to the Cartesian reference frame.
+    """
+
+    @property
+    def rot_x_degrees(self) -> Degrees:
+        """Rotation about the x-axis in degrees."""
+        return Degrees(math.degrees(self.rot_x_radians))
+
+    @property
+    def rot_y_degrees(self) -> Degrees:
+        """Rotation about the y-axis in degrees."""
+        return Degrees(math.degrees(self.rot_y_radians))
+
+
+class PolarCoord:
+    """
+    Deprecated: represents a point expressed in legacy "polar" co-ordinates.
+
+    This coordinate space uses angles between the given axis and a line between
+    the point and the camera.
+
+    Use of this co-ordinate space is discouraged.
     """
 
     def __init__(self, rot, dist_m):
@@ -117,10 +148,10 @@ class Marker:
     @property
     def polar(self) -> PolarCoord:
         """
-        The position of the marker in the polar co-ordinates.
+        Deprecated: the position of the marker in legacy "polar" co-ordinates.
 
-        Strictly these are spherical co-ordinates. The camera's position is the
-        origin of the co-ordinate space.
+        This co-ordinate space uses angles between the given axis and a line
+        between the point and the camera.
         """
         polar = self._raw_data['polar']
         return PolarCoord((polar[0], polar[1]), polar[2])
@@ -133,3 +164,14 @@ class Marker:
         The camera's position is the origin of the co-ordinate space.
         """
         return CartCoord(*self._raw_data['cartesian'])
+
+    @property
+    def spherical(self) -> SphericalCoord:
+        """
+        The position of the marker in Spherical co-ordinates.
+
+        This co-ordinate space describes a point as a angles about the Cartesian
+        x and y axes and a distance from the camera. Note: this co-ordinate
+        space is differnt to the usual representation of a spherical space.
+        """
+        return SphericalCoord(*self._raw_data['spherical'])
