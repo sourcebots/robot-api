@@ -32,7 +32,7 @@ class ResultList(List[Marker]):
             if not self:
                 raise IndexError("Trying to index an empty list") from None
             else:
-                raise e
+                raise
 
 
 class Camera(Board):
