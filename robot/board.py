@@ -169,8 +169,8 @@ class BoardList(Mapping[Union[str, int], TBoard]):
         self._store = dict(*args, **kwargs)
         self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
 
-    def __getitem__(self, attr) -> TBoard:
-        if type(attr) is int:
+    def __getitem__(self, attr: Union[str, int]) -> TBoard:
+        if isinstance(attr, int):
             return self._store_list[attr]
         return self._store[attr]
 
