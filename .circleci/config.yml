@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: python:3.5-stretch
+      - image: python:3-stretch
     working_directory: ~/robot
 
     steps:
