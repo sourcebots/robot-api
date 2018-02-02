@@ -77,11 +77,6 @@ class Marker:
         """ID of the marker seen."""
         return self._raw_data['id']
 
-    @property
-    def size(self) -> Tuple[Metres, Metres]:
-        """Marker size in metres."""
-        return self._raw_data['size']
-
     # Disabled because it's always 0.0
     # TODO fix the certainty being 0
     # @property
