@@ -1,6 +1,5 @@
 import math
-from collections import namedtuple
-from typing import List, NewType, Tuple
+from typing import List, NamedTuple, NewType, Tuple
 
 from robot.game_specific import TOKEN, WALL
 
@@ -10,7 +9,11 @@ Radians = NewType('Radians', float)
 Pixel = NewType('Pixel', float)
 PixelCoordinates = NewType('PixelCoordinates', Tuple[Pixel, Pixel])
 
-CartCoord = namedtuple("CardCoord", ["x", "y", "z"])
+CartCoord = NamedTuple('CartCoord', (
+    ('x', Metres),
+    ('y', Metres),
+    ('z', Metres),
+))
 
 
 class PolarCoord:
