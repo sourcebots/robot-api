@@ -15,6 +15,10 @@ class MockBoardMixin:
         self.message_queue = Queue()
 
     def clear_queue(self):
+        # If run from the main process, wait some time for the board runner
+        # process to decode and enqueue any commands waiting in the socket
+        # buffer before we check whether the queue is empty or not.
+        time.sleep(0.2)
         while not self.message_queue.empty():
             self.message_queue.get()
 
