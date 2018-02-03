@@ -40,11 +40,11 @@ class Robot:
         ]
 
         self._wait_for_power_board()
+        self.power_board.power_on()
 
         print('Waiting for start button.')
         self.power_board.wait_start()
 
-        self.power_board.power_on()
         print("Starting user code.")
 
     def _wait_for_power_board(self):
