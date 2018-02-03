@@ -6,18 +6,19 @@ from unittest import mock
 
 from robot.robot import Robot
 from robot.servo import ArduinoError, CommandError, InvalidResponse, ServoBoard
-from tests.mock_robotd import MockRobotD
+from tests.mock_robotd import MockRobotD, create_root_dir, remove_root_dir
 
 from robotd.devices import ServoAssembly
 
 
 class ServoBoardTest(unittest.TestCase):
     def setUp(self):
-        mock = MockRobotD(root_dir="/tmp/robotd")
+        self.root_dir = create_root_dir()
+        mock = MockRobotD(root_dir=self.root_dir)
         mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock
-        self.robot = Robot(robotd_path="/tmp/robotd")
+        self.robot = Robot(robotd_path=self.root_dir)
 
     def test_insert_servoboards(self):
         self.mock.new_servoboard('ABC')
@@ -85,6 +86,7 @@ class ServoBoardTest(unittest.TestCase):
 
     def tearDown(self):
         self.mock.stop()
+        remove_root_dir(self.root_dir)
 
 
 class FakeSerialConnection:

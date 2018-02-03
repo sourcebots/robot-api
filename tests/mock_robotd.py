@@ -1,4 +1,7 @@
+import shutil
+import tempfile
 import time
+import warnings
 from multiprocessing import Queue
 
 import robot
@@ -7,6 +10,16 @@ from robotd.devices import Camera as RobotDCamera
 from robotd.devices import GameState as RobotDGameState
 from robotd.devices_base import Board
 from robotd.master import BoardRunner
+
+
+def create_root_dir():
+    return tempfile.mkdtemp(prefix="robot-api-test-")
+
+def remove_root_dir(dir):
+    try:
+        shutil.rmtree(dir)
+    except Exception as e:
+        warnings.warn("Failed to remove temporary directory at {}: {}".format(dir, e), stacklevel=2)
 
 
 class MockBoardMixin:
@@ -145,7 +158,8 @@ class MockGameState(RobotDGameState):
 
 
 def main():
-    mock = MockRobotD(root_dir='/tmp/robotd')
+    root_dir = '/tmp/robotd'
+    mock = MockRobotD(root_dir=root_dir)
 
     mock.new_powerboard()
     time.sleep(0.2)
@@ -154,7 +168,7 @@ def main():
     time.sleep(0.2)
 
     from robot.robot import Robot
-    robot = Robot(robotd_path='/tmp/robotd')
+    robot = Robot(robotd_path=root_dir)
     robot.power_board.power_off()
     m0 = robot.motor_boards[0].m0
     m0.voltage = 1

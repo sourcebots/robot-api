@@ -6,7 +6,7 @@ from robot.camera import ResultList
 from robot.markers import CartCoord, PolarCoord
 from robot.robot import Robot
 from sb_vision.camera import FileCamera
-from tests.mock_robotd import MockRobotD
+from tests.mock_robotd import MockRobotD, create_root_dir, remove_root_dir
 
 IMAGE_ROOT = os.path.dirname(os.path.realpath(__file__)) + "/test_data/"
 IMAGE_WITH_NO_MARKER = IMAGE_ROOT + 'photo_empty.jpg'
@@ -25,12 +25,13 @@ class CameraTest(unittest.TestCase):
 
     # TODO add test for Serial number
     def setUp(self):
-        mock = MockRobotD(root_dir="/tmp/robotd")
+        self.root_dir = create_root_dir()
+        mock = MockRobotD(root_dir=self.root_dir)
         # Insert a power board to let the robot start up
         self.power_board = mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock
-        self.robot = Robot(robotd_path="/tmp/robotd")
+        self.robot = Robot(robotd_path=self.root_dir)
 
     def test_insert_cameras(self):
         self.mock.new_camera(CAMERA_SEES_NO_MARKER, 'ABC')
@@ -89,6 +90,7 @@ class CameraTest(unittest.TestCase):
 
     def tearDown(self):
         self.mock.stop()
+        remove_root_dir(self.root_dir)
 
 
 class ResultListTest(unittest.TestCase):
