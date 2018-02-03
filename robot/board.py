@@ -107,7 +107,6 @@ class Board:
         data = (json.dumps(message) + '\n').encode('utf-8')
 
         def sendall():
-            print('Sent:', data.strip())
             self.socket.sendall(data)
 
         if should_retry:
@@ -137,8 +136,6 @@ class Board:
 
         line = self.data.split(b'\n', 1)[0]
         self.data = self.data[len(line) + 1:]
-
-        print('Received:', line.strip())
 
         return json.loads(line.decode('utf-8'))
 
