@@ -39,7 +39,6 @@ class Robot:
             self.known_gamestates,
         ]
 
-        self._display_boards()
         self._wait_for_power_board()
 
         print('Waiting for start button.')
@@ -47,12 +46,6 @@ class Robot:
 
         self.power_board.power_on()
         print("Starting user code.")
-
-    def _display_boards(self):
-        print("Found the following hardware devices:")
-        for board_list in self.all_known_boards:
-            for board in board_list:
-                print(board)
 
     def _wait_for_power_board(self):
         power_boards = self.power_boards
