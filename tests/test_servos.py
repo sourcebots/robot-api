@@ -1,8 +1,14 @@
+import json
+import socket
 import time
 import unittest
+from unittest import mock
 
 from robot.robot import Robot
+from robot.servo import ArduinoError, CommandError, InvalidResponse, ServoBoard
 from tests.mock_robotd import MockRobotD
+
+from robotd.devices import ServoAssembly
 
 
 class ServoBoardTest(unittest.TestCase):
@@ -79,3 +85,240 @@ class ServoBoardTest(unittest.TestCase):
 
     def tearDown(self):
         self.mock.stop()
+
+
+class FakeSerialConnection:
+    def __init__(self, responses):
+        self.responses = responses
+        self.received = ''
+
+    @property
+    def lines_received(self):
+        return self.received.splitlines()
+
+    def write(self, content):
+        self.received += content.decode('utf-8')
+
+    def flush(self):
+        pass
+
+    def reset_input_buffer(self):
+        pass
+
+    def readline(self):
+        return self.responses.pop(0).encode('utf-8')
+
+
+class Counter:
+    def __init__(self):
+        self.current = 0
+
+    def __call__(self, *args):
+        self.current += 1
+        return self.current
+
+
+class FakeSocket:
+    def __init__(self, robotd_board):
+        self.robotd_board = robotd_board
+
+    def settimeout(self, timeout):
+        pass
+
+    def connect(self, location):
+        pass
+
+
+class ServoBoardGenericCommandTest(unittest.TestCase):
+    longMessage = True
+
+    def assertCommands(self, expected_commands):
+        self.assertEqual(
+            expected_commands,
+            self.fake_connection.lines_received,
+            "Wrong commands send over serial connection.",
+        )
+
+    @staticmethod
+    def ok_response():
+        return '+ ok'
+
+    @staticmethod
+    def error_response(error):
+        return '- {}'.format(error)
+
+    @staticmethod
+    def message_response(message):
+        return '> {}'.format(message)
+
+    @staticmethod
+    def comment_response(comment):
+        return '# {}'.format(comment)
+
+    @staticmethod
+    def build_response_lines(command_number, messages):
+        return ['@{:d} {}'.format(command_number, x) for x in messages]
+
+    @staticmethod
+    def connect_socket_to_robotd_board(socket, robotd_board):
+        response_queue = [b'{"greetings": 1}']
+
+        def enqueue_response(response):
+            response_queue.append(json.dumps(response).encode('utf-8'))
+
+        def send(raw_data):
+            response = robotd_board.command(
+                json.loads(raw_data.decode('utf-8')),
+            )
+            # do what the BoardRunner would do
+            if response is not None:
+                enqueue_response({'response': response})
+
+            enqueue_response(robotd_board.status())
+
+        def receive(size):
+            return response_queue.pop(0) + b'\n'
+
+        socket.sendall = send
+        socket.recv = receive
+
+        return response_queue
+
+    def setUp(self):
+        self.command_counter = Counter()
+        self.mock_randint = mock.patch(
+            'robotd.devices.random.randint',
+            self.command_counter,
+        )
+        self.mock_randint.start()
+
+        self.fake_connection = FakeSerialConnection(
+            responses=self.build_response_lines(1, [
+                self.message_response('fw-version'),
+                self.ok_response(),
+            ]),
+        )
+        self.mock_serial = mock.patch(
+            'robotd.devices.serial.Serial',
+            return_value=self.fake_connection,
+        )
+        self.mock_serial.start()
+
+        self._servo_assembly = ServoAssembly({'DEVNAME': None})
+        self._servo_assembly.make_safe = lambda: None
+        self._servo_assembly.start()
+
+        # remove the firmware version query that we don't care about
+        self.fake_connection.received = ''
+
+        self.spec_socket = socket.socket()
+        socket_mock = mock.Mock(spec=self.spec_socket)
+        self.mock_socket = mock.patch(
+            'socket.socket',
+            return_value=socket_mock,
+            autospec=True,
+        )
+        self.mock_socket.start()
+
+        self.response_queue = self.connect_socket_to_robotd_board(
+            socket_mock,
+            self._servo_assembly,
+        )
+        self.board = ServoBoard('')
+
+    def tearDown(self):
+        self.mock_socket.stop()
+        self.mock_serial.stop()
+        self.mock_randint.stop()
+
+        self.spec_socket.close()
+        self.board.close()
+
+    def test_command_ok(self):
+        RESPONSE = 'the-response'
+        self.fake_connection.responses += self.build_response_lines(2, [
+            self.message_response(RESPONSE),
+            self.ok_response(),
+        ])
+
+        actual_response = self.board.direct_command('the-command')
+
+        self.assertEqual(
+            [RESPONSE],
+            actual_response,
+            "Wrong response to command",
+        )
+
+        self.assertCommands(['\0@2 the-command'])
+
+        self.assertEqual(
+            [],
+            self.response_queue,
+            "There should be no pending messages from the robotd board after "
+            "the command completes",
+        )
+
+    def test_error_command_error(self):
+        RESPONSE = 'the-response'
+        self.fake_connection.responses += self.build_response_lines(2, [
+            self.error_response(RESPONSE),
+            self.ok_response(),
+        ])
+
+        with self.assertRaises(CommandError) as e_info:
+            self.board.direct_command('the-command')
+
+        self.assertIn(
+            RESPONSE,
+            str(e_info.exception),
+            "Wrong error message",
+        )
+
+        self.assertEqual(
+            [],
+            self.response_queue,
+            "There should be no pending messages from the robotd board after "
+            "the command completes",
+        )
+
+    def test_error_invalid_response(self):
+        RESPONSE = 'the-response'
+        self.fake_connection.responses += self.build_response_lines(2, [
+            RESPONSE,
+        ])
+
+        with self.assertRaises(InvalidResponse) as e_info:
+            self.board.direct_command('the-command')
+
+        self.assertIn(
+            RESPONSE,
+            str(e_info.exception),
+            "Wrong error message",
+        )
+
+        self.assertEqual(
+            [],
+            self.response_queue,
+            "There should be no pending messages from the robotd board after "
+            "the command completes",
+        )
+
+    def test_unknown_error(self):
+        ERROR_MESSAGE = "fancy error description"
+
+        self._servo_assembly.command = mock.Mock(
+            return_value={
+                'status': 'error',
+                'type': 'newly-added-type',
+                'description': ERROR_MESSAGE,
+            },
+        )
+
+        with self.assertRaises(ArduinoError) as e_info:
+            self.board.direct_command('the-command')
+
+        self.assertIn(
+            ERROR_MESSAGE,
+            str(e_info.exception),
+            "Wrong error message",
+        )

@@ -50,33 +50,33 @@ class MotorBoard(Board):
             )
 
     @property
-    def m0(self):
+    def m0(self) -> float:
         """
         :return: The value of motor output 0.
         """
         return self._get_status("m0")
 
     @m0.setter
-    def m0(self, power):
+    def m0(self, power: float):
         self._update_motor("m0", power)
 
     @property
-    def m1(self):
+    def m1(self) -> float:
         """
         :return: The value of motor output 1.
         """
         return self._get_status("m1")
 
     @m1.setter
-    def m1(self, power):
+    def m1(self, power: float):
         self._update_motor("m1", power)
 
-    def _get_status(self, motor_id):
+    def _get_status(self, motor_id: str):
         return self._string_to_power(
             self._send_and_receive({})[motor_id],
         )
 
-    def _update_motor(self, motor_id, voltage):
+    def _update_motor(self, motor_id: str, voltage: float):
         """
         Set the value of a motor output.
 

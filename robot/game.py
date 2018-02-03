@@ -1,6 +1,9 @@
 from enum import Enum
+from typing import NewType
 
 from robot.board import Board
+
+Zone = NewType('Zone', int)
 
 
 class GameMode(Enum):
@@ -14,7 +17,7 @@ class GameState(Board):
     """A description of the initial game state the robot is operating under."""
 
     @property
-    def zone(self):
+    def zone(self) -> Zone:
         """
         The zone in which the robot starts the match.
 
@@ -26,11 +29,9 @@ class GameState(Board):
         return self._send_and_receive({})['zone']
 
     @property
-    def mode(self):
+    def mode(self) -> GameMode:
         """
         :return: The ``GameMode`` that the robot is currently in.
         """
         value = self._send_and_receive({})['mode']
-        for enum in GameMode:
-            if value == enum.value:
-                return enum
+        return GameMode(value)

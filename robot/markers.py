@@ -1,30 +1,19 @@
 import math
+from typing import List, NamedTuple, NewType, Tuple
 
 from robot.game_specific import TOKEN, WALL
 
+Metres = NewType('Metres', float)
+Degrees = NewType('Degrees', float)
+Radians = NewType('Radians', float)
+Pixel = NewType('Pixel', float)
+PixelCoordinates = NewType('PixelCoordinates', Tuple[Pixel, Pixel])
 
-class CartCoord:
-    """Represents a cartesian co-ordinate point."""
-
-    def __init__(self, x, y, z):
-        self._x = x
-        self._y = y
-        self._z = z
-
-    @property
-    def x(self):
-        """X co-ordinate of the cartesian position."""
-        return self._x
-
-    @property
-    def y(self):
-        """Y co-ordinate of the cartesian position."""
-        return self._y
-
-    @property
-    def z(self):
-        """Z co-ordinate of the cartesian position."""
-        return self._z
+CartCoord = NamedTuple('CartCoord', (
+    ('x', Metres),
+    ('y', Metres),
+    ('z', Metres),
+))
 
 
 class PolarCoord:
@@ -41,37 +30,37 @@ class PolarCoord:
 
     # TODO add tests for all these
     @property
-    def rot_x_rad(self):
+    def rot_x_rad(self) -> Radians:
         """
         Rotation of marker relative to camera in the #TODO axis.
         """
         return self._rot_x_rad
 
     @property
-    def rot_y_rad(self):
+    def rot_y_rad(self) -> Radians:
         """
         Rotation of marker relative to camera in the #TODO axis.
         """
         return self._rot_y_rad
 
     @property
-    def rot_x_deg(self):
+    def rot_x_deg(self) -> Degrees:
         """
         Rotation of marker relative to camera in the #TODO axis.
         """
         # TODO describe which axis this is
-        return math.degrees(self._rot_x_rad)
+        return Degrees(math.degrees(self._rot_x_rad))
 
     @property
-    def rot_y_deg(self):
+    def rot_y_deg(self) -> Degrees:
         """
         Rotation of marker relative to camera in the #TODO axis.
         """
         # TODO describe which axis this is
-        return math.degrees(self._rot_y_rad)
+        return Degrees(math.degrees(self._rot_y_rad))
 
     @property
-    def distance_metres(self):
+    def distance_metres(self) -> Metres:
         """Distance of marker from camera in metres."""
         # TODO describe which axis this is
         return self._distance_metres
@@ -83,20 +72,10 @@ class Marker:
     def __init__(self, data):
         self._raw_data = data
 
-        # Go through all the data, add an _ at the start.
-        data = {"_" + k: v for k, v in data.items()}
-
-        self.__dict__.update(data)
-
     @property
-    def id(self):
+    def id(self) -> int:
         """ID of the marker seen."""
-        return self._id
-
-    @property
-    def size(self):
-        """Marker size in metres."""
-        return tuple(self._size)
+        return self._raw_data['id']
 
     # Disabled because it's always 0.0
     # TODO fix the certainty being 0
@@ -105,46 +84,47 @@ class Marker:
     #     return self._certainty
 
     @property
-    def pixel_corners(self):
+    def pixel_corners(self) -> List[PixelCoordinates]:
         """Pixel co-ordinates of the of the corners of the marker."""
         # TODO define what the order of these corners are
-        return [tuple(x) for x in self._pixel_corners]
+        return [PixelCoordinates((x[0], x[1])) for x in self._raw_data['pixel_corners']]
 
     @property
-    def pixel_centre(self):
+    def pixel_centre(self) -> PixelCoordinates:
         """Pixel co-ordinates of the centre of the marker."""
-        return tuple(self._pixel_centre)
+        pixel_center = self._raw_data['pixel_centre']
+        return PixelCoordinates((pixel_center[0], pixel_center[1]))
 
     @property
-    def distance_metres(self):
+    def distance_metres(self) -> Metres:
         """Distance of the marker from the camera in metres."""
         return self.polar.distance_metres
 
     # Helper functions, Might need to vary these per-game
-
-    def is_wall_marker(self):
+    def is_wall_marker(self) -> bool:
         """If the marker is a wall marker."""
         return self.id in WALL
 
-    def is_token_marker(self):
+    def is_token_marker(self) -> bool:
         """If the marker is a token marker."""
         return self.id in TOKEN
 
     @property
-    def polar(self):
+    def polar(self) -> PolarCoord:
         """
         The position of the marker in the polar co-ordinates.
 
         Strictly these are spherical co-ordinates. The camera's position is the
         origin of the co-ordinate space.
         """
-        return PolarCoord((self._polar[0], self._polar[1]), self._polar[2])
+        polar = self._raw_data['polar']
+        return PolarCoord((polar[0], polar[1]), polar[2])
 
     @property
-    def cartesian(self):
+    def cartesian(self) -> CartCoord:
         """
         The position of the marker in Cartesian co-ordinates.
 
         The camera's position is the origin of the co-ordinate space.
         """
-        return CartCoord(*self._cartesian)
+        return CartCoord(*self._raw_data['cartesian'])

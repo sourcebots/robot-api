@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import Set  # noqa: F401
+from typing import List, Set, Union  # noqa: F401
 
-from robot.board import BoardList
+from robot.board import BoardList, TBoard
 from robot.camera import Camera
-from robot.game import GameState
+from robot.game import GameMode, GameState, Zone
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
@@ -22,13 +22,14 @@ class Robot:
 
     ROBOTD_ADDRESS = "/var/robotd"
 
-    def __init__(self, robotd_path=ROBOTD_ADDRESS):
+    def __init__(self, robotd_path: Union[str, Path]=ROBOTD_ADDRESS) -> None:
         self.robotd_path = Path(robotd_path)
-        self.known_power_boards = []
-        self.known_motor_boards = []
-        self.known_servo_boards = []
-        self.known_cameras = []
-        self.known_gamestates = []
+        self.known_power_boards = []  # type: List[PowerBoard]
+        self.known_motor_boards = []  # type: List[MotorBoard]
+        self.known_servo_boards = []  # type: List[ServoBoard]
+        self.known_cameras = []  # type: List[Camera]
+        self.known_gamestates = []  # type: List[GameState]
+
         print("Initializing Hardware...")
         self.all_known_boards = [
             self.known_power_boards,
@@ -84,13 +85,13 @@ class Robot:
         return sorted(boards, key=lambda b: b.serial)
 
     @staticmethod
-    def _dictify_boards(boards):
+    def _dictify_boards(boards: List[TBoard]) -> BoardList[TBoard]:
         # Convert lists of boards into a dictionary
         return BoardList({board.serial: board for board in boards})
 
     # TODO: Parameterise the functions below so we only need one
     @property
-    def motor_boards(self):
+    def motor_boards(self) -> BoardList[MotorBoard]:
         """
         :return: A ``BoardList`` of available ``MotorBoard``s.
         """
@@ -99,7 +100,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def power_boards(self):
+    def power_boards(self) -> BoardList[PowerBoard]:
         """
         :return: A ``BoardList`` of available ``PowerBoard``s.
         """
@@ -108,7 +109,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def servo_boards(self):
+    def servo_boards(self) -> BoardList[ServoBoard]:
         """
         :return: A ``BoardList`` of available ``ServoBoard``s.
         """
@@ -121,7 +122,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def cameras(self):
+    def cameras(self) -> BoardList[Camera]:
         """
         :return: A ``BoardList`` of available cameras.
         """
@@ -130,7 +131,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @property
-    def _games(self):
+    def _games(self) -> BoardList[GameState]:
         """
         :return: A ``BoardList`` of available ``GameStates``.
         """
@@ -139,14 +140,14 @@ class Robot:
         return self._dictify_boards(boards)
 
     @staticmethod
-    def _single_index(name, list_of_boards):
+    def _single_index(name, list_of_boards: BoardList[TBoard]) -> TBoard:
         if list_of_boards:
             return list_of_boards[0]
         else:
             raise AttributeError("No {}s connected".format(name))
 
     @property
-    def power_board(self):
+    def power_board(self) -> PowerBoard:
         """
         :return: The first ``PowerBoard``, if attached.
 
@@ -155,7 +156,7 @@ class Robot:
         return self._single_index("power board", self.power_boards)
 
     @property
-    def motor_board(self):
+    def motor_board(self) -> MotorBoard:
         """
         :return: The first ``MotorBoard``, if attached.
 
@@ -164,7 +165,7 @@ class Robot:
         return self._single_index("motor board", self.motor_boards)
 
     @property
-    def servo_board(self):
+    def servo_board(self) -> ServoBoard:
         """
         :return: The first ``ServoBoard``, if attached.
 
@@ -173,7 +174,7 @@ class Robot:
         return self._single_index("servo board", self.servo_boards)
 
     @property
-    def camera(self):
+    def camera(self) -> Camera:
         """
         :return: The first ``Camera``, if attached.
 
@@ -182,7 +183,7 @@ class Robot:
         return self._single_index("camera", self.cameras)
 
     @property
-    def _game(self):
+    def _game(self) -> GameState:
         """
         :return: The first ``GameStates``, if any.
 
@@ -191,7 +192,7 @@ class Robot:
         return self._single_index("game states", self._games)
 
     @property
-    def zone(self):
+    def zone(self) -> Zone:
         """
         The zone the robot is in.
 
@@ -203,7 +204,7 @@ class Robot:
         return self._game.zone
 
     @property
-    def mode(self):
+    def mode(self) -> GameMode:
         """
         The ``GameMode`` the robot is in.
 
