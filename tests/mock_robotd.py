@@ -15,11 +15,15 @@ from robotd.master import BoardRunner
 def create_root_dir():
     return tempfile.mkdtemp(prefix="robot-api-test-")
 
+
 def remove_root_dir(dir):
     try:
         shutil.rmtree(dir)
     except Exception as e:
-        warnings.warn("Failed to remove temporary directory at {}: {}".format(dir, e), stacklevel=2)
+        warnings.warn(
+            "Failed to remove temporary directory at {}: {}".format(dir, e),
+            stacklevel=2,
+        )
 
 
 class MockBoardMixin:
