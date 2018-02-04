@@ -39,7 +39,7 @@ class Robot:
             self.known_gamestates,
         ]
 
-        self._wait_for_power_board()
+        self._assert_has_power_board()
         self.power_board.power_on()
 
         print('Waiting for start button.')
@@ -47,7 +47,7 @@ class Robot:
 
         print("Starting user code.")
 
-    def _wait_for_power_board(self):
+    def _assert_has_power_board(self):
         power_boards = self.power_boards
         if not power_boards:
             raise RuntimeError('Cannot find Power Board!')
