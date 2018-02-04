@@ -31,7 +31,8 @@ class SphericalCoord(_SphericalCoord):
     and y axes and a distance from the observer.
 
     Note: this co-ordinate space is different to the usual representation of a
-    spherical space which is less coupled to the Cartesian reference frame.
+    spherical space which measures its angles relative to Cartesian planes
+    rather than about Cartesian axes.
     """
 
     @property
