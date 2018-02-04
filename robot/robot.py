@@ -1,4 +1,3 @@
-import time
 from pathlib import Path
 from typing import List, Set, Union  # noqa: F401
 
@@ -30,6 +29,8 @@ class Robot:
         self.known_servo_boards = []  # type: List[ServoBoard]
         self.known_cameras = []  # type: List[Camera]
         self.known_gamestates = []  # type: List[GameState]
+
+        print("Initializing Hardware...")
         self.all_known_boards = [
             self.known_power_boards,
             self.known_motor_boards,
@@ -38,22 +39,18 @@ class Robot:
             self.known_gamestates,
         ]
 
-        self._wait_for_power_board()
-
-    def _wait_for_power_board(self):
-        power_boards = self.power_boards
-        if not power_boards:
-            raise RuntimeError('Cannot find Power Board!')
-
-        print('Turning on power board.')
+        self._assert_has_power_board()
         self.power_board.power_on()
 
         print('Waiting for start button.')
-        self.power_board.set_start_led(True)
-        while not self.power_board.start_button_pressed:
-            time.sleep(0.05)
-        self.power_board.set_start_led(False)
-        print('Start button pressed!')
+        self.power_board.wait_start()
+
+        print("Starting user code.")
+
+    def _assert_has_power_board(self):
+        power_boards = self.power_boards
+        if not power_boards:
+            raise RuntimeError('Cannot find Power Board!')
 
     def _update_boards(self, known_boards, board_type, directory_name):
         """
@@ -210,8 +207,9 @@ class Robot:
 
     def close(self):
         """
-        Close all the board connections this instance holds.
+        Cleanup robot instance.
         """
+
         for board_group in self.all_known_boards:
             for board in board_group:
                 board.close()

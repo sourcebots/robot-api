@@ -1,3 +1,5 @@
+import time
+
 from robot.board import Board
 
 
@@ -40,6 +42,19 @@ class PowerBoard(Board):
 
         status = self._send_and_receive({})
         return status["start-button"]
+
+    def wait_start(self):
+        """
+        Block until the start button is pressed.
+        """
+        start_time = time.time()
+        led_value = True
+        while not self.start_button_pressed:
+            if time.time() - start_time >= 0.1:
+                led_value = not led_value
+                start_time = time.time()
+                self.set_start_led(led_value)
+        self.set_start_led(False)
 
     def buzz(self, duration, *, note=None, frequency=None):
         """Enqueue a note to be played by the buzzer on the power board."""

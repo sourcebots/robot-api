@@ -19,16 +19,7 @@ class PowerBoardTest(unittest.TestCase):
         self.assertIn('power', msg)
         self.assertEqual(msg['power'], True)
 
-        # Catch the start led turning on
-        msg = self.power_board.message_queue.get()
-        self.assertIn('start-led', msg)
-        self.assertEqual(msg['start-led'], True)
-
-        # Catch the start led turning off
-        msg = self.power_board.message_queue.get()
-        self.assertIn('start-led', msg)
-        self.assertEqual(msg['start-led'], False)
-
+        self.power_board.clear_queue()
         self.robot.power_boards[0].power_off()
         msg = self.power_board.message_queue.get()
         self.assertEqual(msg['power'], False)
@@ -36,6 +27,19 @@ class PowerBoardTest(unittest.TestCase):
         self.robot.power_boards[0].power_on()
         msg = self.power_board.message_queue.get()
         self.assertEqual(msg['power'], True)
+
+    def test_start_button_pressed(self):
+        self.assertTrue(self.robot.power_board.start_button_pressed)
+
+    def test_set_start_led(self):
+        self.power_board.clear_queue()
+        self.robot.power_board.set_start_led(True)
+        msg = self.power_board.message_queue.get()
+        self.assertEqual(msg['start-led'], True)
+
+        self.robot.power_board.set_start_led(False)
+        msg = self.power_board.message_queue.get()
+        self.assertFalse(msg['start-led'])
 
     def test_insert_power(self):
         # TODO: Make this generic for all boards, instead of duplicated logic

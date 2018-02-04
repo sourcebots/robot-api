@@ -152,6 +152,9 @@ class Board:
         """
         self.socket.detach()
 
+    def __str__(self):
+        return "{} - {}".format(self.__name__, self.serial)
+
     __del__ = close
 
 
