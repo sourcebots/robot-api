@@ -27,10 +27,10 @@ class SphericalCoord(_SphericalCoord):
     """
     Represents a point expressed in polar co-ordinates.
 
-    This co-ordinate space describes a point as a angles about the Cartesian x
+    This co-ordinate space describes a point as angles about the Cartesian x
     and y axes and a distance from the observer.
 
-    Note: this co-ordinate space is differnt to the usual representation of a
+    Note: this co-ordinate space is different to the usual representation of a
     spherical space which is less coupled to the Cartesian reference frame.
     """
 
@@ -177,8 +177,8 @@ class Marker:
         """
         The position of the marker in Spherical co-ordinates.
 
-        This co-ordinate space describes a point as a angles about the Cartesian
+        This co-ordinate space describes a point as angles about the Cartesian
         x and y axes and a distance from the camera. Note: this co-ordinate
-        space is differnt to the usual representation of a spherical space.
+        space is different to the usual representation of a spherical space.
         """
         return SphericalCoord(*self._raw_data['spherical'])
