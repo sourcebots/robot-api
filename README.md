@@ -40,4 +40,4 @@ to install the package
 
 The robot-api tests require [`robotd`](https://github.com/sourcebots/robotd) installed. 
 
-To run the tests, simply run `python3 -m unittest` and it will run all tests.
+To run the tests, run `python3 -m unittest` and it will run all tests.
