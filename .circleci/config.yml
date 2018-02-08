@@ -8,6 +8,8 @@ jobs:
     steps:
       - checkout
 
+      - run: python --version
+
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "requirements.txt" }}
