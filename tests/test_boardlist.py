@@ -7,6 +7,11 @@ class FakeBoard(Board):
     def _connect(selfself):
         pass
 
+    def close(self):
+        pass
+
+    __del__ = close
+
     def __repr__(self):
         return "FakeBoard({!r})".format(str(self.socket_path))
 
