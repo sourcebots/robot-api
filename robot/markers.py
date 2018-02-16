@@ -131,7 +131,7 @@ class Marker:
     @property
     def distance_metres(self) -> Metres:
         """Distance of the marker from the camera in metres."""
-        return self.polar.distance_metres
+        return self.spherical.distance_metres
 
     # Helper functions, Might need to vary these per-game
     def is_wall_marker(self) -> bool:
