@@ -12,7 +12,6 @@ class Board:
     """Base class for connections to ``robotd`` board sockets."""
 
     SEND_TIMEOUT_SECS = 6
-    RECV_BUFFER_BYTES = 2048
 
     def __init__(self, socket_path: Union[Path, str]) -> None:
         self.socket_path = Path(socket_path)
