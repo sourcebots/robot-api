@@ -69,14 +69,14 @@ class Robot:
         boards = known_boards[:]
         # Add all boards that weren't previously there
         for board_path in new_paths - known_paths:
-            LOGGER.debug("New board found: %r", board_path)
+            LOGGER.debug("New board found: '%s'", board_path)
 
             try:
                 new_board = board_type(board_path)
                 boards.append(new_board)
             except (FileNotFoundError, ConnectionRefusedError):
                 LOGGER.warning(
-                    "Could not connect to the board: %r",
+                    "Could not connect to the board: '%s'",
                     board_path,
                     exc_info=True,
                 )
