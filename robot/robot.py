@@ -76,7 +76,7 @@ class Robot:
                 new_board = board_type(board_path)
                 boards.append(new_board)
             except (FileNotFoundError, ConnectionRefusedError):
-                LOGGER.warn(
+                LOGGER.warning(
                     "Could not connect to the board: %r",
                     board_path,
                     exc_info=True,
