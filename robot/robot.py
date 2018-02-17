@@ -23,7 +23,7 @@ class Robot:
     ROBOTD_ADDRESS = "/var/robotd"
 
     def __init__(self, robotd_path: Union[str, Path]=ROBOTD_ADDRESS,
-                 wait_start: bool=True) -> None:
+                 wait_for_start_button: bool=True) -> None:
         self.robotd_path = Path(robotd_path)
         self.known_power_boards = []  # type: List[PowerBoard]
         self.known_motor_boards = []  # type: List[MotorBoard]
@@ -43,18 +43,8 @@ class Robot:
         self._assert_has_power_board()
         self.power_board.power_on()
 
-        if wait_start:
+        if wait_for_start_button:
             self.power_board.wait_start()
-
-    @classmethod
-    def setup(cls, robotd_path: Union[str, Path]=ROBOTD_ADDRESS) -> 'Robot':
-        """
-        Instantiate robot without waiting for start button.
-
-        :param robotd_path:
-        :return: An instance of ``Robot``
-        """
-        return cls(robotd_path=robotd_path, wait_start=False)
 
     def _assert_has_power_board(self):
         power_boards = self.power_boards
