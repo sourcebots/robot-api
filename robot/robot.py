@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import List, Set, Union  # noqa: F401
+from typing import List, Set, Type, Union  # noqa: F401
 
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
@@ -8,6 +8,8 @@ from robot.game import GameMode, GameState, Zone
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
+
+_PathLike = Union[str, Path]
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +29,7 @@ class Robot:
 
     def __init__(
         self,
-        robotd_path: Union[str, Path]=ROBOTD_ADDRESS,
+        robotd_path: _PathLike=ROBOTD_ADDRESS,
         wait_for_start_button: bool=True,
     ) -> None:
         self.robotd_path = Path(robotd_path)
@@ -57,14 +59,20 @@ class Robot:
         if not power_boards:
             raise RuntimeError('Cannot find Power Board!')
 
-    def _update_boards(self, known_boards, board_type, directory_name):
+    def _update_boards(
+        self,
+        known_boards: List[TBoard],
+        board_type: Type[TBoard],
+        directory_name: _PathLike,
+    ) -> List[TBoard]:
         """
         Update the number of boards against the known boards.
 
-        :param known_boards:
-        :param board_type:
-        :param directory_name:
-        :return:
+        :param known_boards: The list of all currently known boards.
+        :param board_type: The type of board to create.
+        :param directory_name: The relative directory to look in for new boards.
+        :return: A list of all the known boards (both previously known and newly
+                 found).
         """
         known_paths = {x.socket_path for x in known_boards}  # type: Set[Path]
         boards_dir = self.robotd_path / directory_name  # type: Path
