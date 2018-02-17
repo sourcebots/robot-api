@@ -25,8 +25,11 @@ class Robot:
 
     ROBOTD_ADDRESS = "/var/robotd"
 
-    def __init__(self, robotd_path: Union[str, Path]=ROBOTD_ADDRESS,
-                 wait_for_start_button: bool=True) -> None:
+    def __init__(
+        self,
+        robotd_path: Union[str, Path]=ROBOTD_ADDRESS,
+        wait_for_start_button: bool=True,
+    ) -> None:
         self.robotd_path = Path(robotd_path)
         self.known_power_boards = []  # type: List[PowerBoard]
         self.known_motor_boards = []  # type: List[MotorBoard]
