@@ -1,12 +1,14 @@
 from pathlib import Path
-from typing import List, Set, Union  # noqa: F401
+from typing import Any, List, Set, Type, Union  # noqa: F401
 
-from robot.board import BoardList, TBoard
+from robot.board import Board, BoardList, TBoard  # noqa: F401
 from robot.camera import Camera
 from robot.game import GameMode, GameState, Zone
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
+
+_PathLike = Union[Path, str]
 
 
 class Robot:
@@ -22,7 +24,7 @@ class Robot:
 
     ROBOTD_ADDRESS = "/var/robotd"
 
-    def __init__(self, robotd_path: Union[str, Path]=ROBOTD_ADDRESS) -> None:
+    def __init__(self, robotd_path: _PathLike=ROBOTD_ADDRESS) -> None:
         self.robotd_path = Path(robotd_path)
         self.known_power_boards = []  # type: List[PowerBoard]
         self.known_motor_boards = []  # type: List[MotorBoard]
@@ -47,12 +49,17 @@ class Robot:
 
         print("Starting user code.")
 
-    def _assert_has_power_board(self):
+    def _assert_has_power_board(self) -> None:
         power_boards = self.power_boards
         if not power_boards:
             raise RuntimeError('Cannot find Power Board!')
 
-    def _update_boards(self, known_boards, board_type, directory_name):
+    def _update_boards(
+        self,
+        known_boards: List[TBoard],
+        board_type: Type[TBoard],
+        directory_name: _PathLike,
+    ) -> List[TBoard]:
         """
         Update the number of boards against the known boards.
 
@@ -133,7 +140,7 @@ class Robot:
         return self._dictify_boards(boards)
 
     @staticmethod
-    def _single_index(name, list_of_boards: BoardList[TBoard]) -> TBoard:
+    def _single_index(name: Any, list_of_boards: BoardList[TBoard]) -> TBoard:
         if list_of_boards:
             return list_of_boards[0]
         else:
@@ -205,7 +212,7 @@ class Robot:
         """
         return self._game.mode
 
-    def close(self):
+    def close(self) -> None:
         """
         Cleanup robot instance.
         """
@@ -218,5 +225,5 @@ class Robot:
             # reanimate the boards (which isn't supported).
             del board_group[:]
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.close()
