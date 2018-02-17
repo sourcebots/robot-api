@@ -13,6 +13,13 @@ LOGGER = logging.getLogger(__name__)
 
 
 def configure_logging() -> None:
+    """
+    Configure basic logging.
+
+    This has us outputting ``logging.INFO`` and higher messages. This function
+    is called within ``Robot.__init__`` for convenience, though as it uses
+    ``logging.basicConfig`` it is a no-op if logging has already been configured.
+    """
     logging.basicConfig(level=logging.INFO)
 
 
