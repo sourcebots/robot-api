@@ -64,27 +64,27 @@ class Robot:
         known_boards: List[TBoard],
         board_type: Type[TBoard],
         directory_name: _PathLike,
-    ) -> List[TBoard]:
+    ) -> BoardList[TBoard]:
         """
         Update the number of boards against the known boards.
 
-        :param known_boards: The list of all currently known boards.
+        :param known_boards: The list of all currently known boards; this list
+                             will be updated with any newly found boards.
         :param board_type: The type of board to create.
         :param directory_name: The relative directory to look in for new boards.
-        :return: A list of all the known boards (both previously known and newly
-                 found).
+        :return: A ``BoardList[TBoard]`` of all the known boards (both
+                 previously known and newly found).
         """
         known_paths = {x.socket_path for x in known_boards}  # type: Set[Path]
         boards_dir = self.robotd_path / directory_name  # type: Path
         new_paths = set(boards_dir.glob('*'))  # type: Set[Path]
-        boards = known_boards[:]
         # Add all boards that weren't previously there
         for board_path in new_paths - known_paths:
             LOGGER.debug("New board found: '%s'", board_path)
 
             try:
                 new_board = board_type(board_path)
-                boards.append(new_board)
+                known_boards.append(new_board)
             except (FileNotFoundError, ConnectionRefusedError):
                 LOGGER.warning(
                     "Could not connect to the board: '%s'",
@@ -92,57 +92,46 @@ class Robot:
                     exc_info=True,
                 )
 
-        return boards
+        return BoardList(known_boards)
 
-    # TODO: Parameterise the functions below so we only need one
     @property
     def motor_boards(self) -> BoardList[MotorBoard]:
         """
         :return: A ``BoardList`` of available ``MotorBoard``s.
         """
-        boards = self._update_boards(self.known_motor_boards, MotorBoard, 'motor')
-        self.known_motor_boards = boards
-        return BoardList(boards)
+        return self._update_boards(self.known_motor_boards, MotorBoard, 'motor')
 
     @property
     def power_boards(self) -> BoardList[PowerBoard]:
         """
         :return: A ``BoardList`` of available ``PowerBoard``s.
         """
-        boards = self._update_boards(self.known_power_boards, PowerBoard, 'power')
-        self.known_power_boards = boards
-        return BoardList(boards)
+        return self._update_boards(self.known_power_boards, PowerBoard, 'power')
 
     @property
     def servo_boards(self) -> BoardList[ServoBoard]:
         """
         :return: A ``BoardList`` of available ``ServoBoard``s.
         """
-        boards = self._update_boards(
+        return self._update_boards(
             self.known_servo_boards,
             ServoBoard,
             'servo_assembly',
         )
-        self.known_servo_boards = boards
-        return BoardList(boards)
 
     @property
     def cameras(self) -> BoardList[Camera]:
         """
         :return: A ``BoardList`` of available cameras.
         """
-        boards = self._update_boards(self.known_cameras, Camera, 'camera')
-        self.known_cameras = boards
-        return BoardList(boards)
+        return self._update_boards(self.known_cameras, Camera, 'camera')
 
     @property
     def _games(self) -> BoardList[GameState]:
         """
         :return: A ``BoardList`` of available ``GameStates``.
         """
-        boards = self._update_boards(self.known_gamestates, GameState, 'game')
-        self.known_gamestates = boards
-        return BoardList(boards)
+        return self._update_boards(self.known_gamestates, GameState, 'game')
 
     @staticmethod
     def _single_index(name, list_of_boards: BoardList[TBoard]) -> TBoard:
