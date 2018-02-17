@@ -17,20 +17,20 @@ class PowerBoard(Board):
         'uc': 523,
     }
 
-    def power_on(self):
+    def power_on(self) -> None:
         """
         Turn on power to all power board outputs.
         """
 
         self._send_and_receive({'power': True})
 
-    def power_off(self):
+    def power_off(self) -> None:
         """
         Turn off power to all power board outputs.
         """
         self._send_and_receive({'power': False})
 
-    def set_start_led(self, value: bool):
+    def set_start_led(self, value: bool) -> None:
         """Set the state of the start LED."""
         self._send_and_receive({'start-led': value})
 
@@ -43,7 +43,7 @@ class PowerBoard(Board):
         status = self._send_and_receive({})
         return status["start-button"]
 
-    def wait_start(self):
+    def wait_start(self) -> None:
         """
         Block until the start button is pressed.
         """
@@ -56,7 +56,7 @@ class PowerBoard(Board):
                 self.set_start_led(led_value)
         self.set_start_led(False)
 
-    def buzz(self, duration, *, note=None, frequency=None):
+    def buzz(self, duration: float, *, note: str=None, frequency: int=None):
         """Enqueue a note to be played by the buzzer on the power board."""
         if note is None and frequency is None:
             raise ValueError("Either note or frequency must be provided")
