@@ -1,6 +1,9 @@
+import logging
 import time
 
 from robot.board import Board
+
+LOGGER = logging.getLogger(__name__)
 
 
 class PowerBoard(Board):
@@ -39,7 +42,6 @@ class PowerBoard(Board):
         """
         Read the status of the start button.
         """
-
         status = self._send_and_receive({})
         return status["start-button"]
 
@@ -47,6 +49,7 @@ class PowerBoard(Board):
         """
         Block until the start button is pressed.
         """
+        LOGGER.info('Waiting for start button.')
         start_time = time.time()
         led_value = True
         while not self.start_button_pressed:
@@ -55,6 +58,7 @@ class PowerBoard(Board):
                 start_time = time.time()
                 self.set_start_led(led_value)
         self.set_start_led(False)
+        LOGGER.info("Starting user code.")
 
     def buzz(self, duration, *, note=None, frequency=None):
         """Enqueue a note to be played by the buzzer on the power board."""
