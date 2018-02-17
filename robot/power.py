@@ -56,7 +56,7 @@ class PowerBoard(Board):
                 self.set_start_led(led_value)
         self.set_start_led(False)
 
-    def buzz(self, duration: float, *, note: str=None, frequency: int=None):
+    def buzz(self, duration: float, *, note: str=None, frequency: int=None) -> None:
         """Enqueue a note to be played by the buzzer on the power board."""
         if note is None and frequency is None:
             raise ValueError("Either note or frequency must be provided")
