@@ -98,11 +98,10 @@ class Board:
 
         raise original_exception
 
-    def _send(self, message, should_retry=True):
+    def _send(self, message):
         """
         Send a message to robotd.
 
-        :param retry: used internally
         :param message: message to send
         """
 
@@ -111,10 +110,7 @@ class Board:
         def sendall():
             self.socket.sendall(data)
 
-        if should_retry:
-            return self._socket_with_single_retry(sendall)
-        else:
-            return sendall()
+        return self._socket_with_single_retry(sendall)
 
     def _recv_from_socket(self, size):
         data = self.socket.recv(size)
@@ -122,17 +118,14 @@ class Board:
             raise BrokenPipeError()
         return data
 
-    def _receive(self, should_retry=True):
+    def _receive(self):
         """
         Receive a message from robotd.
         """
         while b'\n' not in self.data:
-            if should_retry:
-                message = self._socket_with_single_retry(
-                    lambda: self._recv_from_socket(4096),
-                )
-            else:
-                message = self._recv_from_socket(4096)
+            message = self._socket_with_single_retry(
+                lambda: self._recv_from_socket(4096),
+            )
 
             self.data += message
 
@@ -141,12 +134,12 @@ class Board:
 
         return json.loads(line.decode('utf-8'))
 
-    def _send_and_receive(self, message, should_retry=True):
+    def _send_and_receive(self, message):
         """
         Send a message to robotd and wait for a response.
         """
-        self._send(message, should_retry)
-        return self._receive(should_retry)
+        self._send(message)
+        return self._receive()
 
     def close(self):
         """
