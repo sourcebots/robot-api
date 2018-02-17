@@ -11,7 +11,7 @@ LOGGER = logging.getLogger(__name__)
 class Board:
     """Base class for connections to ``robotd`` board sockets."""
 
-    SEND_TIMEOUT_SECS = 6
+    CONNECTION_TIMEOUT_SECS = 6
 
     def __init__(self, socket_path: Union[Path, str]) -> None:
         self.socket_path = Path(socket_path)
@@ -40,7 +40,7 @@ class Board:
         :param socket_path: Path for the unix socket
         """
         self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.socket.settimeout(self.SEND_TIMEOUT_SECS)
+        self.socket.settimeout(self.CONNECTION_TIMEOUT_SECS)
 
         try:
             self.socket.connect(str(self.socket_path))
