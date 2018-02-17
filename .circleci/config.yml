@@ -2,7 +2,11 @@ version: 2
 jobs:
   build:
     docker:
-      - image: python:3-stretch
+      # While we're actually running on stretch (with Python 3.5.3), this is the
+      # closest matching docker image available in CircleCI. The stretch images
+      # all have Python 3.6, which has some syntactic changes.
+      - image: python:3.5.4
+
     working_directory: ~/robot
 
     steps:
