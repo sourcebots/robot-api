@@ -1,5 +1,6 @@
 from enum import Enum
-from typing import Dict, List
+from pathlib import Path
+from typing import Dict, List, Union
 
 from robot.board import Board
 
@@ -23,7 +24,7 @@ class PinValue(Enum):
 class Servo:
     """A servo output on a ``ServoBoard``."""
 
-    def __init__(self, servo_id, set_pos, get_pos):
+    def __init__(self, servo_id: int, set_pos, get_pos) -> None:
         self.servo_id = servo_id
         self._set_pos = set_pos
         self._get_pos = get_pos
@@ -34,7 +35,7 @@ class Servo:
         return self._get_pos()
 
     @position.setter
-    def position(self, position):
+    def position(self, position: float) -> None:
         if position > 1 or position < -1:
             raise ValueError("servo position must be between -1 and 1")
         self._set_pos(position)
@@ -43,7 +44,7 @@ class Servo:
 class Gpio:
     """A general-purpose input-output pin on a ``ServoBoard``."""
 
-    def __init__(self, pin_id, pin_read, pin_mode_get, pin_mode_set):
+    def __init__(self, pin_id: int, pin_read, pin_mode_get, pin_mode_set) -> None:
         self._pin_id = pin_id
         self._pin_read = pin_read
         self._pin_mode_get = pin_mode_get
@@ -55,7 +56,7 @@ class Gpio:
         return PinMode(self._pin_mode_get())
 
     @mode.setter
-    def mode(self, mode: PinMode):
+    def mode(self, mode: PinMode) -> None:
         """
         Set the mode the pin should be in.
 
@@ -108,7 +109,7 @@ class ServoBoard(Board):
     This is an arduino with a servo shield attached.
     """
 
-    def __init__(self, socket_path):
+    def __init__(self, socket_path: Union[Path, str]) -> None:
         super().__init__(socket_path)
 
         servo_ids = range(0, 16)  # servos with a port 0-15
@@ -131,7 +132,7 @@ class ServoBoard(Board):
             for x in gpio_pins
         }  # type: Dict[int, Gpio]
 
-    def direct_command(self, command_name: str, *args) -> List[str]:
+    def direct_command(self, command_name: str, *args: str) -> List[str]:
         """
         Issue a command directly to the arduino.
 
@@ -168,7 +169,7 @@ class ServoBoard(Board):
         """List of ``Servo`` outputs for the servo board."""
         return self._servos
 
-    def _set_servo_pos(self, servo: int, pos: float):
+    def _set_servo_pos(self, servo: int, pos: float) -> None:
         self._send_and_receive({'servos': {servo: pos}})
 
     def _get_servo_pos(self, servo: int) -> float:
@@ -182,7 +183,7 @@ class ServoBoard(Board):
         """List of ``Gpio`` pins for the servo board."""
         return self._gpios
 
-    def _read_pin(self, pin) -> PinValue:
+    def _read_pin(self, pin: int) -> PinValue:
         # request a check for that pin by trying to set it to None
         data = self._send_and_receive({'read-pins': [pin]})
         # example data value:
@@ -190,14 +191,14 @@ class ServoBoard(Board):
         values = data['pin-values']
         return PinValue(values[str(pin)])
 
-    def _get_pin_mode(self, pin) -> PinMode:
+    def _get_pin_mode(self, pin: int) -> PinMode:
         data = self._send_and_receive({})
         # example data value:
         # {'pins':{2:'pullup'}}
         values = data['pins']
         return PinMode(values[str(pin)])
 
-    def _set_pin_mode(self, pin, value: PinMode):
+    def _set_pin_mode(self, pin: int, value: PinMode) -> None:
         self._send_and_receive({'pins': {pin: value.value}})
 
     def read_analogue(self) -> Dict[str, str]:
@@ -205,7 +206,7 @@ class ServoBoard(Board):
         command = {'read-analogue': True}
         return self._send_and_receive(command)['analogue-values']
 
-    def read_ultrasound(self, trigger_pin, echo_pin):
+    def read_ultrasound(self, trigger_pin: int, echo_pin: int) -> float:
         """
         Read an ultrasound value from an ultrasound sensor.
 
