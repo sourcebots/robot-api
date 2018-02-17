@@ -1,6 +1,6 @@
 import math
 import warnings
-from typing import List, NamedTuple, NewType, Tuple
+from typing import Any, Dict, List, NamedTuple, NewType, Tuple
 
 from robot.game_specific import TOKEN, WALL
 
@@ -56,7 +56,7 @@ class PolarCoord:
     Use of this co-ordinate space is discouraged.
     """
 
-    def __init__(self, rot, dist_m):
+    def __init__(self, rot, dist_m):  # type: ignore
         self._rot_x_rad = rot[0]
         self._rot_y_rad = rot[1]
         self._distance_metres = dist_m
@@ -102,7 +102,7 @@ class PolarCoord:
 class Marker:
     """A marker captured from a webcam image."""
 
-    def __init__(self, data):
+    def __init__(self, data: Dict[str, Any]) -> None:
         self._raw_data = data
 
     @property
