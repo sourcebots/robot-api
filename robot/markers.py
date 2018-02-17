@@ -56,7 +56,7 @@ class PolarCoord:
     Use of this co-ordinate space is discouraged.
     """
 
-    def __init__(self, rot, dist_m):  # type: ignore
+    def __init__(self, rot, dist_m):
         self._rot_x_rad = rot[0]
         self._rot_y_rad = rot[1]
         self._distance_metres = dist_m
