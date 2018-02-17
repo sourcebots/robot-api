@@ -63,7 +63,7 @@ class Board:
             path=self.socket_path,
         )
 
-    def _socket_with_single_retry(self, handler):
+    def _socket_with_retry(self, handler):
         retryable_errors = (
             socket.timeout,
             BrokenPipeError,
@@ -113,7 +113,7 @@ class Board:
             self.socket.sendall(data)
 
         if should_retry:
-            return self._socket_with_single_retry(sendall)
+            return self._socket_with_retry(sendall)
         else:
             return sendall()
 
@@ -129,7 +129,7 @@ class Board:
         """
         while b'\n' not in self.data:
             if should_retry:
-                message = self._socket_with_single_retry(
+                message = self._socket_with_retry(
                     lambda: self._recv_from_socket(4096),
                 )
             else:
