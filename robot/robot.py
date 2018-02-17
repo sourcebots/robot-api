@@ -86,11 +86,6 @@ class Robot:
 
         return boards
 
-    @staticmethod
-    def _dictify_boards(boards: List[TBoard]) -> BoardList[TBoard]:
-        # Convert lists of boards into a dictionary
-        return BoardList({board.serial: board for board in boards})
-
     # TODO: Parameterise the functions below so we only need one
     @property
     def motor_boards(self) -> BoardList[MotorBoard]:
@@ -99,7 +94,7 @@ class Robot:
         """
         boards = self._update_boards(self.known_motor_boards, MotorBoard, 'motor')
         self.known_motor_boards = boards
-        return self._dictify_boards(boards)
+        return BoardList(boards)
 
     @property
     def power_boards(self) -> BoardList[PowerBoard]:
@@ -108,7 +103,7 @@ class Robot:
         """
         boards = self._update_boards(self.known_power_boards, PowerBoard, 'power')
         self.known_power_boards = boards
-        return self._dictify_boards(boards)
+        return BoardList(boards)
 
     @property
     def servo_boards(self) -> BoardList[ServoBoard]:
@@ -121,7 +116,7 @@ class Robot:
             'servo_assembly',
         )
         self.known_servo_boards = boards
-        return self._dictify_boards(boards)
+        return BoardList(boards)
 
     @property
     def cameras(self) -> BoardList[Camera]:
@@ -130,7 +125,7 @@ class Robot:
         """
         boards = self._update_boards(self.known_cameras, Camera, 'camera')
         self.known_cameras = boards
-        return self._dictify_boards(boards)
+        return BoardList(boards)
 
     @property
     def _games(self) -> BoardList[GameState]:
@@ -139,7 +134,7 @@ class Robot:
         """
         boards = self._update_boards(self.known_gamestates, GameState, 'game')
         self.known_gamestates = boards
-        return self._dictify_boards(boards)
+        return BoardList(boards)
 
     @staticmethod
     def _single_index(name, list_of_boards: BoardList[TBoard]) -> TBoard:
