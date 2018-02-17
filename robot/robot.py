@@ -12,6 +12,10 @@ from robot.servo import ServoBoard
 LOGGER = logging.getLogger(__name__)
 
 
+def configure_logging() -> None:
+    logging.basicConfig(level=logging.INFO)
+
+
 class Robot:
     """
     Core class of the Robot API.
@@ -36,6 +40,8 @@ class Robot:
         self.known_servo_boards = []  # type: List[ServoBoard]
         self.known_cameras = []  # type: List[Camera]
         self.known_gamestates = []  # type: List[GameState]
+
+        configure_logging()
 
         LOGGER.info("Initializing Hardware...")
         self.all_known_boards = [
