@@ -84,7 +84,7 @@ class Robot:
                     exc_info=True,
                 )
 
-        return sorted(boards, key=lambda b: b.serial)
+        return boards
 
     @staticmethod
     def _dictify_boards(boards: List[TBoard]) -> BoardList[TBoard]:
