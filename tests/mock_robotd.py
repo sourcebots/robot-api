@@ -31,7 +31,7 @@ class MockBoardMixin:
         return self._status
 
     def command(self, cmd):
-        print("{} Command: {}".format(self._name, cmd))
+        print("{} Command: {}".format(self._name, cmd))  # noqa: T001
         self._status.update(cmd)
         self.message_queue.put(cmd)
 

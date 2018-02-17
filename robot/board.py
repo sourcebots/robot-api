@@ -1,8 +1,11 @@
 import json
+import logging
 import socket
 import time
 from pathlib import Path
 from typing import Mapping, TypeVar, Union
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Board:
@@ -43,7 +46,7 @@ class Board:
         try:
             self.socket.connect(str(self.socket_path))
         except ConnectionRefusedError as e:
-            print('Error connecting to:', self.socket_path)
+            LOGGER.exception("Error connecting to: '%s'", self.socket_path)
             raise e
 
         greeting = self._receive()

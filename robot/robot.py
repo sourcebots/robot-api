@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import List, Set, Union  # noqa: F401
 
@@ -7,6 +8,8 @@ from robot.game import GameMode, GameState, Zone
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Robot:
@@ -31,7 +34,7 @@ class Robot:
         self.known_cameras = []  # type: List[Camera]
         self.known_gamestates = []  # type: List[GameState]
 
-        print("Initializing Hardware...")
+        LOGGER.info("Initializing Hardware...")
         self.all_known_boards = [
             self.known_power_boards,
             self.known_motor_boards,
@@ -66,13 +69,17 @@ class Robot:
         boards = known_boards[:]
         # Add all boards that weren't previously there
         for board_path in new_paths - known_paths:
-            print("New board found:", board_path)
+            LOGGER.debug("New board found: '%s'", board_path)
 
             try:
                 new_board = board_type(board_path)
                 boards.append(new_board)
-            except (FileNotFoundError, ConnectionRefusedError) as e:
-                print("Could not connect to the board:", board_path, e)
+            except (FileNotFoundError, ConnectionRefusedError):
+                LOGGER.warning(
+                    "Could not connect to the board: '%s'",
+                    board_path,
+                    exc_info=True,
+                )
 
         return sorted(boards, key=lambda b: b.serial)
 
