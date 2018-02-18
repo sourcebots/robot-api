@@ -12,6 +12,17 @@ from robot.servo import ServoBoard
 LOGGER = logging.getLogger(__name__)
 
 
+def configure_logging() -> None:
+    """
+    Configure basic logging.
+
+    This has us outputting ``logging.INFO`` and higher messages. This function
+    is called within ``Robot.__init__`` for convenience, though as it uses
+    ``logging.basicConfig`` it is a no-op if logging has already been configured.
+    """
+    logging.basicConfig(level=logging.INFO)
+
+
 class Robot:
     """
     Core class of the Robot API.
@@ -36,6 +47,8 @@ class Robot:
         self.known_servo_boards = []  # type: List[ServoBoard]
         self.known_cameras = []  # type: List[Camera]
         self.known_gamestates = []  # type: List[GameState]
+
+        configure_logging()
 
         LOGGER.info("Initializing Hardware...")
         self._assert_has_power_board()
