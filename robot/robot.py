@@ -38,14 +38,6 @@ class Robot:
         self.known_gamestates = []  # type: List[GameState]
 
         LOGGER.info("Initializing Hardware...")
-        self.all_known_boards = [
-            self.known_power_boards,
-            self.known_motor_boards,
-            self.known_servo_boards,
-            self.known_cameras,
-            self.known_gamestates,
-        ]
-
         self._assert_has_power_board()
         self.power_board.power_on()
 
@@ -219,7 +211,13 @@ class Robot:
         Cleanup robot instance.
         """
 
-        for board_group in self.all_known_boards:
+        for board_group in (
+            self.known_power_boards,
+            self.known_motor_boards,
+            self.known_servo_boards,
+            self.known_cameras,
+            self.known_gamestates,
+        ):
             for board in board_group:
                 board.close()
 
