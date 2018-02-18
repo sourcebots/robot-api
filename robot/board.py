@@ -3,7 +3,7 @@ import logging
 import socket
 import time
 from pathlib import Path
-from typing import Mapping, TypeVar, Union
+from typing import Iterable, Mapping, TypeVar, Union
 
 LOGGER = logging.getLogger(__name__)
 
@@ -167,8 +167,8 @@ TBoard = TypeVar('TBoard', bound=Board)
 class BoardList(Mapping[Union[str, int], TBoard]):
     """A mapping of ``Board``s allowing access by index or identity."""
 
-    def __init__(self, *args, **kwargs):
-        self._store = dict(*args, **kwargs)
+    def __init__(self, boards: Iterable[TBoard]) -> None:
+        self._store = {x.serial: x for x in boards}
         self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
 
     def __getitem__(self, attr: Union[str, int]) -> TBoard:
