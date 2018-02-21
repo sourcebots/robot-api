@@ -21,11 +21,11 @@ class ResultList(List[Marker]):
     def __getitem__(self, index: int) -> Marker:
         ...
 
-    @overload  # noqa: F811 (deliberately method replacement)
+    @overload  # noqa: F811 (deliberate method replacement)
     def __getitem__(self, index: slice) -> List[Marker]:
         ...
 
-    def __getitem__(self, index):  # noqa: F811 (deliberately method replacement)
+    def __getitem__(self, index):  # noqa: F811 (deliberate method replacement)
         try:
             return super().__getitem__(index)
         except IndexError as e:

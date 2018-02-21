@@ -2,7 +2,11 @@ version: 2
 jobs:
   build:
     docker:
-      - image: python:3-stretch
+      # While we're actually running on stretch (with Python 3.5.3), this is the
+      # closest matching docker image available in CircleCI. The stretch images
+      # all have Python 3.6, which has some syntactic changes.
+      - image: python:3.5.4
+
     working_directory: ~/robot
 
     steps:
@@ -30,14 +34,12 @@ jobs:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
+      - run: script/linting/lint
+      - run: script/typing/check
+
       - run:
           name: run tests
           command: python3 -m unittest
-
-      - run: script/typing/check
-
-      # run linting!
-      - run: script/linting/lint
 
       - store_artifacts:
           path: test-reports

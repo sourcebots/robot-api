@@ -1,4 +1,5 @@
 import json
+import logging
 import socket
 import time
 from pathlib import Path
@@ -18,6 +19,8 @@ from typing import (  # noqa: F401
 
 T = TypeVar('T')
 _Message = Mapping[str, Any]
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Board:
@@ -58,8 +61,8 @@ class Board:
         try:
             self.socket.connect(str(self.socket_path))
         except ConnectionRefusedError as e:
-            print('Error connecting to:', self.socket_path)
-            raise e
+            LOGGER.exception("Error connecting to: '%s'", self.socket_path)
+            raise
 
         greeting = self._receive()
         self._greeting_response(greeting)
@@ -183,20 +186,8 @@ TBoard = TypeVar('TBoard', bound=Board)
 class BoardList(Mapping[Union[str, int], TBoard]):
     """A mapping of ``Board``s allowing access by index or identity."""
 
-    @overload
-    def __init__(self, **kwargs: TBoard) -> None:
-        ...
-
-    @overload  # noqa: F811 (deliberate method replacement)
-    def __init__(self, mapping: Mapping[str, TBoard], **kwargs: TBoard) -> None:
-        ...
-
-    @overload  # noqa: F811 (deliberate method replacement)
-    def __init__(self, iterable: Iterable[Tuple[str, TBoard]], **kwargs: TBoard) -> None:
-        ...
-
-    def __init__(self, *args, **kwargs):  # noqa: F811 (deliberate method replacement)
-        self._store = dict(*args, **kwargs)
+    def __init__(self, boards: Iterable[TBoard]) -> None:
+        self._store = {x.serial: x for x in boards}
         self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
 
     def __getitem__(self, attr: Union[str, int]) -> TBoard:
