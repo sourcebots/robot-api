@@ -50,3 +50,6 @@ TOKEN_ZONE_3 = set(range(59, 64))
 MARKER_SIZES = {}
 MARKER_SIZES.update({m: (0.25, 0.25) for m in (WALL | COLUMN)})
 MARKER_SIZES.update({m: (0.1, 0.1) for m in TOKEN})
+
+# Size the vision system will assume a marker is if it's not in MARKER_SIZES
+MARKER_SIZE_DEFAULT = (0.25, 0.25)
