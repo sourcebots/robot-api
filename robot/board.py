@@ -1,8 +1,11 @@
 import json
+import logging
 import socket
 import time
 from pathlib import Path
-from typing import Mapping, TypeVar, Union
+from typing import Iterable, Mapping, TypeVar, Union
+
+LOGGER = logging.getLogger(__name__)
 
 
 class Board:
@@ -43,8 +46,8 @@ class Board:
         try:
             self.socket.connect(str(self.socket_path))
         except ConnectionRefusedError as e:
-            print('Error connecting to:', self.socket_path)
-            raise e
+            LOGGER.exception("Error connecting to: '%s'", self.socket_path)
+            raise
 
         greeting = self._receive()
         self._greeting_response(greeting)
@@ -152,6 +155,9 @@ class Board:
         """
         self.socket.detach()
 
+    def __str__(self):
+        return "{} - {}".format(self.__name__, self.serial)
+
     __del__ = close
 
 
@@ -161,8 +167,8 @@ TBoard = TypeVar('TBoard', bound=Board)
 class BoardList(Mapping[Union[str, int], TBoard]):
     """A mapping of ``Board``s allowing access by index or identity."""
 
-    def __init__(self, *args, **kwargs):
-        self._store = dict(*args, **kwargs)
+    def __init__(self, boards: Iterable[TBoard]) -> None:
+        self._store = {x.serial: x for x in boards}
         self._store_list = sorted(self._store.values(), key=lambda board: board.serial)
 
     def __getitem__(self, attr: Union[str, int]) -> TBoard:
