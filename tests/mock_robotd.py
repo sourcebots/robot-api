@@ -171,21 +171,20 @@ class MockGameState(RobotDGameState):
 
 
 def main():
-    root_dir = '/tmp/robotd'
-    mock = MockRobotD(root_dir=root_dir)
+    with tempfile.TemporaryDirectory(prefix="robot-api-test-") as root_dir:
+        mock = MockRobotD(root_dir=root_dir)
 
-    mock.new_powerboard()
-    time.sleep(0.2)
+        mock.new_powerboard()
+        time.sleep(0.2)
 
-    mock.new_motorboard()
-    time.sleep(0.2)
+        mock.new_motorboard()
+        time.sleep(0.2)
 
-    from robot.robot import Robot
-    robot = Robot(robotd_path=root_dir)
-    robot.power_board.power_off()
-    m0 = robot.motor_boards[0].m0
-    m0.voltage = 1
-
+        from robot.robot import Robot
+        robot = Robot(robotd_path=root_dir)
+        robot.power_board.power_off()
+        m0 = robot.motor_boards[0].m0
+        m0.voltage = 1
 
 if __name__ == "__main__":
     main()
