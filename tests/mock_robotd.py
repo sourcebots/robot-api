@@ -12,18 +12,25 @@ from robotd.devices_base import Board
 from robotd.master import BoardRunner
 
 
-def create_root_dir():
-    return tempfile.mkdtemp(prefix="robot-api-test-")
+class MockRobotDFactoryMixin:
+    """
+    A mix-in for test case classes that provides a method to create an instance
+    of MockRobotD. This method is typically used during the test case's setUp
+    """
 
+    def create_mock_robotd(self):
+        """
+        Creates and returns a new instance of MockRobotD which uses a new
+        temporary directory to hold its communication sockets. Clean-up of
+        the temporary directory and the MockRobotD instance is handled
+        automatically.
+        """
 
-def remove_root_dir(dir):
-    try:
-        shutil.rmtree(dir)
-    except Exception as e:
-        warnings.warn(
-            "Failed to remove temporary directory at {}: {}".format(dir, e),
-            stacklevel=2,
-        )
+        root_dir = tempfile.TemporaryDirectory(prefix = "robot-api-test-")
+        self.addCleanup(root_dir.cleanup)
+        mock_robotd = MockRobotD(root_dir = root_dir.name)
+        self.addCleanup(mock_robotd.stop)
+        return mock_robotd
 
 
 class MockBoardMixin:

@@ -3,17 +3,16 @@ import unittest
 
 from robot import COAST
 from robot.robot import Robot
-from tests.mock_robotd import MockRobotD, create_root_dir, remove_root_dir
+from tests.mock_robotd import MockRobotD, MockRobotDFactoryMixin
 
 
-class MotorBoardTest(unittest.TestCase):
+class MotorBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
     def setUp(self):
-        self.root_dir = create_root_dir()
-        mock = MockRobotD(root_dir=self.root_dir)
+        mock = self.create_mock_robotd()
         mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock
-        self.robot = Robot(robotd_path=self.root_dir)
+        self.robot = Robot(robotd_path=mock.root_dir)
 
     def test_insert_motorboards(self):
         self.mock.new_motorboard('ABC')
@@ -53,7 +52,7 @@ class MotorBoardTest(unittest.TestCase):
         # TODO make this test generic to the board, so it runs on all boards.
         self.mock.new_motorboard('ABC')
         # Set up robot 2!
-        robot2 = Robot(robotd_path=self.root_dir)
+        robot2 = Robot(robotd_path=self.mock.root_dir)
         # Give it a tiny bit to init the boards
         time.sleep(0.2)
         self.robot.motor_boards[0].m0 = 1
@@ -107,7 +106,3 @@ class MotorBoardTest(unittest.TestCase):
             self.assertEqual(self.robot.motor_boards[0].m1, value)
         else:
             raise ValueError()
-
-    def tearDown(self):
-        self.mock.stop()
-        remove_root_dir(self.root_dir)
