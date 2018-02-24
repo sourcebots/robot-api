@@ -139,7 +139,7 @@ class Robot:
         return self._update_boards(self.known_gamestates, GameState, 'game')
 
     @staticmethod
-    def _single_index(name: Any, list_of_boards: BoardList[TBoard]) -> TBoard:
+    def _single_index(name: str, list_of_boards: BoardList[TBoard]) -> TBoard:
         if list_of_boards:
             return list_of_boards[0]
         else:
