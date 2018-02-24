@@ -1,7 +1,5 @@
-import shutil
 import tempfile
 import time
-import warnings
 from multiprocessing import Queue
 
 import robot
@@ -26,9 +24,9 @@ class MockRobotDFactoryMixin:
         automatically.
         """
 
-        root_dir = tempfile.TemporaryDirectory(prefix = "robot-api-test-")
+        root_dir = tempfile.TemporaryDirectory(prefix="robot-api-test-")
         self.addCleanup(root_dir.cleanup)
-        mock_robotd = MockRobotD(root_dir = root_dir.name)
+        mock_robotd = MockRobotD(root_dir=root_dir.name)
         self.addCleanup(mock_robotd.stop)
         return mock_robotd
 

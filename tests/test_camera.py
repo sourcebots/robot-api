@@ -6,7 +6,7 @@ from robot.camera import ResultList
 from robot.markers import CartCoord, PolarCoord, SphericalCoord
 from robot.robot import Robot
 from sb_vision.camera import FileCamera
-from tests.mock_robotd import MockRobotD, MockRobotDFactoryMixin
+from tests.mock_robotd import MockRobotDFactoryMixin
 
 IMAGE_ROOT = os.path.dirname(os.path.realpath(__file__)) + "/test_data/"
 IMAGE_WITH_NO_MARKER = IMAGE_ROOT + 'photo_empty.jpg'

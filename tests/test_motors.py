@@ -3,7 +3,7 @@ import unittest
 
 from robot import COAST
 from robot.robot import Robot
-from tests.mock_robotd import MockRobotD, MockRobotDFactoryMixin
+from tests.mock_robotd import MockRobotDFactoryMixin
 
 
 class MotorBoardTest(MockRobotDFactoryMixin, unittest.TestCase):

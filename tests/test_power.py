@@ -2,7 +2,7 @@ import time
 import unittest
 
 from robot.robot import Robot
-from tests.mock_robotd import MockRobotD, MockRobotDFactoryMixin
+from tests.mock_robotd import MockRobotDFactoryMixin
 
 
 class PowerBoardTest(MockRobotDFactoryMixin, unittest.TestCase):

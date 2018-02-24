@@ -3,7 +3,7 @@ import unittest
 
 from robot import Robot
 from robot.game import GameMode
-from tests.mock_robotd import MockRobotD, MockRobotDFactoryMixin
+from tests.mock_robotd import MockRobotDFactoryMixin
 
 
 class GameTest(MockRobotDFactoryMixin, unittest.TestCase):

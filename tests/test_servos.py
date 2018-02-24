@@ -6,7 +6,7 @@ from unittest import mock
 
 from robot.robot import Robot
 from robot.servo import ArduinoError, CommandError, InvalidResponse, ServoBoard
-from tests.mock_robotd import MockRobotD, MockRobotDFactoryMixin
+from tests.mock_robotd import MockRobotDFactoryMixin
 
 from robotd.devices import ServoAssembly
 
