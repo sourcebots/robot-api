@@ -183,8 +183,7 @@ def main():
         from robot.robot import Robot
         robot = Robot(robotd_path=root_dir)
         robot.power_board.power_off()
-        m0 = robot.motor_boards[0].m0
-        m0.voltage = 1
+        robot.motor_boards[0].m0 = 1
 
 if __name__ == "__main__":
     main()
