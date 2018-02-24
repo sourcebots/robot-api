@@ -185,5 +185,8 @@ def main():
         robot.power_board.power_off()
         robot.motor_boards[0].m0 = 1
 
+        time.sleep(0.2)
+        mock.stop()
+
 if __name__ == "__main__":
     main()
