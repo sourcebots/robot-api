@@ -65,37 +65,44 @@ class PolarCoord:
     @property
     def rot_x_rad(self) -> Radians:
         """
-        Rotation of marker relative to camera in the #TODO axis.
+        Rotation of marker around the x axis relative to camera in radians.
+
+        A positive angle represents a marker above the centre of the camera's vision.
         """
         return self._rot_x_rad
 
     @property
     def rot_y_rad(self) -> Radians:
         """
-        Rotation of marker relative to camera in the #TODO axis.
+        Rotation of marker around the y axis relative to camera in radians.
+
+        A positive angle represents a marker to the right of the centre of the
+        camera's vision.
         """
         return self._rot_y_rad
 
     @property
     def rot_x_deg(self) -> Degrees:
         """
-        Rotation of marker relative to camera in the #TODO axis.
+        Rotation of marker around the x axis relative to camera in degrees.
+
+        A positive angle represents a marker above the centre of the camera's vision.
         """
-        # TODO describe which axis this is
         return Degrees(math.degrees(self._rot_x_rad))
 
     @property
     def rot_y_deg(self) -> Degrees:
         """
-        Rotation of marker relative to camera in the #TODO axis.
+        Rotation of marker around the y axis relative to camera in degrees.
+
+        A positive angle represents a marker to the right of the centre of the
+        camera's vision.
         """
-        # TODO describe which axis this is
         return Degrees(math.degrees(self._rot_y_rad))
 
     @property
     def distance_metres(self) -> Metres:
         """Distance of marker from camera in metres."""
-        # TODO describe which axis this is
         return self._distance_metres
 
 
