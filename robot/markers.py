@@ -178,3 +178,12 @@ class Marker:
         space is different to the usual representation of a spherical space.
         """
         return SphericalCoord(*self._raw_data['spherical'])
+
+    def __str__(self):
+        bearing = self.spherical.rot_y_degrees
+        return "<Marker {}: {:.0f}° {}, {:.2f}m away>".format(
+            self.id,
+            abs(bearing),
+            "right" if bearing > 0 else "left",
+            self.distance_metres,
+        )
