@@ -217,3 +217,15 @@ class Marker:
         space is different to the usual representation of a spherical space.
         """
         return SphericalCoord(*self._raw_data['spherical'])
+
+    @property
+    def orientation(self) -> Orientation:
+        """
+        The rotation of the marker in relative to the camera.
+
+        Describes a rotation as angles about the x, y, and z axes, which
+        corresponds pitch, yaw, and roll of the marker respectively. The
+        angles are measured as an offset from the marker directly facing
+        the camera.
+        """
+        return Orientation(*self._raw_data['orientation'])
