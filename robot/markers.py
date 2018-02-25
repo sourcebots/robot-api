@@ -152,7 +152,7 @@ class Marker:
         """
         warnings.warn(
             "Use of the 'polar' property is deprecated as the values returned "
-            "aren't from any know polar co-ordinate system. You should use the "
+            "aren't from any known polar co-ordinate system. You should use the "
             "'spherical' property instead.",
             DeprecationWarning,
         )
