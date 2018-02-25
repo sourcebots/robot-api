@@ -46,6 +46,45 @@ class SphericalCoord(_SphericalCoord):
         return Degrees(math.degrees(self.rot_y_radians))
 
 
+_Orientation = NamedTuple('Orientation', (
+    ('rot_x_radians', Radians),
+    ('rot_y_radians', Radians),
+    ('rot_z_radians', Radians),
+))
+
+
+class Orientation(_Orientation):
+    """
+    Represents the orientation in 3d space as rotations around x, y, and z axes.
+
+    Rotations around the different axes can be thought of as follows:
+      - X rotation represents pitch. Positive rotation
+      around the X axis represents a rotation with the nearest point going downwards,
+      and furthest going upwards. (i.e. a bowing motion is a positive x rotation)
+      - Y rotation represents yaw. Positive rotation around the Y axis represents
+      a rotation with the nearest point going to the left, and the furthest going to the
+      right.
+      - Z rotation represents roll. Positive rotation around the Z axis represents
+      a rotation with the highest point going to the right, and the bottom going to the
+      left.
+    """
+
+    @property
+    def rot_x_degrees(self) -> Degrees:
+        """Rotation about the x-axis in degrees."""
+        return Degrees(math.degrees(self.rot_x_radians))
+
+    @property
+    def rot_y_degrees(self) -> Degrees:
+        """Rotation about the y-axis in degrees."""
+        return Degrees(math.degrees(self.rot_y_radians))
+
+    @property
+    def rot_z_degrees(self) -> Degrees:
+        """Rotation about the z-axis in degrees."""
+        return Degrees(math.degrees(self.rot_z_radians))
+
+
 class PolarCoord:
     """
     Deprecated: represents a point expressed in legacy "polar" co-ordinates.
