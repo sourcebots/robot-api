@@ -64,45 +64,27 @@ class PolarCoord:
     # TODO add tests for all these
     @property
     def rot_x_rad(self) -> Radians:
-        """
-        Rotation of marker around the x axis relative to camera in radians.
-
-        A positive angle represents a marker above the centre of the camera's vision.
-        """
+        """Deprecated. Use Spherical Coordinates instead."""
         return self._rot_x_rad
 
     @property
     def rot_y_rad(self) -> Radians:
-        """
-        Rotation of marker around the y axis relative to camera in radians.
-
-        A positive angle represents a marker to the right of the centre of the
-        camera's vision.
-        """
+        """Deprecated. Use Spherical Coordinates instead."""
         return self._rot_y_rad
 
     @property
     def rot_x_deg(self) -> Degrees:
-        """
-        Rotation of marker around the x axis relative to camera in degrees.
-
-        A positive angle represents a marker above the centre of the camera's vision.
-        """
+        """Deprecated. Use Spherical Coordinates instead."""
         return Degrees(math.degrees(self._rot_x_rad))
 
     @property
     def rot_y_deg(self) -> Degrees:
-        """
-        Rotation of marker around the y axis relative to camera in degrees.
-
-        A positive angle represents a marker to the right of the centre of the
-        camera's vision.
-        """
+        """Deprecated. Use Spherical Coordinates instead."""
         return Degrees(math.degrees(self._rot_y_rad))
 
     @property
     def distance_metres(self) -> Metres:
-        """Distance of marker from camera in metres."""
+        """Deprecated. Use Spherical Coordinates instead."""
         return self._distance_metres
 
 
