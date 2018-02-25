@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from robot.markers import Metres, Radians, SphericalCoord, Marker
+from robot.markers import Marker, Metres, Radians, SphericalCoord
 
 
 class SphericalCoordTest(unittest.TestCase):
