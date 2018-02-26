@@ -64,38 +64,27 @@ class PolarCoord:
     # TODO add tests for all these
     @property
     def rot_x_rad(self) -> Radians:
-        """
-        Rotation of marker relative to camera in the #TODO axis.
-        """
+        """Deprecated. Use Spherical Coordinates instead."""
         return self._rot_x_rad
 
     @property
     def rot_y_rad(self) -> Radians:
-        """
-        Rotation of marker relative to camera in the #TODO axis.
-        """
+        """Deprecated. Use Spherical Coordinates instead."""
         return self._rot_y_rad
 
     @property
     def rot_x_deg(self) -> Degrees:
-        """
-        Rotation of marker relative to camera in the #TODO axis.
-        """
-        # TODO describe which axis this is
+        """Deprecated. Use Spherical Coordinates instead."""
         return Degrees(math.degrees(self._rot_x_rad))
 
     @property
     def rot_y_deg(self) -> Degrees:
-        """
-        Rotation of marker relative to camera in the #TODO axis.
-        """
-        # TODO describe which axis this is
+        """Deprecated. Use Spherical Coordinates instead."""
         return Degrees(math.degrees(self._rot_y_rad))
 
     @property
     def distance_metres(self) -> Metres:
-        """Distance of marker from camera in metres."""
-        # TODO describe which axis this is
+        """Deprecated. Use Spherical Coordinates instead."""
         return self._distance_metres
 
 
