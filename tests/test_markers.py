@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from robot.markers import Metres, Radians, SphericalCoord
+from robot.markers import Marker, Metres, Radians, SphericalCoord
 
 
 class SphericalCoordTest(unittest.TestCase):
@@ -22,4 +22,34 @@ class SphericalCoordTest(unittest.TestCase):
             -45,
             coords.rot_y_degrees,
             "Wrong y rotation",
+        )
+
+
+class MarkerTest(unittest.TestCase):
+    def test_str_left(self):
+        data = {
+            'id': 13,
+            'spherical': [
+                0,  # rot_x
+                -0.21467549799530256,  # rot_y, -12.3 degrees
+                0.12,  # distance
+            ],
+        }
+        self.assertEqual(
+            str(Marker(data)),
+            "<Marker 13: 12° left, 0.12m away>",
+        )
+
+    def test_str_right(self):
+        data = {
+            'id': 13,
+            'spherical': [
+                0,  # rot_x
+                0.21467549799530256,  # rot_y, 12.3 degrees
+                0.12,  # distance
+            ],
+        }
+        self.assertEqual(
+            str(Marker(data)),
+            "<Marker 13: 12° right, 0.12m away>",
         )

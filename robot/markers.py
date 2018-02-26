@@ -103,38 +103,27 @@ class PolarCoord:
     # TODO add tests for all these
     @property
     def rot_x_rad(self) -> Radians:
-        """
-        Rotation of marker relative to camera in the #TODO axis.
-        """
+        """Deprecated. Use Spherical Coordinates instead."""
         return self._rot_x_rad
 
     @property
     def rot_y_rad(self) -> Radians:
-        """
-        Rotation of marker relative to camera in the #TODO axis.
-        """
+        """Deprecated. Use Spherical Coordinates instead."""
         return self._rot_y_rad
 
     @property
     def rot_x_deg(self) -> Degrees:
-        """
-        Rotation of marker relative to camera in the #TODO axis.
-        """
-        # TODO describe which axis this is
+        """Deprecated. Use Spherical Coordinates instead."""
         return Degrees(math.degrees(self._rot_x_rad))
 
     @property
     def rot_y_deg(self) -> Degrees:
-        """
-        Rotation of marker relative to camera in the #TODO axis.
-        """
-        # TODO describe which axis this is
+        """Deprecated. Use Spherical Coordinates instead."""
         return Degrees(math.degrees(self._rot_y_rad))
 
     @property
     def distance_metres(self) -> Metres:
-        """Distance of marker from camera in metres."""
-        # TODO describe which axis this is
+        """Deprecated. Use Spherical Coordinates instead."""
         return self._distance_metres
 
 
@@ -191,7 +180,7 @@ class Marker:
         """
         warnings.warn(
             "Use of the 'polar' property is deprecated as the values returned "
-            "aren't from any know polar co-ordinate system. You should use the "
+            "aren't from any known polar co-ordinate system. You should use the "
             "'spherical' property instead.",
             DeprecationWarning,
         )
@@ -229,3 +218,12 @@ class Marker:
         the camera.
         """
         return Orientation(*self._raw_data['orientation'])
+
+    def __str__(self):
+        bearing = self.spherical.rot_y_degrees
+        return "<Marker {}: {:.0f}° {}, {:.2f}m away>".format(
+            self.id,
+            abs(bearing),
+            "right" if bearing > 0 else "left",
+            self.distance_metres,
+        )
