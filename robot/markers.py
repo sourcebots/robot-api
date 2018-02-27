@@ -211,7 +211,7 @@ class Marker:
 
         Describes a rotation as angles about the x, y, and z axes, which
         corresponds pitch, yaw, and roll of the marker respectively. The
-        angles are measured as an offset from the marker directly facing
+        angles are measured as an offset from a marker directly facing
         the camera.
         """
         return Orientation(*self._raw_data['orientation'])
