@@ -66,6 +66,7 @@ class Orientation(_Orientation):
       - Z rotation represents roll. A good way to think of this is a person
       doing a cart-wheel to the right would be a positive Z rotation.
     """
+
     @property
     def rot_x_degrees(self) -> Degrees:
         """Rotation about the x-axis in degrees."""
