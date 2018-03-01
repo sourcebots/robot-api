@@ -1,6 +1,6 @@
 import math
 import warnings
-from typing import List, NamedTuple, NewType, Tuple
+from typing import Any, List, Mapping, NamedTuple, NewType, Tuple
 
 from robot.game_specific import TOKEN, WALL
 
@@ -91,7 +91,7 @@ class PolarCoord:
 class Marker:
     """A marker captured from a webcam image."""
 
-    def __init__(self, data):
+    def __init__(self, data: Mapping[str, Any]) -> None:
         self._raw_data = data
 
     @property

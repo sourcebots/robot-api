@@ -3,7 +3,22 @@ import logging
 import socket
 import time
 from pathlib import Path
-from typing import Iterable, Mapping, TypeVar, Union
+from typing import (  # noqa: F401
+    Any,
+    Callable,
+    Iterable,
+    Iterator,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    TypeVar,
+    Union,
+    overload,
+)
+
+T = TypeVar('T')
+_Message = Mapping[str, Any]
 
 LOGGER = logging.getLogger(__name__)
 
@@ -16,17 +31,17 @@ class Board:
 
     def __init__(self, socket_path: Union[Path, str]) -> None:
         self.socket_path = Path(socket_path)
-        self.socket = None
+        self.socket = None  # type: Optional[socket.socket]
         self.data = b''
 
         self._connect()
 
     @property
-    def serial(self):
+    def serial(self) -> str:
         """Serial number for the board."""
         return self.socket_path.stem
 
-    def _greeting_response(self, data):
+    def _greeting_response(self, data: _Message) -> None:
         """
         Handle the response to the greeting command.
 
@@ -34,7 +49,7 @@ class Board:
         """
         pass
 
-    def _connect(self):
+    def _connect(self) -> None:
         """
         Connect or reconnect to a socket.
 
@@ -63,7 +78,7 @@ class Board:
             path=self.socket_path,
         )
 
-    def _socket_with_single_retry(self, handler):
+    def _socket_with_single_retry(self, handler: Callable[[], T]) -> T:
         retryable_errors = (
             socket.timeout,
             BrokenPipeError,
@@ -99,7 +114,7 @@ class Board:
 
         raise original_exception
 
-    def _send(self, message, should_retry=True):
+    def _send(self, message: _Message, should_retry: bool=True) -> None:
         """
         Send a message to robotd.
 
@@ -109,7 +124,7 @@ class Board:
 
         data = (json.dumps(message) + '\n').encode('utf-8')
 
-        def sendall():
+        def sendall() -> None:
             self.socket.sendall(data)
 
         if should_retry:
@@ -117,13 +132,13 @@ class Board:
         else:
             return sendall()
 
-    def _recv_from_socket(self, size):
+    def _recv_from_socket(self, size: int) -> bytes:
         data = self.socket.recv(size)
         if data == b'':
             raise BrokenPipeError()
         return data
 
-    def _receive(self, should_retry=True):
+    def _receive(self, should_retry: bool=True) -> _Message:
         """
         Receive a message from robotd.
         """
@@ -142,21 +157,25 @@ class Board:
 
         return json.loads(line.decode('utf-8'))
 
-    def _send_and_receive(self, message, should_retry=True):
+    def _send_and_receive(
+        self,
+        message: _Message,
+        should_retry: bool=True,
+    ) -> _Message:
         """
         Send a message to robotd and wait for a response.
         """
         self._send(message, should_retry)
         return self._receive(should_retry)
 
-    def close(self):
+    def close(self) -> None:
         """
         Close the the connection to the underlying robotd board.
         """
         self.socket.detach()
 
-    def __str__(self):
-        return "{} - {}".format(self.__name__, self.serial)
+    def __str__(self) -> str:
+        return "{} - {}".format(self.__class__.__name__, self.serial)
 
     __del__ = close
 

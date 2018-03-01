@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import List, Set, Type, Union  # noqa: F401
+from typing import Any, List, Set, Type, Union  # noqa: F401
 
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
@@ -59,7 +59,7 @@ class Robot:
         if wait_for_start_button:
             self.power_board.wait_start()
 
-    def _assert_has_power_board(self):
+    def _assert_has_power_board(self) -> None:
         power_boards = self.power_boards
         if not power_boards:
             raise RuntimeError('Cannot find Power Board!')
@@ -139,7 +139,7 @@ class Robot:
         return self._update_boards(self.known_gamestates, GameState, 'game')
 
     @staticmethod
-    def _single_index(name, list_of_boards: BoardList[TBoard]) -> TBoard:
+    def _single_index(name: str, list_of_boards: BoardList[TBoard]) -> TBoard:
         if list_of_boards:
             return list_of_boards[0]
         else:
@@ -211,7 +211,7 @@ class Robot:
         """
         return self._game.mode
 
-    def close(self):
+    def close(self) -> None:
         """
         Cleanup robot instance.
         """
@@ -230,5 +230,5 @@ class Robot:
             # reanimate the boards (which isn't supported).
             del board_group[:]
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.close()

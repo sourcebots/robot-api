@@ -1,6 +1,6 @@
 import socket
 import time
-from typing import List, overload
+from typing import Any, List, Mapping, Sequence, overload
 
 from robot.board import Board
 from robot.markers import Marker
@@ -41,7 +41,7 @@ class Camera(Board):
     """
 
     @staticmethod
-    def _see_to_results(data) -> ResultList:
+    def _see_to_results(data: Mapping[str, Sequence[Mapping[str, Any]]]) -> ResultList:
         """
         Convert the data from ``robotd`` into a sorted of ``Marker``s.
 
