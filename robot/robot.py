@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 from typing import List, Set, Type, Union  # noqa: F401
+import pkg_resources  # part of setuptools
 
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
@@ -13,6 +14,7 @@ _PathLike = Union[str, Path]
 
 LOGGER = logging.getLogger(__name__)
 
+VERSION = pkg_resources.require("robot")[0].version
 
 def configure_logging() -> None:
     """
@@ -53,6 +55,7 @@ class Robot:
         configure_logging()
 
         LOGGER.info("Initializing Hardware...")
+        LOGGER.info("Robot Intiailised (v{})".format(VERSION))
         self._assert_has_power_board()
         self.power_board.power_on()
 
