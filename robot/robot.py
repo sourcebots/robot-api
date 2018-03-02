@@ -1,8 +1,8 @@
 import logging
 from pathlib import Path
 from typing import List, Set, Type, Union  # noqa: F401
-import pkg_resources  # part of setuptools
 
+import pkg_resources  # part of setuptools
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
 from robot.game import GameMode, GameState, Zone
@@ -15,6 +15,7 @@ _PathLike = Union[str, Path]
 LOGGER = logging.getLogger(__name__)
 
 VERSION = pkg_resources.require("robot")[0].version
+
 
 def configure_logging() -> None:
     """
