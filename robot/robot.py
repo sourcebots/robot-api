@@ -2,18 +2,17 @@ import logging
 from pathlib import Path
 from typing import List, Set, Type, Union  # noqa: F401
 
+from robot import __VERSION__
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
 from robot.game import GameMode, GameState, Zone
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
-from robot import __VERSION__
 
 _PathLike = Union[str, Path]
 
 LOGGER = logging.getLogger(__name__)
-
 
 
 def configure_logging() -> None:
