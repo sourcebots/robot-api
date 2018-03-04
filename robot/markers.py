@@ -215,7 +215,8 @@ class Marker:
         angles are measured as an offset from a marker directly facing
         the camera.
 
-        The rotations are applied in the order of Z, Y, X.
+        The rotations are applied in the order of Z, Y, then X rotations. Each rotation
+        is applied relative to the marker.
         """
         return Orientation(*self._raw_data['orientation'])
 
