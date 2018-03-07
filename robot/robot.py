@@ -53,7 +53,7 @@ class Robot:
 
         configure_logging()
 
-        LOGGER.info("Robot (v{}) Intialising...".format(__VERSION__))
+        LOGGER.info("Robot (v{}) Initialising...".format(__VERSION__))
         self._assert_has_power_board()
         self.power_board.power_on()
 
