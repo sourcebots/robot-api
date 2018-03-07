@@ -159,7 +159,7 @@ class Board:
         return "<{}>".format(str(self))
 
     def __str__(self):
-        return "{} - {}".format(self.__name__, self.serial)
+        return "{} - {}".format(self.__class__.__name__, self.serial)
 
     __del__ = close
 
