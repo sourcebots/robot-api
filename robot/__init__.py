@@ -1,5 +1,7 @@
 """Userspace API for a robot running ``robotd``."""
 
+__VERSION__ = "2018.2.0"
+
 from robot.game import GameMode
 from robot.game_specific import (
     COLUMN,

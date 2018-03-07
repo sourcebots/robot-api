@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 from typing import List, Set, Type, Union  # noqa: F401
 
+from robot import __VERSION__
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
 from robot.game import GameMode, GameState, Zone
@@ -52,7 +53,7 @@ class Robot:
 
         configure_logging()
 
-        LOGGER.info("Initializing Hardware...")
+        LOGGER.info("Robot (v{}) Initialising...".format(__VERSION__))
         self._assert_has_power_board()
         self.power_board.power_on()
 
