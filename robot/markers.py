@@ -169,7 +169,7 @@ class Marker:
         return SphericalCoord(*self._raw_data['spherical'])
 
     def __repr__(self):
-        return "<robot.markers.{} >".format(self.__str__())
+        return "<robot.markers.{} >".format(str(self))
 
     def __str__(self):
         bearing = self.spherical.rot_y_degrees
