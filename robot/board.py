@@ -44,7 +44,7 @@ class Board:
         self.socket.settimeout(self.SEND_TIMEOUT_SECS)
 
         try:
-            self.socket.connect(self.socket_path)
+            self.socket.connect(str(self.socket_path))
         except ConnectionRefusedError as e:
             LOGGER.exception("Error connecting to: '%s'", self.socket_path)
             raise
