@@ -13,7 +13,7 @@ LOGGER = logging.getLogger(__name__)
 
 def kill_after_delay(timeout_seconds, exit_message):
     """
-    interrupts main process after the given delay
+    Interrupts main process after the given delay.
     """
 
     end = time.time() + timeout_seconds
