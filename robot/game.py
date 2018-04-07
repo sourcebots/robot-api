@@ -16,10 +16,10 @@ def kill_after_delay(timeout_seconds, exit_message):
     Interrupts main process after the given delay.
     """
 
-    end = time.time() + timeout_seconds
+    end_time = time.time() + timeout_seconds
 
     def worker():
-        while time.time() < end:
+        while time.time() < end_time:
             time.sleep(0.1)
 
         LOGGER.info("Timeout %r expired: %s", timeout_seconds, exit_message)
