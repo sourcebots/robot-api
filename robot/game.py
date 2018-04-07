@@ -1,6 +1,6 @@
 import logging
-import _thread
 import time
+import _thread
 
 from enum import Enum
 from threading import Thread
