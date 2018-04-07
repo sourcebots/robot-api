@@ -2,6 +2,9 @@ import logging
 import time
 
 from robot.board import Board
+from game import GameMode, GameState, kill_after_delay
+from threading import Thread
+from game_specific import GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE
 
 LOGGER = logging.getLogger(__name__)
 
@@ -59,6 +62,10 @@ class PowerBoard(Board):
                 self.set_start_led(led_value)
         self.set_start_led(False)
         LOGGER.info("Starting user code.")
+
+        if GameState.mode == GameMode.COMPETITION:
+            kill_after_delay(GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE)
+
 
     def buzz(self, duration, *, note=None, frequency=None):
         """Enqueue a note to be played by the buzzer on the power board."""

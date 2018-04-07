@@ -1,10 +1,37 @@
+import time
+import _thread
+import logging
+
 from enum import Enum
 from typing import NewType
-
 from robot.board import Board
 
 Zone = NewType('Zone', int)
 
+LOGGER = logging.getLogger(__name__)
+
+
+def kill_after_delay(timeout_seconds, exit_message):
+    """
+    interrupts main process after the given delay
+    """
+
+    end = time.time() + timeout_seconds
+
+    def worker():
+        while time.time() < end:
+            time.sleep(0.1)
+
+        LOGGER.info("Timeout %r expired: %s", timeout_seconds, exit_message)
+        # interrupt the main thread several times to ensure the message gets through
+
+        for _ in range(4):
+            _thread.interrupt_main()
+            time.sleep(0.1)
+
+    worker_thread = Thread(target=worker)
+    worker_thread.start()
+    return worker_thread
 
 class GameMode(Enum):
     """Possible modes the robot can be in."""

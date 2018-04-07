@@ -6,6 +6,9 @@
 WALL = set(range(0, 28))  # 0 - 27
 
 # Currently for SB2018
+GAME_DURATION_SECONDS = 150
+GAME_EXIT_MESSAGE = "Game over!"
+
 COLUMN_N = set(range(28, 32))
 COLUMN_E = set(range(32, 36))
 COLUMN_S = set(range(36, 40))
