@@ -26,7 +26,7 @@ def kill_after_delay(timeout_seconds, exit_message):
         LOGGER.info("Timeout %r expired: %s", timeout_seconds, exit_message)
 
         # interrupt the main thread to close the user code
-        _thread.interrupt_main()
+        _thread.interrupt_main()  # type: ignore
 
     worker_thread = Thread(target=worker)
     worker_thread.start()
