@@ -60,10 +60,11 @@ class PowerBoard(Board):
                 start_time = time.time()
                 self.set_start_led(led_value)
         self.set_start_led(False)
-        LOGGER.info("Starting user code.")
 
         if GameState.mode == GameMode.COMPETITION:
             kill_after_delay(GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE)
+
+        LOGGER.info("Starting user code.")
 
     def buzz(self, duration, *, note=None, frequency=None):
         """Enqueue a note to be played by the buzzer on the power board."""
