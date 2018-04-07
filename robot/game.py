@@ -1,10 +1,10 @@
 import logging
 import time
-import _thread
-
 from enum import Enum
 from threading import Thread
 from typing import NewType
+
+import _thread
 from robot.board import Board
 
 Zone = NewType('Zone', int)
