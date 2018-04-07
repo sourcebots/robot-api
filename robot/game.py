@@ -1,6 +1,6 @@
 import logging
-import time
 import Thread
+import time
 from enum import Enum
 from typing import NewType
 

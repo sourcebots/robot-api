@@ -1,6 +1,5 @@
 import logging
 import time
-from threading import Thread
 
 from game import GameMode, GameState, kill_after_delay
 from game_specific import GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE
