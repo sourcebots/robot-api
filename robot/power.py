@@ -1,10 +1,10 @@
 import logging
 import time
-
-from robot.board import Board
-from game import GameMode, GameState, kill_after_delay
 from threading import Thread
+
+from game import GameMode, GameState, kill_after_delay
 from game_specific import GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE
+from robot.board import Board
 
 LOGGER = logging.getLogger(__name__)
 
