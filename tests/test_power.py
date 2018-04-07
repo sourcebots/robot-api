@@ -3,7 +3,7 @@ import unittest
 
 from robot.robot import Robot
 from tests.mock_robotd import MockRobotD
-
+from pathlib import Path
 
 class PowerBoardTest(unittest.TestCase):
     def setUp(self):
@@ -40,6 +40,27 @@ class PowerBoardTest(unittest.TestCase):
         self.robot.power_board.set_start_led(False)
         msg = self.power_board.message_queue.get()
         self.assertFalse(msg['start-led'])
+
+    def test_wait_start(self):
+        board_name = self.power_board.name(self.power_board.node)
+        board_path = Path(self.mock.root_dir) / 'power' / board_name
+
+        mock_callable = unittest.mock()
+        board = PowerBoard(board_path, on_start_signal=mock_callable)
+
+        self.power_board.clear_queue()
+
+        # this is the action we're testing
+        board.wait_start()
+
+        msg = self.power_board.message_queue.get()
+        self.assertFalse(
+            msg['start-led'],
+            "Start LED should be off after wait_start returns",
+        )
+
+        # Check that our callable was called
+        mock_callable.assert_called_once_with()
 
     def test_insert_power(self):
         # TODO: Make this generic for all boards, instead of duplicated logic
@@ -119,3 +140,5 @@ class PowerBoardTest(unittest.TestCase):
 
     def tearDown(self):
         self.mock.stop()
+
+from robot.power import PowerBoard

@@ -1,9 +1,8 @@
 import logging
 import time
+from typing import Callable
 
 from robot.board import Board
-from robot.game import GameMode, GameState, kill_after_delay
-from robot.game_specific import GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,6 +20,15 @@ class PowerBoard(Board):
         'b': 493,
         'uc': 523,
     }
+
+    def __init__(
+        self,
+        *args,
+        on_start_signal: Callable[[], None]=lambda: None,
+        **kwargs
+    ) -> None:
+        super().__init__(*args, **kwargs)
+        self._on_start_signal = on_start_signal
 
     def power_on(self):
         """
@@ -61,8 +69,7 @@ class PowerBoard(Board):
                 self.set_start_led(led_value)
         self.set_start_led(False)
 
-        if GameState.mode == GameMode.COMPETITION:
-            kill_after_delay(GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE)
+        self._on_wait_start()
 
         LOGGER.info("Starting user code.")
 
