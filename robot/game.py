@@ -1,5 +1,6 @@
 import logging
 import time
+import Thread
 from enum import Enum
 from typing import NewType
 
@@ -30,6 +31,7 @@ def kill_after_delay(timeout_seconds, exit_message):
     worker_thread = Thread(target=worker)
     worker_thread.start()
     return worker_thread
+
 
 class GameMode(Enum):
     """Possible modes the robot can be in."""
