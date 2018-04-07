@@ -94,7 +94,7 @@ class Marker:
     def __init__(self, data):
         self._raw_data = data
 
-    @property  # noqa: A002: apparent bug in flake8
+    @property  # noqa: A001: apparent bug in flake8
     def id(self) -> int:
         """ID of the marker seen."""
         return self._raw_data['id']
