@@ -1,9 +1,11 @@
 import time
 import unittest
+from pathlib import Path
 
+from robot.power import PowerBoard
 from robot.robot import Robot
 from tests.mock_robotd import MockRobotD
-from pathlib import Path
+
 
 class PowerBoardTest(unittest.TestCase):
     def setUp(self):
@@ -140,5 +142,3 @@ class PowerBoardTest(unittest.TestCase):
 
     def tearDown(self):
         self.mock.stop()
-
-from robot.power import PowerBoard
