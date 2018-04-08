@@ -69,7 +69,7 @@ class PowerBoard(Board):
                 self.set_start_led(led_value)
         self.set_start_led(False)
 
-        self._on_wait_start()
+        self._on_start_signal()
 
         LOGGER.info("Starting user code.")
 
