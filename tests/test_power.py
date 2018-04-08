@@ -1,5 +1,6 @@
 import time
 import unittest
+from unittest import mock
 
 from robot.power import PowerBoard
 from robot.robot import Robot
@@ -43,7 +44,7 @@ class PowerBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
         self.assertFalse(msg['start-led'])
 
     def test_wait_start(self):
-        mock_callable = unittest.mock()
+        mock_callable = mock.Mock()
         board = PowerBoard(
             self.board_path(self.power_board),
             on_start_signal=mock_callable,
