@@ -4,16 +4,16 @@ from pathlib import Path
 
 from robot.power import PowerBoard
 from robot.robot import Robot
-from tests.mock_robotd import MockRobotD
+from tests.mock_robotd import MockRobotDFactoryMixin
 
 
-class PowerBoardTest(unittest.TestCase):
+class PowerBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
     def setUp(self):
-        mock = MockRobotD(root_dir="/tmp/robotd")
+        mock = self.create_mock_robotd()
         self.power_board = mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock
-        self.robot = Robot(robotd_path="/tmp/robotd")
+        self.robot = Robot(robotd_path=mock.root_dir)
 
     def test_on_off(self):
         # power board switch on when booting
@@ -139,6 +139,3 @@ class PowerBoardTest(unittest.TestCase):
             'duration': 500,
         })
         self.assertIsInstance(msg['buzz']['duration'], int)
-
-    def tearDown(self):
-        self.mock.stop()

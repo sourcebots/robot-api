@@ -3,16 +3,16 @@ import unittest
 
 from robot import PinMode
 from robot.robot import Robot
-from tests.mock_robotd import MockRobotD
+from tests.mock_robotd import MockRobotDFactoryMixin
 
 
-class GPIOTest(unittest.TestCase):
+class GPIOTest(MockRobotDFactoryMixin, unittest.TestCase):
     def setUp(self):
-        mock = MockRobotD(root_dir="/tmp/robotd")
+        mock = self.create_mock_robotd()
         mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock
-        self.robot = Robot(robotd_path="/tmp/robotd")
+        self.robot = Robot(robotd_path=mock.root_dir)
 
     def test_set_edge_conditions(self):
         board = self.mock.new_servoboard()
@@ -40,6 +40,3 @@ class GPIOTest(unittest.TestCase):
         self.assertEqual(got_value, {'pins': {str(gpio): expect.value}})
         # Test the value can be read
         self.assertEqual(self.robot.servo_boards[0].gpios[gpio].mode, value)
-
-    def tearDown(self):
-        self.mock.stop()

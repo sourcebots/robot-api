@@ -154,7 +154,7 @@ class Robot:
         if list_of_boards:
             return list_of_boards[0]
         else:
-            raise AttributeError("No {}s connected".format(name))
+            raise AttributeError("No {} connected".format(name))
 
     @property
     def power_board(self) -> PowerBoard:
@@ -163,7 +163,7 @@ class Robot:
 
         Raises an ``AttributeError`` if there are no power boards attached.
         """
-        return self._single_index("power board", self.power_boards)
+        return self._single_index("power boards", self.power_boards)
 
     @property
     def motor_board(self) -> MotorBoard:
@@ -172,7 +172,7 @@ class Robot:
 
         Raises an ``AttributeError`` if there are no motor boards attached.
         """
-        return self._single_index("motor board", self.motor_boards)
+        return self._single_index("motor boards", self.motor_boards)
 
     @property
     def servo_board(self) -> ServoBoard:
@@ -181,7 +181,7 @@ class Robot:
 
         Raises an ``AttributeError`` if there are no servo boards attached.
         """
-        return self._single_index("servo board", self.servo_boards)
+        return self._single_index("servo boards", self.servo_boards)
 
     @property
     def camera(self) -> Camera:
@@ -190,7 +190,7 @@ class Robot:
 
         Raises an ``AttributeError`` if there are no cameras attached.
         """
-        return self._single_index("camera", self.cameras)
+        return self._single_index("cameras", self.cameras)
 
     @property
     def _game(self) -> GameState:
