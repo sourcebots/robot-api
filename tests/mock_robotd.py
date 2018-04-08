@@ -1,6 +1,7 @@
 import tempfile
 import time
 from multiprocessing import Queue
+from pathlib import Path
 
 import robot
 
@@ -29,6 +30,11 @@ class MockRobotDFactoryMixin:
         mock_robotd = MockRobotD(root_dir=root_dir.name)
         self.addCleanup(mock_robotd.stop)
         return mock_robotd
+
+    def board_path(self, board: Board):
+        board_name = board.name(board.node)
+        board_path = Path(self.mock.root_dir) / type(board).board_type_id / board_name
+        return board_path
 
 
 class MockBoardMixin:
