@@ -12,7 +12,7 @@ class GPIOTest(MockRobotDFactoryMixin, unittest.TestCase):
         mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock
-        self.robot = Robot(robotd_path=mock.root_dir)
+        self.robot = Robot(robotd_path=mock.root_dir, wait_for_start_button=False)
 
     def test_set_edge_conditions(self):
         board = self.mock.new_servoboard()
