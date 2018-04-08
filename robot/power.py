@@ -45,7 +45,7 @@ class PowerBoard(Board):
         status = self._send_and_receive({})
         return status["start-button"]
 
-    def wait_start(self):
+    def wait_start(self) -> None:
         """
         Block until the start button is pressed.
         """
@@ -60,7 +60,7 @@ class PowerBoard(Board):
         self.set_start_led(False)
         LOGGER.info("Starting user code.")
 
-    def buzz(self, duration, *, note=None, frequency=None):
+    def buzz(self, duration, *, note=None, frequency=None) -> None:
         """Enqueue a note to be played by the buzzer on the power board."""
         if note is None and frequency is None:
             raise ValueError("Either note or frequency must be provided")
