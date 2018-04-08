@@ -28,7 +28,7 @@ def kill_after_delay(timeout_seconds, exit_message):
         # Interrupt the main thread to kill the user code
         _thread.interrupt_main()  # type: ignore
 
-    worker_thread = Thread(target=worker)
+    worker_thread = Thread(target=worker, daemon=True)
     worker_thread.start()
     return worker_thread
 
