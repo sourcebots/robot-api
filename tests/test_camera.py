@@ -6,7 +6,7 @@ from robot.camera import ResultList
 from robot.markers import CartCoord, PolarCoord, SphericalCoord
 from robot.robot import Robot
 from sb_vision.camera import FileCamera
-from tests.mock_robotd import MockRobotD
+from tests.mock_robotd import MockRobotDFactoryMixin
 
 IMAGE_ROOT = os.path.dirname(os.path.realpath(__file__)) + "/test_data/"
 IMAGE_WITH_NO_MARKER = IMAGE_ROOT + 'photo_empty.jpg'
@@ -16,7 +16,7 @@ CAMERA_SEES_NO_MARKER = FileCamera(IMAGE_WITH_NO_MARKER, 'c270')
 CAMERA_SEES_MARKER = FileCamera(IMAGE_WITH_MARKER, 'c270')
 
 
-class CameraTest(unittest.TestCase):
+class CameraTest(MockRobotDFactoryMixin, unittest.TestCase):
     """
     Tests pertaining to the camera object
     """
@@ -25,12 +25,12 @@ class CameraTest(unittest.TestCase):
 
     # TODO add test for Serial number
     def setUp(self):
-        mock = MockRobotD(root_dir="/tmp/robotd")
+        mock = self.create_mock_robotd()
         # Insert a power board to let the robot start up
         self.power_board = mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock
-        self.robot = Robot(robotd_path="/tmp/robotd")
+        self.robot = Robot(robotd_path=mock.root_dir)
 
     def test_insert_cameras(self):
         self.mock.new_camera(CAMERA_SEES_NO_MARKER, 'ABC')
@@ -92,9 +92,6 @@ class CameraTest(unittest.TestCase):
         tokens = self.robot.cameras[0].see()
         with self.assertRaisesRegexp(IndexError, "Trying to index an empty list"):
             tokens[0]
-
-    def tearDown(self):
-        self.mock.stop()
 
 
 class ResultListTest(unittest.TestCase):

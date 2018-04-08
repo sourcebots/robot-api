@@ -1,3 +1,4 @@
+import tempfile
 import time
 from multiprocessing import Queue
 
@@ -7,6 +8,27 @@ from robotd.devices import Camera as RobotDCamera
 from robotd.devices import GameState as RobotDGameState
 from robotd.devices_base import Board
 from robotd.master import BoardRunner
+
+
+class MockRobotDFactoryMixin:
+    """
+    A mix-in for test case classes that provides a method to create an instance
+    of MockRobotD. This method is typically used during the test case's setUp
+    """
+
+    def create_mock_robotd(self):
+        """
+        Creates and returns a new instance of MockRobotD which uses a new
+        temporary directory to hold its communication sockets. Clean-up of
+        the temporary directory and the MockRobotD instance is handled
+        automatically.
+        """
+
+        root_dir = tempfile.TemporaryDirectory(prefix="robot-api-test-")
+        self.addCleanup(root_dir.cleanup)
+        mock_robotd = MockRobotD(root_dir=root_dir.name)
+        self.addCleanup(mock_robotd.stop)
+        return mock_robotd
 
 
 class MockBoardMixin:
@@ -149,19 +171,22 @@ class MockGameState(RobotDGameState):
 
 
 def main():
-    mock = MockRobotD(root_dir='/tmp/robotd')
+    with tempfile.TemporaryDirectory(prefix="robot-api-test-") as root_dir:
+        mock = MockRobotD(root_dir=root_dir)
 
-    mock.new_powerboard()
-    time.sleep(0.2)
+        mock.new_powerboard()
+        time.sleep(0.2)
 
-    mock.new_motorboard()
-    time.sleep(0.2)
+        mock.new_motorboard()
+        time.sleep(0.2)
 
-    from robot.robot import Robot
-    robot = Robot(robotd_path='/tmp/robotd')
-    robot.power_board.power_off()
-    m0 = robot.motor_boards[0].m0
-    m0.voltage = 1
+        from robot.robot import Robot
+        robot = Robot(robotd_path=root_dir)
+        robot.power_board.power_off()
+        robot.motor_boards[0].m0 = 1
+
+        time.sleep(0.2)
+        mock.stop()
 
 
 if __name__ == "__main__":
