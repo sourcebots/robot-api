@@ -109,7 +109,14 @@ class Robot:
         """
         return self._update_boards(self.known_motor_boards, MotorBoard, 'motor')
 
-    def _configure_death(self):
+    def _on_start_signal(self):
+        game_state = self._game
+        LOGGER.info(
+            "Recieved start signal in %s mode, zone %d",
+            game_state.mode.value,
+            game_state.zone,
+        )
+
         if self.mode == GameMode.COMPETITION:
             kill_after_delay(GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE)
 
@@ -120,7 +127,7 @@ class Robot:
         """
         return self._update_boards(
             self.known_power_boards,
-            functools.partial(PowerBoard, on_start_signal=self._configure_death),
+            functools.partial(PowerBoard, on_start_signal=self._on_start_signal),
             'power',
         )
 
