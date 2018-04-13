@@ -117,7 +117,7 @@ class Robot:
             game_state.zone,
         )
 
-        if self.mode == GameMode.COMPETITION:
+        if game_state.mode == GameMode.COMPETITION:
             kill_after_delay(GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE)
 
     @property
