@@ -21,7 +21,8 @@ def kill_after_delay(timeout_seconds, exit_message):
 
     def worker():
         while time.time() < end_time:
-            time.sleep(0.1)
+            remaining = end_time - time.time()
+            time.sleep(max(remaining, 0.01))
 
         LOGGER.info("Timeout %rs expired: %s", timeout_seconds, exit_message)
 
