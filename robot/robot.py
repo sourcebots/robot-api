@@ -7,7 +7,7 @@ from robot import __VERSION__
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
 from robot.game import GameMode, GameState, Zone, kill_after_delay
-from robot.game_specific import GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE
+from robot.game_specific import GAME_DURATION_SECONDS
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
@@ -118,7 +118,7 @@ class Robot:
         )
 
         if game_state.mode == GameMode.COMPETITION:
-            kill_after_delay(GAME_DURATION_SECONDS, GAME_EXIT_MESSAGE)
+            kill_after_delay(GAME_DURATION_SECONDS)
 
     @property
     def power_boards(self) -> BoardList[PowerBoard]:

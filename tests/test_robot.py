@@ -48,7 +48,6 @@ class RobotTest(MockRobotDFactoryMixin, unittest.TestCase):
 
             mock_kill_after_delay.assert_called_once_with(
                 game_specific.GAME_DURATION_SECONDS,
-                game_specific.GAME_EXIT_MESSAGE,
             )
 
     def test_implicit_wait_start_development_mode(self):
@@ -66,5 +65,4 @@ class RobotTest(MockRobotDFactoryMixin, unittest.TestCase):
 
             mock_kill_after_delay.assert_called_once_with(
                 game_specific.GAME_DURATION_SECONDS,
-                game_specific.GAME_EXIT_MESSAGE,
             )

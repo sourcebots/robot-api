@@ -12,7 +12,7 @@ Zone = NewType('Zone', int)
 LOGGER = logging.getLogger(__name__)
 
 
-def kill_after_delay(timeout_seconds, exit_message):
+def kill_after_delay(timeout_seconds):
     """
     Interrupts main process after the given delay.
     """
@@ -24,7 +24,7 @@ def kill_after_delay(timeout_seconds, exit_message):
             remaining = end_time - time.time()
             time.sleep(max(remaining, 0.01))
 
-        LOGGER.info("Timeout %rs expired: %s", timeout_seconds, exit_message)
+        LOGGER.info("Timeout %rs expired: Game over!", timeout_seconds)
 
         # Interrupt the main thread to kill the user code
         _thread.interrupt_main()  # type: ignore
