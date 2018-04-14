@@ -56,6 +56,10 @@ class Robot:
         LOGGER.info("Robot (v{}) Initialising...".format(__VERSION__))
         self._assert_has_power_board()
         self.power_board.power_on()
+        LOGGER.info("Zone: {zone}. Mode: {mode}".format(
+            zone=self.zone,
+            mode=self.mode
+        ))
 
         if wait_for_start_button:
             self.power_board.wait_start()
