@@ -12,7 +12,7 @@ class MotorBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
         mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock
-        self.robot = Robot(robotd_path=mock.root_dir)
+        self.robot = Robot(robotd_path=mock.root_dir, wait_for_start_button=False)
 
     def test_insert_motorboards(self):
         self.mock.new_motorboard('ABC')
@@ -52,7 +52,7 @@ class MotorBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
         # TODO make this test generic to the board, so it runs on all boards.
         self.mock.new_motorboard('ABC')
         # Set up robot 2!
-        robot2 = Robot(robotd_path=self.mock.root_dir)
+        robot2 = Robot(robotd_path=self.mock.root_dir, wait_for_start_button=False)
         # Give it a tiny bit to init the boards
         time.sleep(0.2)
         self.robot.motor_boards[0].m0 = 1

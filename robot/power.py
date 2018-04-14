@@ -1,5 +1,6 @@
 import logging
 import time
+from typing import Callable
 
 from robot.board import Board
 
@@ -19,6 +20,15 @@ class PowerBoard(Board):
         'b': 493,
         'uc': 523,
     }
+
+    def __init__(
+        self,
+        *args,
+        on_start_signal: Callable[[], None]=lambda: None,
+        **kwargs
+    ) -> None:
+        super().__init__(*args, **kwargs)
+        self._on_start_signal = on_start_signal
 
     def power_on(self):
         """
@@ -58,6 +68,9 @@ class PowerBoard(Board):
                 start_time = time.time()
                 self.set_start_led(led_value)
         self.set_start_led(False)
+
+        self._on_start_signal()
+
         LOGGER.info("Starting user code.")
 
     def buzz(self, duration, *, note=None, frequency=None) -> None:

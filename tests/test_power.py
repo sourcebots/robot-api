@@ -1,6 +1,8 @@
 import time
 import unittest
+from unittest import mock
 
+from robot.power import PowerBoard
 from robot.robot import Robot
 from tests.mock_robotd import MockRobotDFactoryMixin
 
@@ -11,7 +13,7 @@ class PowerBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
         self.power_board = mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock
-        self.robot = Robot(robotd_path=mock.root_dir)
+        self.robot = Robot(robotd_path=mock.root_dir, wait_for_start_button=False)
 
     def test_on_off(self):
         # power board switch on when booting
@@ -40,6 +42,27 @@ class PowerBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
         self.robot.power_board.set_start_led(False)
         msg = self.power_board.message_queue.get()
         self.assertFalse(msg['start-led'])
+
+    def test_wait_start(self):
+        mock_callable = mock.Mock()
+        board = PowerBoard(
+            self.board_path(self.power_board),
+            on_start_signal=mock_callable,
+        )
+
+        self.power_board.clear_queue()
+
+        # this is the action we're testing
+        board.wait_start()
+
+        msg = self.power_board.message_queue.get()
+        self.assertFalse(
+            msg['start-led'],
+            "Start LED should be off after wait_start returns",
+        )
+
+        # Check that our callable was called
+        mock_callable.assert_called_once_with()
 
     def test_insert_power(self):
         # TODO: Make this generic for all boards, instead of duplicated logic

@@ -30,7 +30,7 @@ class CameraTest(MockRobotDFactoryMixin, unittest.TestCase):
         self.power_board = mock.new_powerboard()
         time.sleep(0.2)
         self.mock = mock
-        self.robot = Robot(robotd_path=mock.root_dir)
+        self.robot = Robot(robotd_path=mock.root_dir, wait_for_start_button=False)
 
     def test_insert_cameras(self):
         self.mock.new_camera(CAMERA_SEES_NO_MARKER, 'ABC')

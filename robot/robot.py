@@ -1,11 +1,13 @@
+import functools
 import logging
 from pathlib import Path
-from typing import List, Set, Type, Union  # noqa: F401
+from typing import Callable, List, Set, Type, Union  # noqa: F401
 
 from robot import __VERSION__
 from robot.board import BoardList, TBoard
 from robot.camera import Camera
-from robot.game import GameMode, GameState, Zone
+from robot.game import GameMode, GameState, Zone, kill_after_delay
+from robot.game_specific import GAME_DURATION_SECONDS
 from robot.motor import MotorBoard
 from robot.power import PowerBoard
 from robot.servo import ServoBoard
@@ -68,7 +70,7 @@ class Robot:
     def _update_boards(
         self,
         known_boards: List[TBoard],
-        board_type: Type[TBoard],
+        board_type: Callable[[_PathLike], TBoard],
         directory_name: _PathLike,
     ) -> BoardList[TBoard]:
         """
@@ -107,12 +109,27 @@ class Robot:
         """
         return self._update_boards(self.known_motor_boards, MotorBoard, 'motor')
 
+    def _on_start_signal(self):
+        game_state = self._game
+        LOGGER.info(
+            "Recieved start signal in %s mode, zone %d",
+            game_state.mode.value,
+            game_state.zone,
+        )
+
+        if game_state.mode == GameMode.COMPETITION:
+            kill_after_delay(GAME_DURATION_SECONDS)
+
     @property
     def power_boards(self) -> BoardList[PowerBoard]:
         """
         :return: A ``BoardList`` of available ``PowerBoard``s.
         """
-        return self._update_boards(self.known_power_boards, PowerBoard, 'power')
+        return self._update_boards(
+            self.known_power_boards,
+            functools.partial(PowerBoard, on_start_signal=self._on_start_signal),
+            'power',
+        )
 
     @property
     def servo_boards(self) -> BoardList[ServoBoard]:
