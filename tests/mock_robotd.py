@@ -5,7 +5,6 @@ from multiprocessing import Queue
 import robot
 
 from robotd.devices import Camera as RobotDCamera
-from robotd.devices import GameState as RobotDGameState
 from robotd.devices_base import Board
 from robotd.master import BoardRunner
 
@@ -162,12 +161,17 @@ class MockCamera(RobotDCamera):
         super().__init__(node, camera)
 
 
-class MockGameState(RobotDGameState):
+class MockGameState(MockBoardMixin, Board):
     board_type_id = 'game'
 
     def __init__(self, name, node):
-        super().__init__()
+        super().__init__(node)
         self._serial = name
+        self._name = name
+        self._status = {
+            'zone': 0,
+            'mode': 'development',
+        }
 
 
 def main():
