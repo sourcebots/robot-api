@@ -112,7 +112,7 @@ class Robot:
     def _on_start_signal(self):
         game_state = self._game
         LOGGER.info(
-            "Recieved start signal in %s mode, zone %d",
+            "Received start signal in %s mode, zone %d",
             game_state.mode.value,
             game_state.zone,
         )
