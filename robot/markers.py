@@ -123,14 +123,6 @@ class Marker:
         return self.spherical.distance_metres
 
     # Helper functions, Might need to vary these per-game
-    def is_wall_marker(self) -> bool:
-        """If the marker is a wall marker."""
-        return self.id in WALL
-
-    def is_token_marker(self) -> bool:
-        """If the marker is a token marker."""
-        return self.id in TOKEN
-
     @property
     def polar(self) -> PolarCoord:
         """
