@@ -2,8 +2,6 @@ import math
 import warnings
 from typing import List, NamedTuple, NewType, Tuple
 
-from robot.game_specific import TOKEN, WALL
-
 Metres = NewType('Metres', float)
 Degrees = NewType('Degrees', float)
 Radians = NewType('Radians', float)
