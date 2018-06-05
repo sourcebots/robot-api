@@ -2,8 +2,6 @@ import math
 import warnings
 from typing import List, NamedTuple, NewType, Tuple
 
-from robot.game_specific import TOKEN, WALL
-
 Metres = NewType('Metres', float)
 Degrees = NewType('Degrees', float)
 Radians = NewType('Radians', float)
@@ -121,15 +119,6 @@ class Marker:
     def distance_metres(self) -> Metres:
         """Distance of the marker from the camera in metres."""
         return self.spherical.distance_metres
-
-    # Helper functions, Might need to vary these per-game
-    def is_wall_marker(self) -> bool:
-        """If the marker is a wall marker."""
-        return self.id in WALL
-
-    def is_token_marker(self) -> bool:
-        """If the marker is a token marker."""
-        return self.id in TOKEN
 
     @property
     def polar(self) -> PolarCoord:
