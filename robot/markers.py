@@ -120,7 +120,6 @@ class Marker:
         """Distance of the marker from the camera in metres."""
         return self.spherical.distance_metres
 
-    # Helper functions, Might need to vary these per-game
     @property
     def polar(self) -> PolarCoord:
         """
