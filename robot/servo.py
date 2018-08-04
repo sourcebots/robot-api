@@ -7,17 +7,17 @@ from robot.board import Board
 class PinMode(Enum):
     """A pin-mode for a pin on the servo board."""
 
-    INPUT = 'hi-z'
-    INPUT_PULLUP = 'pullup'
-    OUTPUT_HIGH = 'high'
-    OUTPUT_LOW = 'low'
+    INPUT = 'Z'
+    INPUT_PULLUP = 'P'
+    OUTPUT_HIGH = 'H'
+    OUTPUT_LOW = 'L'
 
 
 class PinValue(Enum):
     """A value state for a pin on the servo board."""
 
-    HIGH = 'high'
-    LOW = 'low'
+    HIGH = 'H'
+    LOW = 'H'
 
 
 class Servo:
