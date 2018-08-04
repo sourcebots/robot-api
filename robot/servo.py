@@ -112,7 +112,7 @@ class ServoBoard(Board):
         super().__init__(socket_path)
 
         servo_ids = range(0, 16)  # servos with a port 0-15
-        gpio_pins = range(2, 13)  # gpio pins 2-12
+        gpio_pins = range(2, 14)  # gpio pins 2-13
 
         self._servos = {}  # type: Dict[int, Servo]
         for x in servo_ids:
