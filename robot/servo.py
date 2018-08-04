@@ -17,7 +17,7 @@ class PinValue(Enum):
     """A value state for a pin on the servo board."""
 
     HIGH = 'H'
-    LOW = 'H'
+    LOW = 'L'
 
 
 class Servo:
