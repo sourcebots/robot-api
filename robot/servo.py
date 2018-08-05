@@ -200,7 +200,7 @@ class ServoBoard(Board):
     def _set_pin_mode(self, pin, value: PinMode):
         self._send_and_receive({'pins': {pin: value.value}})
 
-    def read_analogue(self) -> Dict[str, str]:
+    def read_analogue(self) -> Dict[str, float]:
         """Read analogue values from the connected board."""
         command = {'read-analogue': True}
         return self._send_and_receive(command)['analogue-values']
