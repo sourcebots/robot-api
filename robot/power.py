@@ -1,7 +1,8 @@
+import enum
 import logging
 import time
 from typing import Callable
-import enum
+
 from robot.board import Board
 
 LOGGER = logging.getLogger(__name__)
@@ -56,8 +57,11 @@ class PowerBoard(Board):
         self._send_and_receive({'power': False})
 
     def set_output(self, output: PowerOutput, value: bool) -> None:
-        self.send_and_receive({
-            'power-output': output.value
+        """
+        Turn off individual power output.
+        """
+        self._send_and_receive({
+            'power-output': output.value,
             'power-level': value,
         })
 
