@@ -2,7 +2,7 @@ import time
 import unittest
 from unittest import mock
 
-from robot.power import PowerBoard
+from robot.power import PowerBoard, PowerOutput
 from robot.robot import Robot
 from tests.mock_robotd import MockRobotDFactoryMixin
 
@@ -139,3 +139,12 @@ class PowerBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
             'duration': 500,
         })
         self.assertIsInstance(msg['buzz']['duration'], int)
+
+    def test_separate_power(self):
+        self.power_board.clear_queue()
+        self.robot.power_board.set_output(PowerOutput.HIGH_POWER_1, True)
+        msg = self.power_board.message_queue.get()
+        self.assertIn('power-output', msg)
+        self.assertIn('power-level', msg)
+        self.assertEqual(msg['power-output'], 0)
+        self.assertEqual(msg['power-level'], True)
