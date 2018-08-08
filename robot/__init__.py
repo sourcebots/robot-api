@@ -38,6 +38,7 @@ from robot.game_specific import (
     WALL,
 )
 from robot.motor import BRAKE, COAST
+from robot.power import PowerOutput
 from robot.robot import Robot
 from robot.servo import PinMode, PinValue
 
@@ -80,4 +81,5 @@ __all__ = (
     'Robot',
     'PinMode',
     'PinValue',
+    'PowerOutput',
 )
