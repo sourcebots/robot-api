@@ -58,7 +58,7 @@ class PowerBoard(Board):
 
     def set_output(self, output: PowerOutput, value: bool) -> None:
         """
-        Turn off individual power output.
+        Turn on and off individual power outputs.
         """
         self._send_and_receive({
             'power-output': output.value,
