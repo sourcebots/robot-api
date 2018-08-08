@@ -56,7 +56,7 @@ class PowerBoard(Board):
         """
         self._send_and_receive({'power': False})
 
-    def set_output(self, output: PowerOutput, value: bool) -> None:
+    def _set_output(self, output: PowerOutput, value: bool) -> None:
         """
         Turn on and off individual power outputs.
         """
@@ -66,6 +66,18 @@ class PowerBoard(Board):
             'power-output': output.value,
             'power-level': value,
         })
+
+    def power_on_output(self, output: PowerOutput) -> None:
+        """
+        Turn on power to a specific power board output.
+        """
+        self._set_output(output, True)
+
+    def power_off_output(self, output: PowerOutput) -> None:
+        """
+        Turn off power to a specific power board output.
+        """
+        self._set_output(output, False)
 
     def set_start_led(self, value: bool):
         """Set the state of the start LED."""
