@@ -12,12 +12,12 @@ LOGGER = logging.getLogger(__name__)
 class PowerOutput(enum.Enum):
     """An enumeration of the outputs on the power board."""
 
-    HIGH_POWER_0 = 0
-    HIGH_POWER_1 = 1
-    LOW_POWER_0 = 2
-    LOW_POWER_1 = 3
-    LOW_POWER_2 = 4
-    LOW_POWER_3 = 5
+    H0 = 0
+    H1 = 1
+    L0 = 2
+    L1 = 3
+    L2 = 4
+    L3 = 5
 
 
 class PowerBoard(Board):

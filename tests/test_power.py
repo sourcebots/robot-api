@@ -142,7 +142,7 @@ class PowerBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
 
     def test_separate_power_on(self):
         self.power_board.clear_queue()
-        self.robot.power_board.power_on_output(PowerOutput.HIGH_POWER_1)
+        self.robot.power_board.power_on_output(PowerOutput.H1)
         msg = self.power_board.message_queue.get()
         self.assertIn('power-output', msg)
         self.assertIn('power-level', msg)
@@ -151,7 +151,7 @@ class PowerBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
 
     def test_separate_power_off(self):
         self.power_board.clear_queue()
-        self.robot.power_board.power_off_output(PowerOutput.HIGH_POWER_1)
+        self.robot.power_board.power_off_output(PowerOutput.H1)
         msg = self.power_board.message_queue.get()
         self.assertIn('power-output', msg)
         self.assertIn('power-level', msg)
