@@ -60,6 +60,8 @@ class PowerBoard(Board):
         """
         Turn on and off individual power outputs.
         """
+        if not isinstance(value, bool):
+            raise TypeError("Value must be a boolean (True/False)")
         self._send_and_receive({
             'power-output': output.value,
             'power-level': value,
