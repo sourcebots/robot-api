@@ -146,5 +146,5 @@ class PowerBoardTest(MockRobotDFactoryMixin, unittest.TestCase):
         msg = self.power_board.message_queue.get()
         self.assertIn('power-output', msg)
         self.assertIn('power-level', msg)
-        self.assertEqual(msg['power-output'], 0)
+        self.assertEqual(msg['power-output'], 1)
         self.assertEqual(msg['power-level'], True)
