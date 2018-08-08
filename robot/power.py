@@ -1,3 +1,4 @@
+import enum
 import logging
 import time
 from typing import Callable
@@ -5,6 +6,18 @@ from typing import Callable
 from robot.board import Board
 
 LOGGER = logging.getLogger(__name__)
+
+
+# Keep this in sync with `robotd`
+class PowerOutput(enum.Enum):
+    """An enumeration of the outputs on the power board."""
+
+    H0 = 0
+    H1 = 1
+    L0 = 2
+    L1 = 3
+    L2 = 4
+    L3 = 5
 
 
 class PowerBoard(Board):
@@ -42,6 +55,29 @@ class PowerBoard(Board):
         Turn off power to all power board outputs.
         """
         self._send_and_receive({'power': False})
+
+    def _set_output(self, output: PowerOutput, value: bool) -> None:
+        """
+        Turn on and off individual power outputs.
+        """
+        if not isinstance(value, bool):
+            raise TypeError("Value must be a boolean (True/False)")
+        self._send_and_receive({
+            'power-output': output.value,
+            'power-level': value,
+        })
+
+    def power_on_output(self, output: PowerOutput) -> None:
+        """
+        Turn on power to a specific power board output.
+        """
+        self._set_output(output, True)
+
+    def power_off_output(self, output: PowerOutput) -> None:
+        """
+        Turn off power to a specific power board output.
+        """
+        self._set_output(output, False)
 
     def set_start_led(self, value: bool):
         """Set the state of the start LED."""
