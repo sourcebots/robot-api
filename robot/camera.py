@@ -69,7 +69,7 @@ class Camera(Board):
 
         while True:
             try:
-                return self._see_to_results(self._receive(should_retry=True))
+                return self._see_to_results(self._receive())
             except socket.timeout:
                 if time.time() > abort_after:
                     raise
