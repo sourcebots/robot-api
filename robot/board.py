@@ -45,7 +45,7 @@ class Board:
 
         try:
             self.socket.connect(str(self.socket_path))
-        except ConnectionRefusedError as e:
+        except ConnectionRefusedError:
             LOGGER.exception("Error connecting to: '%s'", self.socket_path)
             raise
 

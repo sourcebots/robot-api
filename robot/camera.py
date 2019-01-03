@@ -28,7 +28,7 @@ class ResultList(List[Marker]):
     def __getitem__(self, index):  # noqa: F811 (deliberate method replacement)
         try:
             return super().__getitem__(index)
-        except IndexError as e:
+        except IndexError:
             if not self:
                 raise IndexError("Trying to index an empty list") from None
             else:
