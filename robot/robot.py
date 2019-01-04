@@ -1,7 +1,7 @@
 import functools
 import logging
 from pathlib import Path
-from typing import Callable, List, Set, Type, Union  # noqa: F401
+from typing import Callable, List, Set, Union  # noqa: F401
 
 from robot import __VERSION__
 from robot.board import BoardList, TBoard
