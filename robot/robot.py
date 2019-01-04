@@ -43,8 +43,8 @@ class Robot:
 
     def __init__(
         self,
-        robotd_path: _PathLike=ROBOTD_ADDRESS,
-        wait_for_start_button: bool=True,
+        robotd_path: _PathLike = ROBOTD_ADDRESS,
+        wait_for_start_button: bool = True,
     ) -> None:
         self.robotd_path = Path(robotd_path)
         self.known_power_boards = []  # type: List[PowerBoard]

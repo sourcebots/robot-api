@@ -37,7 +37,7 @@ class PowerBoard(Board):
     def __init__(
         self,
         *args,
-        on_start_signal: Callable[[], None]=lambda: None,
+        on_start_signal: Callable[[], None] = lambda: None,
         **kwargs
     ) -> None:
         super().__init__(*args, **kwargs)
