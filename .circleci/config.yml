@@ -2,10 +2,10 @@ version: 2
 jobs:
   build:
     docker:
-      # While we're actually running on stretch (with Python 3.5.3), this is the
-      # closest matching docker image available in CircleCI. The stretch images
-      # all have Python 3.6, which has some syntactic changes.
-      - image: python:3.5.4
+      # Note: Raspbian stretch actually has Python 3.5.3, but CircleCI's images
+      # don't offer exactly that combination. We go with the closest we can,
+      # even this is likely on the wrong patch version.
+      - image: python:3.5-stretch
 
     working_directory: ~/robot
 
