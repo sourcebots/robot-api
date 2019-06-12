@@ -37,7 +37,7 @@ class MarkerTest(unittest.TestCase):
         }
         self.assertEqual(
             str(Marker(data)),
-            "<Marker 13: 12° left, 0.12m away>",
+            "Marker 13: 12° left, 0.12m away",
         )
 
     def test_str_right(self):
@@ -51,5 +51,5 @@ class MarkerTest(unittest.TestCase):
         }
         self.assertEqual(
             str(Marker(data)),
-            "<Marker 13: 12° right, 0.12m away>",
+            "Marker 13: 12° right, 0.12m away",
         )
