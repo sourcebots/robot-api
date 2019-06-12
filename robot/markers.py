@@ -44,6 +44,43 @@ class SphericalCoord(_SphericalCoord):
         return Degrees(math.degrees(self.rot_y_radians))
 
 
+_Orientation = NamedTuple('Orientation', (
+    ('rot_x_radians', Radians),
+    ('rot_y_radians', Radians),
+    ('rot_z_radians', Radians),
+))
+
+
+class Orientation(_Orientation):
+    """
+    Represents the orientation in 3d space as rotations around x, y, and z axes.
+
+    Rotations around the different axes can be thought of as follows:
+      - X rotation represents pitch. A good way to think of this is a person
+      leaning towards you (like they're doing a bow in respect of your amazing
+      robot) would be a positive X rotation.
+      - Y rotation represents yaw. A good way to think of this is a person
+      spinning clockwise on the spot would be a positive Y rotation.
+      - Z rotation represents roll. A good way to think of this is a person
+      doing a cart-wheel to the right would be a positive Z rotation.
+    """
+
+    @property
+    def rot_x_degrees(self) -> Degrees:
+        """Rotation about the x-axis in degrees."""
+        return Degrees(math.degrees(self.rot_x_radians))
+
+    @property
+    def rot_y_degrees(self) -> Degrees:
+        """Rotation about the y-axis in degrees."""
+        return Degrees(math.degrees(self.rot_y_radians))
+
+    @property
+    def rot_z_degrees(self) -> Degrees:
+        """Rotation about the z-axis in degrees."""
+        return Degrees(math.degrees(self.rot_z_radians))
+
+
 class PolarCoord:
     """
     Deprecated: represents a point expressed in legacy "polar" co-ordinates.
@@ -156,6 +193,21 @@ class Marker:
         space is different to the usual representation of a spherical space.
         """
         return SphericalCoord(*self._raw_data['spherical'])
+
+    @property
+    def orientation(self) -> Orientation:
+        """
+        The rotation of the marker in relative to the camera.
+
+        Describes a rotation as angles about the x, y, and z axes, which
+        corresponds pitch, yaw, and roll of the marker respectively. The
+        angles are measured as an offset from a marker directly facing
+        the camera.
+
+        The rotations are applied in the order of Z, Y, then X rotations. Each rotation
+        is applied relative to the marker.
+        """
+        return Orientation(*self._raw_data['orientation'])
 
     def __str__(self):
         bearing = self.spherical.rot_y_degrees

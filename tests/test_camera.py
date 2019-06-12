@@ -3,7 +3,7 @@ import time
 import unittest
 
 from robot.camera import ResultList
-from robot.markers import CartCoord, PolarCoord, SphericalCoord
+from robot.markers import CartCoord, Orientation, PolarCoord, SphericalCoord
 from robot.robot import Robot
 from sb_vision.camera import FileCamera
 from tests.mock_robotd import MockRobotDFactoryMixin
@@ -78,6 +78,12 @@ class CameraTest(MockRobotDFactoryMixin, unittest.TestCase):
             token.spherical,
             SphericalCoord,
             "Invalid spherical coordinates",
+        )
+
+        self.assertIsInstance(
+            token.orientation,
+            Orientation,
+            "Invalid orientation coordinates",
         )
 
         self.assertIsInstance(
